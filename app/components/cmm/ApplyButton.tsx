@@ -29,7 +29,7 @@ export default function ApplyButton({
       type="button"
       aria-label="활동 신청하기"
       onClick={handleClick}
-      className={`h-12 shrink-0 whitespace-nowrap rounded-xl px-4 font-bold font-hana-main text-[14px] text-white ${
+      className={`h-12 shrink-0 whitespace-nowrap rounded-xl px-4 font-hana-main text-[14px] text-white ${
         isApplied ? 'bg-hana-pink' : 'bg-hana-main hover:bg-hana-mint'
       }`}
     >
