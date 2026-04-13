@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 /**
  * @page: Calendar Component
  * @description: 캘린더 컴포넌트입니다. 하드코딩ver.
@@ -10,7 +12,7 @@
 type CalendarView = 'month' | 'week';
 type EventType = 'church' | 'smallGroup' | 'personal';
 
-type CalenderProps = {
+type CalendarProps = {
   year?: number;
   month?: number;
   view?: CalendarView;
@@ -119,7 +121,7 @@ function ChevronRightIcon() {
   );
 }
 
-function CalenderHeader({
+function CalendarHeader({
   year,
   month,
   view,
@@ -146,13 +148,7 @@ function CalenderHeader({
           <ChevronLeftIcon />
         </button>
 
-        <h2
-          style={{
-            fontSize: '16px',
-            fontWeight: 700,
-            color: '#222222',
-          }}
-        >
+        <h2 className="font-bold text-[#222222] text-[16px]">
           {year}년 {month}월
         </h2>
 
@@ -215,7 +211,7 @@ function CalenderHeader({
   );
 }
 
-function CalenderDayNameRow() {
+function CalendarDayNameRow() {
   return (
     <div className="mb-1 grid grid-cols-7 gap-1">
       {DAY_LABELS.map((label, index) => {
@@ -241,7 +237,7 @@ function CalenderDayNameRow() {
   );
 }
 
-function CalenderLegend() {
+function CalendarLegend() {
   return (
     <div
       style={{
@@ -292,7 +288,7 @@ function CalenderLegend() {
   );
 }
 
-function CalenderDayCell({
+function CalendarDayCell({
   date,
   dayIndex,
   isSelected,
@@ -361,7 +357,7 @@ function CalenderDayCell({
   );
 }
 
-export default function Calender({
+export default function Calendar({
   year,
   month,
   view = 'month',
@@ -371,21 +367,39 @@ export default function Calender({
   onNextMonth,
   onSelectDate,
   onChangeView,
-}: CalenderProps) {
-  const today = new Date();
+}: CalendarProps) {
+  const [today, setToday] = useState<{
+    year: number;
+    month: number;
+    date: number;
+  } | null>(null);
 
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth() + 1;
-  const currentDate = today.getDate();
+  useEffect(() => {
+    const now = new Date();
 
-  const resolvedYear = year ?? currentYear;
-  const resolvedMonth = month ?? currentMonth;
+    setToday({
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      date: now.getDate(),
+    });
+  }, []);
+
+  const resolvedYear = year ?? today?.year;
+  const resolvedMonth = month ?? today?.month;
 
   const isCurrentMonth =
-    resolvedYear === currentYear && resolvedMonth === currentMonth;
+    resolvedYear !== undefined &&
+    resolvedMonth !== undefined &&
+    today !== null &&
+    resolvedYear === today.year &&
+    resolvedMonth === today.month;
 
   const resolvedSelectedDate =
-    selectedDate ?? (isCurrentMonth ? currentDate : undefined);
+    selectedDate ?? (isCurrentMonth ? today?.date : undefined);
+
+  if (resolvedYear === undefined || resolvedMonth === undefined) {
+    return null;
+  }
 
   const days = buildCalendarDays(resolvedYear, resolvedMonth);
 
@@ -399,7 +413,7 @@ export default function Calender({
         width: '100%',
       }}
     >
-      <CalenderHeader
+      <CalendarHeader
         year={resolvedYear}
         month={resolvedMonth}
         view={view}
@@ -408,7 +422,7 @@ export default function Calender({
         onChangeView={onChangeView}
       />
 
-      <CalenderDayNameRow />
+      <CalendarDayNameRow />
 
       <div className="mb-1 grid grid-cols-7 gap-1">
         {days.map((date, index) => {
@@ -417,7 +431,7 @@ export default function Calender({
           const isSelected = date === resolvedSelectedDate;
 
           return (
-            <CalenderDayCell
+            <CalendarDayCell
               key={`${resolvedYear}-${resolvedMonth}-${date ?? `empty-${index}`}`}
               date={date}
               dayIndex={dayIndex}
@@ -429,7 +443,7 @@ export default function Calender({
         })}
       </div>
 
-      <CalenderLegend />
+      <CalendarLegend />
     </div>
   );
 }
