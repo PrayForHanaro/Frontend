@@ -3,26 +3,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
 
-function formatBirthDate(value: string) {
-  const numbersOnly = value.replace(/\D/g, '').slice(0, 8);
-
-  if (numbersOnly.length <= 4) return numbersOnly;
-  if (numbersOnly.length <= 6) {
-    return `${numbersOnly.slice(0, 4)}.${numbersOnly.slice(4)}`;
-  }
-  return `${numbersOnly.slice(0, 4)}.${numbersOnly.slice(4, 6)}.${numbersOnly.slice(6, 8)}`;
-}
-
-function formatPhoneNumber(value: string) {
-  const numbersOnly = value.replace(/\D/g, '').slice(0, 11);
-
-  if (numbersOnly.length <= 3) return numbersOnly;
-  if (numbersOnly.length <= 7) {
-    return `${numbersOnly.slice(0, 3)}-${numbersOnly.slice(3)}`;
-  }
-  return `${numbersOnly.slice(0, 3)}-${numbersOnly.slice(3, 7)}-${numbersOnly.slice(7, 11)}`;
-}
+/**
+ * @page: 회원가입 페이지입니다.
+ * @description: 회원가입 페이지입니다.
+ * @author: 이정수
+ * @date: 2026-04-13
+ */
 
 export default function Signup() {
   const [birthDate, setBirthDate] = useState('');

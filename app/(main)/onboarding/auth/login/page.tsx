@@ -3,6 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
+/**
+ * @page: 로그인 페이지 입니다.
+ * @description: 로그인 페이지 입니다.
+ * @author: 이정수
+ * @date: 2026-04-13
+ */
+
 export default function Login() {
   return (
     <form>
