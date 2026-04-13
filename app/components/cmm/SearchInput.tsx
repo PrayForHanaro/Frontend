@@ -11,10 +11,14 @@ import { Search } from 'lucide-react';
 
 type SearchInputProps = {
   placeholder?: string;
+  value: string;
+  onChangeValue: (value: string) => void;
 };
 
 export default function SearchInput({
   placeholder = '검색하기',
+  value,
+  onChangeValue,
 }: SearchInputProps) {
   return (
     <div className="w-full">
@@ -25,6 +29,8 @@ export default function SearchInput({
 
         <input
           type="text"
+          value={value}
+          onChange={(event) => onChangeValue(event.target.value)}
           placeholder={placeholder}
           className="h-10 w-full rounded-xl border border-[#E5E7EB] bg-white pr-4 pl-11 font-hana-main text-[#222222] text-sm shadow-sm outline-none placeholder:text-[#9CA3AF]"
         />

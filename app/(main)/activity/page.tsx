@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import ActivityCard from '@/app/components/cmm/ActivityCard';
 import BoardToggle from '@/app/components/cmm/BoardToggle';
@@ -21,12 +21,31 @@ import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
 
 export default function Activity() {
   const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
 
-  const filteredActivities =
-    selectedTab === '전체'
-      ? ACTIVITY_LIST
-      : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+  const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const filteredActivities = useMemo(() => {
+    const trimmedKeyword = searchKeyword.trim().toLowerCase();
+
+    const tabFilteredActivities =
+      selectedTab === '전체'
+        ? ACTIVITY_LIST
+        : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+
+    if (!trimmedKeyword) {
+      return tabFilteredActivities;
+    }
+
+    return tabFilteredActivities.filter((activity) => {
+      return (
+        activity.title.toLowerCase().includes(trimmedKeyword) ||
+        activity.location.toLowerCase().includes(trimmedKeyword) ||
+        activity.schedule.toLowerCase().includes(trimmedKeyword) ||
+        activity.category.toLowerCase().includes(trimmedKeyword)
+      );
+    });
+  }, [searchKeyword, selectedTab]);
 
   function handleMoveRegisterPage() {
     router.push('/activity/register');
@@ -35,9 +54,10 @@ export default function Activity() {
   return (
     <div className="flex flex-col gap-4">
       <Header content="소모임" />
+
       <BoardToggle selectedTab={selectedTab} onChangeTab={setSelectedTab} />
 
-      <SearchInput />
+      <SearchInput value={searchKeyword} onChangeValue={setSearchKeyword} />
 
       <div className="flex flex-col gap-4">
         {filteredActivities.map((activity) => (
