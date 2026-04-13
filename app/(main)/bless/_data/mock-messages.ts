@@ -29,6 +29,42 @@ export const MOCK_MESSAGES: Record<string, BlessMessage[]> = {
       content:
         '감사합니다 주님. 승빈이가 오늘 밝은 얼굴로 전화해 주었습니다. 항상 기쁨이 넘치는 아이가 되게 해주세요.',
     },
+    {
+      id: 'm1-4',
+      targetId: '1',
+      date: '2026-04-06',
+      dayOfWeek: '일',
+      points: 50,
+      content:
+        '주님, 오늘 예배에서 승빈이를 위해 기도했습니다. 늘 주님의 사랑 안에서 자라나게 해주세요.',
+    },
+    {
+      id: 'm1-5',
+      targetId: '1',
+      date: '2026-04-05',
+      dayOfWeek: '토',
+      points: 50,
+      content:
+        '하나님, 승빈이가 이번 주도 무사히 보냈습니다. 다음 주도 건강하고 평안한 한 주가 되게 해주세요.',
+    },
+    {
+      id: 'm1-6',
+      targetId: '1',
+      date: '2026-04-04',
+      dayOfWeek: '금',
+      points: 50,
+      content:
+        '주님, 승빈이의 꿈을 응원합니다. 어떤 길을 걷든 주님이 함께하시길 기도합니다.',
+    },
+    {
+      id: 'm1-7',
+      targetId: '1',
+      date: '2026-04-03',
+      dayOfWeek: '목',
+      points: 50,
+      content:
+        '감사합니다. 승빈이가 요즘 부쩍 의젓해졌습니다. 좋은 어른으로 자라게 이끌어 주세요.',
+    },
   ],
   '2': [
     {
