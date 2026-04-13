@@ -8,7 +8,7 @@ type BibleVerseBoxProps = {
 
 export default function BibleVerseBox({ verse }: BibleVerseBoxProps) {
   return (
-    <div className="rounded-2xl bg-hana-carousel-bg-green px-6 py-5">
+    <div className="rounded-2xl bg-white px-6 py-5">
       <p className="text-center font-hana-regular text-gray-700 text-sm leading-relaxed">
         &ldquo;{verse.text}&rdquo;
       </p>
