@@ -47,7 +47,7 @@ export default function Signup() {
             생년월일
           </FieldLabel>
           <Input
-            id="birth-date"
+            id="fieldgroup-birth"
             name="birthDate"
             type="text"
             inputMode="numeric"
@@ -80,7 +80,7 @@ export default function Signup() {
         <Field>
           <FieldLabel
             className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-phone"
+            htmlFor="fieldgroup-password"
           >
             비밀번호
           </FieldLabel>

@@ -20,7 +20,7 @@ export default function Login() {
         <Field>
           <FieldLabel
             className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-name"
+            htmlFor="fieldgroup-phone"
           >
             전화번호
           </FieldLabel>
@@ -33,7 +33,7 @@ export default function Login() {
         <Field className="pt-10">
           <FieldLabel
             className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-email"
+            htmlFor="fieldgroup-password"
           >
             비밀번호
           </FieldLabel>
