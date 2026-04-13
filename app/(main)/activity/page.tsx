@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import ActivityCard from '@/app/components/cmm/ActivityCard';
@@ -17,12 +18,17 @@ import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
  */
 
 export default function Activity() {
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
 
   const filteredActivities =
     selectedTab === '전체'
       ? ACTIVITY_LIST
       : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+
+  function handleMoveRegisterPage() {
+    router.push('/activity/register');
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -34,6 +40,7 @@ export default function Activity() {
         {filteredActivities.map((activity) => (
           <ActivityCard
             key={activity.id}
+            id={activity.id}
             category={activity.category}
             title={activity.title}
             location={activity.location}
@@ -41,11 +48,13 @@ export default function Activity() {
             currentCount={activity.currentCount}
             maxCount={activity.maxCount}
             point={activity.point}
+            isApplied={false}
           />
         ))}
       </div>
 
-      <LongButton text="활동 만들기" />
+      <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
+
       <Calendar />
     </div>
   );

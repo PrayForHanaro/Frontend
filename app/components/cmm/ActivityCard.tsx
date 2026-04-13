@@ -1,9 +1,9 @@
 'use client';
 
 import { MapPin, Users } from 'lucide-react';
-import type { KeyboardEvent, MouseEvent } from 'react';
 
 import type { ActivityCategory } from '@/constants/activity';
+import ApplyButton from './ApplyButton';
 import CategoryTag from './Tag';
 
 /**
@@ -14,6 +14,7 @@ import CategoryTag from './Tag';
  */
 
 type ActivityCardProps = {
+  id: number;
   category: ActivityCategory;
   title: string;
   location: string;
@@ -21,11 +22,11 @@ type ActivityCardProps = {
   currentCount: number;
   maxCount: number;
   point: number;
-  onClickAction?: () => void;
-  onApplyAction?: () => void;
+  isApplied?: boolean;
 };
 
 export default function ActivityCard({
+  id,
   category,
   title,
   location,
@@ -33,35 +34,14 @@ export default function ActivityCard({
   currentCount,
   maxCount,
   point,
-  onClickAction,
-  onApplyAction,
+  isApplied = false,
 }: ActivityCardProps) {
-  function handleApplyClick(event: MouseEvent<HTMLButtonElement>) {
-    event.stopPropagation();
-    onApplyAction?.();
-  }
-
-  function handleCardKeyDown(event: KeyboardEvent<HTMLElement>) {
-    if (!onClickAction) {
-      return;
-    }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      onClickAction();
-    }
-  }
-
   return (
     <article
       className="w-full rounded-3xl bg-white p-6 hover:scale-102"
       style={{
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
       }}
-      onClick={onClickAction}
-      onKeyDown={handleCardKeyDown}
-      role={onClickAction ? 'button' : undefined}
-      tabIndex={onClickAction ? 0 : undefined}
       aria-label={`${title} 활동 카드`}
     >
       <div className="mb-2">
@@ -100,14 +80,7 @@ export default function ActivityCard({
           <CategoryTag label="포인트" text={`+${point}포인트`} />
         </div>
 
-        <button
-          type="button"
-          aria-label={`${title} 신청하기`}
-          onClick={handleApplyClick}
-          className="h-12 shrink-0 whitespace-nowrap rounded-xl bg-hana-main px-4 font-bold font-hana-main text-[14px] text-white hover:bg-hana-mint"
-        >
-          신청하기
-        </button>
+        <ApplyButton activityId={id} isApplied={isApplied} />
       </div>
     </article>
   );
