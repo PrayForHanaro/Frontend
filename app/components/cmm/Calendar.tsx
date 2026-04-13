@@ -1,5 +1,12 @@
 'use client';
 
+/**
+ * @page: Calendar Component
+ * @description: 캘린더 컴포넌트입니다. 하드코딩ver.
+ * @author: typeyu
+ * @date: 2026-04-13
+ */
+
 type CalendarView = 'month' | 'week';
 type EventType = 'church' | 'smallGroup' | 'personal';
 
