@@ -49,7 +49,7 @@ export default function CategoryTag({ label, text }: CategoryTagProps) {
 
   return (
     <span
-      className="inline-flex items-center gap-1 rounded-full px-3 py-2 font-bold font-hana-main text-sm leading-none"
+      className="inline-flex items-center gap-1 rounded-full px-3 py-2 font-hana-main text-sm leading-none"
       style={{
         color: tagStyle.textColor,
         backgroundColor: tagStyle.backgroundColor,
