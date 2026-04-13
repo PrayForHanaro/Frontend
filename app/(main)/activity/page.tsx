@@ -33,7 +33,7 @@ export default function Activity() {
       <div className="flex flex-col gap-4">
         {filteredActivities.map((activity) => (
           <ActivityCard
-            key={`${activity.category}-${activity.title}`}
+            key={activity.id}
             category={activity.category}
             title={activity.title}
             location={activity.location}
