@@ -1,31 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { BOARD_TABS, type BoardTab } from '@/constants/activity';
 
-type BoardTab = '전체' | '봉사모집' | '동행찾기' | '교회행사';
+/**
+ * @page: 소모임 - 토글 버튼
+ * @description: 전체 게시판, 봉사모집, 동행찾기, 교육행사 네 가지 구분
+ * @author: typeyu
+ * @date: 2026-04-13
+ */
 
 type BoardToggleProps = {
-  defaultTab?: BoardTab;
-  onChangeTab?: (tab: BoardTab) => void;
+  selectedTab: BoardTab;
+  onChangeTab: (tab: BoardTab) => void;
 };
 
-const BOARD_TABS: BoardTab[] = ['전체', '봉사모집', '동행찾기', '교회행사'];
-
 export default function BoardToggle({
-  defaultTab = '전체',
+  selectedTab,
   onChangeTab,
 }: BoardToggleProps) {
-  const [selectedTab, setSelectedTab] = useState<BoardTab>(defaultTab);
-
-  function handleClick(tab: BoardTab) {
-    setSelectedTab(tab);
-    onChangeTab?.(tab);
-  }
-
   return (
     <div className="w-full">
       <div
-        className="flex h-[44px] w-full rounded-[12px] bg-[#F1EEEA] p-1"
+        className="flex h-11 w-full rounded-2xl bg-[#F1EEEA] p-1"
         role="tablist"
         aria-label="게시판 카테고리 선택"
       >
@@ -39,10 +35,10 @@ export default function BoardToggle({
               role="tab"
               aria-selected={isActive}
               aria-label={`${tab} 보기`}
-              onClick={() => handleClick(tab)}
-              className={`flex h-full min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[12px] text-center font-hana-light text-[14px] text-base leading-none transition ${
+              onClick={() => onChangeTab(tab)}
+              className={`flex h-full min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-2xl text-center font-hana-light text-[14px] leading-none transition ${
                 isActive
-                  ? 'bg-hana-main text-white shadow-sm'
+                  ? 'fade-in animate-in bg-hana-main text-white shadow-sm'
                   : 'bg-transparent text-[#9B9B9B]'
               }`}
             >
