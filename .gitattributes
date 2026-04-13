@@ -1,0 +1,10 @@
+# 맥, 윈도우 LF CRLF 환경 달라져서 오류 지옥 방지
+# 기본: 전부 LF로 통일
+* text=auto eol=lf
+
+# 바이너리는 변환 금지
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary

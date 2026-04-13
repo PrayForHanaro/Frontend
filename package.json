@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "prepare": "husky"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -28,6 +29,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "husky": "^9.1.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
