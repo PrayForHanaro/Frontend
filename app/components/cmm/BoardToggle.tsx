@@ -19,7 +19,7 @@ export default function BoardToggle({
   onChangeTab,
 }: BoardToggleProps) {
   return (
-    <div className="w-full">
+    <div className="w-full pt-3">
       <div
         className="flex h-11 w-full rounded-2xl bg-[#F1EEEA] p-1"
         role="tablist"
