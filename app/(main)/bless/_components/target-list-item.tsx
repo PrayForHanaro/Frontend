@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronRight, CircleUserRound } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import type { BlessTarget } from '../_types';
 
@@ -12,9 +13,15 @@ export default function TargetListItem({ target }: TargetListItemProps) {
   return (
     <Link
       href={`/bless/interval/${target.id}`}
-      className="flex items-center gap-4 border-hana-gray-200 border-b px-4 py-4 transition-colors active:bg-hana-gray-100"
+      className="flex items-center gap-4 border-hana-gray-300 border-b px-5 py-4 transition-colors active:bg-hana-gray-100"
     >
-      <CircleUserRound className="size-10 text-hana-gray-400" />
+      <Image
+        src={target.avatar}
+        alt={target.name}
+        width={40}
+        height={40}
+        className="size-10 rounded-full object-contain"
+      />
       <span className="flex-1 font-hana-medium text-base text-gray-900">
         {target.name} ({target.relation})
       </span>

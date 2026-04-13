@@ -2,6 +2,7 @@ export type BlessTarget = {
   id: string;
   name: string;
   relation: string;
+  avatar: string;
   daysOfPrayer: number;
   totalAmount: number;
   dailyAmount: number;

@@ -14,9 +14,9 @@ export default function BlessHeader({
   greeting,
 }: BlessHeaderProps) {
   return (
-    <div className="flex flex-col items-center rounded-2xl bg-hana-white-yellow px-6 pt-10 pb-8 text-center">
-      <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-hana-carousel-bg-green">
-        <Send className="-rotate-12 size-6 text-hana-main" />
+    <div className="flex flex-col items-center px-6 pt-10 pb-8 text-center">
+      <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-hana-bless-icon-bg">
+        <Send className="-rotate-12 size-6 text-hana-bless-icon" />
       </div>
       {greeting && (
         <p className="mb-1 font-hana-regular text-hana-gray-600 text-sm">
