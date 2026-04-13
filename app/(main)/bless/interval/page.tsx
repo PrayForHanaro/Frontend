@@ -19,24 +19,25 @@ export default function BlessIntervalList() {
         {/* Progress bar */}
         <div className="mx-5 h-1 rounded-full bg-hana-bless-progress" />
 
-        <div className="flex items-center justify-between px-5 pt-5 pb-2">
-          <p className="font-hana-medium text-gray-900 text-sm">
-            OO님이 기도드리며 적금하는 사람들이에요
-          </p>
-          <button
-            type="button"
-            onClick={() => alert('대상자 추가 기능은 추후 구현됩니다')}
-            className="flex size-7 items-center justify-center rounded-full bg-hana-main text-white"
-            aria-label="대상자 추가"
-          >
-            <Plus className="size-4" />
-          </button>
-        </div>
+        <p className="px-5 pt-5 pb-2 font-hana-medium text-gray-900 text-sm">
+          OO님이 기도드리며 적금하는 사람들이에요
+        </p>
 
         <div className="flex flex-col">
           {MOCK_TARGETS.map((target) => (
             <TargetListItem key={target.id} target={target} />
           ))}
+        </div>
+
+        <div className="flex justify-center py-4">
+          <button
+            type="button"
+            onClick={() => alert('대상자 추가 기능은 추후 구현됩니다')}
+            className="flex size-10 items-center justify-center rounded-full border border-hana-gray-300 bg-white text-hana-gray-400"
+            aria-label="대상자 추가"
+          >
+            <Plus className="size-5" />
+          </button>
         </div>
       </div>
       <Nav />
