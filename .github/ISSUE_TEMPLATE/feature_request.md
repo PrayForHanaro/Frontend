@@ -7,11 +7,6 @@ assignees: ''
 
 ---
 
-- Feature Template
-
-- 기능 추가 이슈 템플릿
-
-
 ## ✨ Description
 
 > 기능에 대한 설명을 적습니다.
