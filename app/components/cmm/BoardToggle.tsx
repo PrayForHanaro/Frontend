@@ -40,7 +40,7 @@ export default function BoardToggle({
               aria-selected={isActive}
               aria-label={`${tab} 보기`}
               onClick={() => handleClick(tab)}
-              className={`flex h-full min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[12px] text-center font-hana-light text-[14px] text-base leading-none transition ${
+              className={`flex h-full min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-[12px] text-center font-hana-light text-[14px] leading-none transition ${
                 isActive
                   ? 'bg-hana-main text-white shadow-sm'
                   : 'bg-transparent text-[#9B9B9B]'
