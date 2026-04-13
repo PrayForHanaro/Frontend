@@ -8,6 +8,8 @@ import BoardToggle from '@/app/components/cmm/BoardToggle';
 import Calendar from '@/app/components/cmm/Calendar';
 import LongButton from '@/app/components/cmm/LongBtn';
 import SearchInput from '@/app/components/cmm/SearchInput';
+import Header from '@/components/ui/cmm/Header';
+import Nav from '@/components/ui/cmm/Nav';
 import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
 
 /**
@@ -32,6 +34,7 @@ export default function Activity() {
 
   return (
     <div className="flex flex-col gap-4">
+      <Header content="소모임" />
       <BoardToggle selectedTab={selectedTab} onChangeTab={setSelectedTab} />
 
       <SearchInput />
@@ -56,6 +59,7 @@ export default function Activity() {
       <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
 
       <Calendar />
+      <Nav />
     </div>
   );
 }
