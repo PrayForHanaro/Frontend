@@ -6,7 +6,6 @@ import WhiteCard from '@/components/ui/cmm/WhiteCard';
 export default function SetUp() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams?.get('id') ?? '';
   const name = searchParams?.get('name') ?? '';
   const location = searchParams?.get('location') ?? '';
 
