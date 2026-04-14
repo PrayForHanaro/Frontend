@@ -9,6 +9,8 @@ import MessageHistoryItem from '../../_components/message-history-item';
 import { MOCK_MESSAGES } from '../../_data/mock-messages';
 import { MOCK_TARGETS } from '../../_data/mock-targets';
 
+const TOTAL_PRAYER_DAYS = 200;
+
 export default function BlessInterval() {
   const { blessId } = useParams<{ blessId: string }>();
 
@@ -51,12 +53,11 @@ export default function BlessInterval() {
             </p>
           </div>
 
-          {/* Progress bar (mock: 37/200 days) */}
           <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-200">
             <div
               className="h-full rounded-full bg-hana-bless-progress"
               style={{
-                width: `${Math.min((target.daysOfPrayer / 200) * 100, 100)}%`,
+                width: `${Math.min((target.daysOfPrayer / TOTAL_PRAYER_DAYS) * 100, 100)}%`,
               }}
             />
           </div>
