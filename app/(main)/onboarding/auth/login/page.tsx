@@ -12,8 +12,8 @@ import { Input } from '@/components/ui/input';
 
 export default function Login() {
   return (
-    <form>
-      <h1 className="pt-24 text-center font-hana-medium text-5xl text-hana-light-mint">
+    <form className="relative min-h-full">
+      <h1 className="pt-24 text-center font-hana-medium text-3xl text-hana-light-mint">
         로그인
       </h1>
       <FieldGroup className="flex flex-col items-center pt-24">
@@ -27,7 +27,7 @@ export default function Login() {
           <Input
             id="fieldgroup-phone"
             placeholder="010-0000-0000"
-            className="p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
+            className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
           />
         </Field>
         <Field className="pt-10">
@@ -40,25 +40,25 @@ export default function Login() {
           <Input
             id="fieldgroup-password"
             type="password"
-            className="p-5 pt-7 pb-7 text-2xl"
+            className="bg-white p-5 pt-7 pb-7 text-2xl"
           />
         </Field>
-        <Field className="items-center pt-10">
-          <Button
-            type="reset"
-            variant="outline"
-            className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
-          >
-            초기화
-          </Button>
-          <Button
-            type="submit"
-            className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
-          >
-            시작하기
-          </Button>
-        </Field>
       </FieldGroup>
+      <Field className="absolute bottom-4 items-center pt-10">
+        <Button
+          type="reset"
+          variant="outline"
+          className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
+        >
+          초기화
+        </Button>
+        <Button
+          type="submit"
+          className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+        >
+          시작하기
+        </Button>
+      </Field>
     </form>
   );
 }
