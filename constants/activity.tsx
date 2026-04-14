@@ -36,9 +36,9 @@ export const ACTIVITY_LIST: ActivityItem[] = [
   {
     id: 2,
     category: '동행찾기',
-    title: '성경읽기 21일 챌린지',
-    location: '온라인',
-    schedule: '4.15(화) ~ 5.5(월)',
+    title: '봄꽃 구경 겸 나들이 가요^^',
+    location: '종로구 ○○공원',
+    schedule: '4월 둘째 주',
     currentCount: 15,
     maxCount: 30,
     point: 30,
