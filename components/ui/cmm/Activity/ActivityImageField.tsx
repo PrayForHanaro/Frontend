@@ -2,7 +2,7 @@
 
 import { ImagePlus, X } from 'lucide-react';
 import type { ChangeEvent } from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * @page: 소모임 - 활동 이미지 입력 필드 컴포넌트
@@ -28,21 +28,22 @@ export default function ActivityImageField({
   maxCount = 3,
 }: ActivityImageFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [previewItems, setPreviewItems] = useState<PreviewItem[]>([]);
 
-  const previewItems = useMemo<PreviewItem[]>(() => {
-    return value.map((file) => ({
+  useEffect(() => {
+    const nextPreviewItems = value.map((file) => ({
       file,
       previewUrl: URL.createObjectURL(file),
     }));
-  }, [value]);
 
-  useEffect(() => {
+    setPreviewItems(nextPreviewItems);
+
     return () => {
-      previewItems.forEach((item) => {
+      nextPreviewItems.forEach((item) => {
         URL.revokeObjectURL(item.previewUrl);
       });
     };
-  }, [previewItems]);
+  }, [value]);
 
   function handleOpenFilePicker() {
     inputRef.current?.click();
