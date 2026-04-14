@@ -203,7 +203,6 @@
 }
 
 @layer utilities {
-
   /* 크롬, 사파리, 오페라 */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
