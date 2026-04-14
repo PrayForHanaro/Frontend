@@ -11,7 +11,6 @@ export default function WhiteCard({
   description,
   setIsSelected,
 }: Props) {
-  console.log(description);
   return (
     <div
       className={`flex h-20 w-full max-w-md items-center justify-center ${isSelected ? `border-4 border-hana-checkin-green-b bg-white` : `bg-white`} rounded-2xl p-5 text-center shadow-sm`}

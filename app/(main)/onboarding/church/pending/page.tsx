@@ -36,10 +36,14 @@ export default function Pending() {
   };
   const findChurch = (v: string) => {
     if (!v) {
-      return [];
+      setFilteredChurches([]);
+      return;
     }
     const filteredList = churchList.filter((item) =>
-      item.replaceAll(' ', '').startsWith(v.replaceAll(' ', '')),
+      item
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .includes(v.toLowerCase().replaceAll(' ', '')),
     );
     setFilteredChurches(filteredList);
   };
@@ -93,7 +97,8 @@ export default function Pending() {
       <div className="absolute bottom-4 w-full items-center pt-10">
         <Button
           type="button"
-          className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+          disabled={!selectedItem}
+          className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green disabled:opacity-50"
           onClick={handleClick}
         >
           선택 완료
