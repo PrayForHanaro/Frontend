@@ -17,17 +17,16 @@ export function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
       if (timeout) clearTimeout(timeout);
 
       timeout = setTimeout(() => {
-        const result = fn(...args); // 함수 실행
-        resolve(result); // 함수 실행 결과 반환
+        const result = fn(...args);
+        resolve(result);
       }, delay);
     });
   };
 }
 
-export function useDebounce<T extends (...args: any[]) => any>(
-  fn: T, // T는 함수 타입
-  delay: number,
-): (...args: Parameters<T>) => Promise<ReturnType<T>> {
+export function useDebounce<
+  T extends (...args: Parameters<T>) => ReturnType<T>,
+>(fn: T, delay: number): (...args: Parameters<T>) => Promise<ReturnType<T>> {
   const debouncedFn = debounce(fn, delay);
   return debouncedFn;
 }
