@@ -25,10 +25,9 @@ export default function BlessOnceComplete() {
     return null;
   }
 
-  const handleSend = () => {
+  const handleComplete = () => {
     sessionStorage.removeItem('bless-once-form');
-    alert('축복이 전달되었습니다!');
-    router.push('/bless/interval');
+    router.push('/home');
   };
 
   const recipientDisplay = formData.recipientName
@@ -91,15 +90,7 @@ export default function BlessOnceComplete() {
         {/* Buttons */}
         <div className="mt-auto flex flex-col gap-3 px-6 pt-6 pb-6">
           <KakaoShareButton />
-          <BlessActionButton onClick={handleSend}>
-            축복 보내기
-          </BlessActionButton>
-          <BlessActionButton
-            variant="outline"
-            onClick={() => router.push('/bless/once/input')}
-          >
-            이전으로 돌아가기
-          </BlessActionButton>
+          <BlessActionButton onClick={handleComplete}>완료</BlessActionButton>
         </div>
       </div>
       <Nav />
