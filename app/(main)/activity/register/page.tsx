@@ -10,8 +10,8 @@ import ActivityLocationField from '@/components/ui/cmm/Activity/ActivityLocation
 import ActivityPeriodField, {
   type ActivityPeriodValue,
 } from '@/components/ui/cmm/Activity/ActivityPeriodField';
-import LongButton from '@/components/ui/cmm/Activity/LongBtn';
 import Header from '@/components/ui/cmm/Header';
+import LongButton from '@/components/ui/cmm/LongBtn';
 import Nav from '@/components/ui/cmm/Nav';
 
 /**
