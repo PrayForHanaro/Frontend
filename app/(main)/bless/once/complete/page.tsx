@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react';
 import Nav from '@/components/ui/cmm/Nav';
 import BlessActionButton from '../../_components/bless-action-button';
 import BlessHeader from '../../_components/bless-header';
-import KakaoShareButton from '../../_components/kakao-share-button';
 import type { OnceBlessFormData } from '../../_types';
+
+const MESSAGE_PREVIEW_LIMIT = 40;
 
 export default function BlessOnceComplete() {
   const router = useRouter();
@@ -34,6 +35,11 @@ export default function BlessOnceComplete() {
   const recipientDisplay = formData.recipientName
     ? `${formData.recipientName} (${formData.recipientRelation})`
     : formData.accountNumber;
+
+  const previewMessage =
+    formData.message.length > MESSAGE_PREVIEW_LIMIT
+      ? `${formData.message.slice(0, MESSAGE_PREVIEW_LIMIT)}…`
+      : formData.message;
 
   return (
     <div className="relative h-full w-full">
@@ -62,9 +68,9 @@ export default function BlessOnceComplete() {
               {recipientDisplay}
             </span>
             <Heart className="my-1 size-5 text-hana-main" />
-            {formData.message && (
-              <p className="line-clamp-2 font-hana-regular text-hana-gray-600 text-sm">
-                {`"${formData.message}"`}
+            {previewMessage && (
+              <p className="line-clamp-2 break-all px-4 font-hana-regular text-hana-gray-600 text-sm">
+                {`"${previewMessage}"`}
               </p>
             )}
             <p className="mt-2 font-hana-bold text-[#568F6E] text-xl">
@@ -74,7 +80,6 @@ export default function BlessOnceComplete() {
         </div>
 
         <div className="mt-auto flex flex-col gap-2.5 px-6 pt-5 pb-5">
-          <KakaoShareButton />
           <BlessActionButton onClick={handleComplete}>완료</BlessActionButton>
         </div>
       </div>
