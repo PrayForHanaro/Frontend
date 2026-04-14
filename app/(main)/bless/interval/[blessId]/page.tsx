@@ -1,7 +1,8 @@
 'use client';
 
-import { ChevronLeft, Heart } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { Heart } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import BackButton from '@/components/ui/cmm/BackButton';
 import Nav from '@/components/ui/cmm/Nav';
 import DetailButtons from '../../_components/detail-buttons';
 import MessageHistoryItem from '../../_components/message-history-item';
@@ -10,7 +11,6 @@ import { MOCK_TARGETS } from '../../_data/mock-targets';
 
 export default function BlessInterval() {
   const { blessId } = useParams<{ blessId: string }>();
-  const router = useRouter();
 
   const target = MOCK_TARGETS.find((t) => t.id === blessId);
   const messages = MOCK_MESSAGES[blessId] ?? [];
@@ -27,23 +27,19 @@ export default function BlessInterval() {
 
   return (
     <div className="relative h-full w-full">
-      <div className="flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
-        {/* Back button */}
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="self-start p-4"
-          aria-label="뒤로가기"
-        >
-          <ChevronLeft className="size-6 text-gray-700" />
-        </button>
+      <div className="relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+        <BackButton />
+
+        {/* Heart icon — outside card */}
+        <div className="mt-4 mb-4 flex justify-center">
+          <div className="flex size-14 items-center justify-center rounded-full bg-hana-bless-progress">
+            <Heart className="size-7 fill-white text-white" />
+          </div>
+        </div>
 
         {/* Hero card */}
         <div className="mx-4 rounded-2xl border border-gray-200 bg-hana-bless-bg px-6 py-6 shadow-sm">
           <div className="flex flex-col items-center text-center">
-            <div className="mb-3 flex size-14 items-center justify-center rounded-full bg-hana-bless-progress">
-              <Heart className="size-7 fill-white text-white" />
-            </div>
             <p className="font-hana-medium text-[#568F6E] text-sm">
               To. {target.name}
             </p>
