@@ -6,7 +6,7 @@
  * @date: 2026-04-14
  */
 
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
   fn: T, // T는 함수 타입, 매개변수와 반환 타입이 있는 함수
   delay: number,
 ) {
