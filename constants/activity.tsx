@@ -12,6 +12,7 @@ export type BoardTab = (typeof BOARD_TABS)[number];
 export type ActivityCategory = Exclude<BoardTab, '전체'>;
 
 export type ActivityItem = {
+  id: number;
   category: ActivityCategory;
   title: string;
   location: string;
@@ -23,6 +24,7 @@ export type ActivityItem = {
 
 export const ACTIVITY_LIST: ActivityItem[] = [
   {
+    id: 1,
     category: '봉사모집',
     title: '토요 급식 봉사자 모집',
     location: '성동구 ○○교회',
@@ -32,6 +34,7 @@ export const ACTIVITY_LIST: ActivityItem[] = [
     point: 50,
   },
   {
+    id: 2,
     category: '동행찾기',
     title: '성경읽기 21일 챌린지',
     location: '온라인',
@@ -41,6 +44,7 @@ export const ACTIVITY_LIST: ActivityItem[] = [
     point: 30,
   },
   {
+    id: 3,
     category: '교회행사',
     title: '교회 정원 가꾸기',
     location: '마포구 ○○교회',
