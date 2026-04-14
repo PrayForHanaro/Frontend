@@ -11,7 +11,7 @@ import MessageTextarea from '../../_components/message-textarea';
 import type { RegisteredAccount } from '../../_types';
 
 const formatAccountNumber = (raw: string) => {
-  const digits = raw.replace(/\D/g, '').slice(0, 12);
+  const digits = raw.replace(/\D/g, '').slice(0, 14);
   if (digits.length <= 3) return digits;
   if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
   return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
@@ -136,7 +136,7 @@ export default function BlessOnceInput() {
             <input
               type="text"
               inputMode="numeric"
-              maxLength={14}
+              maxLength={16}
               value={accountNumber}
               onChange={(e) => {
                 setAccountNumber(formatAccountNumber(e.target.value));
