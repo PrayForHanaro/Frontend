@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import ActivityMemberAvatar from '@/components/ui/cmm/Activity/ActivityMemberAvatar';
-import LongButton from '@/components/ui/cmm/Activity/LongBtn';
+import LongButton from '@/components/ui/cmm/LongBtn';
 
 /**
  * @page: 소모임 - 활동 멤버 섹션 컴포넌트
