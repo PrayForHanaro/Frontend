@@ -19,16 +19,28 @@ export async function GET() {
       cache: 'no-store',
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(`Backend response not ok: ${response.status}`);
+      return NextResponse.json(
+        {
+          code: data.code || 'G001',
+          message: data.message || '데이터를 불러오는 중 오류가 발생했습니다.',
+          status: response.status,
+        },
+        { status: response.status },
+      );
     }
 
-    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('API Error (Giving/Once GET):', error);
     return NextResponse.json(
-      { code: '500', message: '서버 내부 오류가 발생했습니다.', data: null },
+      {
+        code: 'G000',
+        message: '서버 내부 오류가 발생했습니다.',
+        status: 500,
+      },
       { status: 500 },
     );
   }
@@ -45,23 +57,28 @@ export async function POST(request: Request) {
       body: JSON.stringify(body),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorText = await response.text();
       return NextResponse.json(
         {
-          code: String(response.status),
-          message: errorText || '헌금 접수에 실패했습니다.',
+          code: data.code || String(response.status),
+          message: data.message || '헌금 접수에 실패했습니다.',
+          status: response.status,
         },
         { status: response.status },
       );
     }
 
-    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('API Error (Giving/Once POST):', error);
     return NextResponse.json(
-      { code: '500', message: '서버 내부 오류가 발생했습니다.', data: null },
+      {
+        code: 'G000',
+        message: '서버 내부 오류가 발생했습니다.',
+        status: 500,
+      },
       { status: 500 },
     );
   }
