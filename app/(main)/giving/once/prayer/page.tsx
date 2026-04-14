@@ -62,6 +62,7 @@ export default function GivingPrayer() {
       <div className="flex gap-5 p-5 pb-10">
         <button
           type="button"
+          onClick={() => router.back()}
           className="w-[200px] rounded-2xl bg-hana-fade-green py-4 font-hana-bold text-hana-main text-xl shadow-lg transition-transform active:scale-[0.98]"
         >
           취소

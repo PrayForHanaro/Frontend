@@ -34,7 +34,7 @@ export default function GivingOnceComplete() {
         setAmount(numAmount);
 
         const res = await fetch('/api/me');
-        let pointRate = 0.02;
+        let pointRate = 0.01;
         let name = '하나';
 
         if (res.ok) {
