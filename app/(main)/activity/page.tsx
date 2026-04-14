@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-
 import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
+import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
 import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
 import Calendar from '@/components/ui/cmm/Activity/Calendar';
 import LongButton from '@/components/ui/cmm/Activity/LongBtn';
@@ -13,10 +13,10 @@ import Nav from '@/components/ui/cmm/Nav';
 import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
 
 /**
- * @page: 소모임 메인 페이지
- * @description: 소모임 메인 페이지입니다. 게시판 토글, 검색창, 활동 카드 리스트, 활동 만들기 버튼, 캘린더로 구성되어 있습니다.
+ * @page: 소모임 - 활동 목록 페이지
+ * @description:  활동 목록 페이지입니다. 활동 카드 리스트와 활동 등록 페이지로 이동하는 버튼으로 구성되어 있습니다.
  * @author: typeYu
- * @date: 2026-04-13
+ * @date: 2026-04-14
  */
 
 export default function Activity() {
@@ -80,6 +80,7 @@ export default function Activity() {
 
       <Calendar />
       <Nav />
+      <ActivityJoinToast />
     </div>
   );
 }
