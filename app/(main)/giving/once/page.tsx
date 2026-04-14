@@ -132,7 +132,7 @@ export default function GivingOnce() {
 
       const result = await res.json();
 
-      if (res.ok && result.code === '200') {
+      if (res.ok && result.success) {
         sessionStorage.setItem('latest_giving_amount', amount);
         route.push('/giving/once/complete');
       } else {
