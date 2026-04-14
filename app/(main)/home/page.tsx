@@ -96,7 +96,6 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col pb-20">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
         @keyframes slowFade {
           0%, 100% { opacity: 0; }
           50% { opacity: 1; }

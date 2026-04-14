@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
  */
 
 //docker-compose 컨테이너 이름 사용
-const GATEWAY_URL = 'http://api-gateway:8080';
+const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
 export async function GET() {
   try {
