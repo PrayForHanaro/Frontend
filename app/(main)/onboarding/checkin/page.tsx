@@ -63,7 +63,11 @@ export default function CheckIn() {
       setDragX(window.innerWidth);
 
       setTimeout(() => {
+<<<<<<< HEAD
         router.replace('/onboarding/auth/login');
+=======
+        router.push('/onboarding/auth/login');
+>>>>>>> 8f47ae6 (feat: checkin 화면 UI 구현 #12)
       }, 240);
     } else {
       setDragX(0);
@@ -72,6 +76,42 @@ export default function CheckIn() {
 
   return (
     <div className="-m-3 relative min-h-[calc(100%+1.5rem)] w-[calc(100%+1.5rem)] bg-gradient-to-b from-hana-checkin-green-t to-hana-checkin-green-b">
+<<<<<<< HEAD
+=======
+      <div className="absolute inset-0 p-3">
+        <div className="flex h-full flex-col items-center justify-center">
+          <h1 className="font-hana-medium text-hana-white text-xl">
+            하나은행이 함께한 헌금
+          </h1>
+          <h1 className="pt-4 font-hana-bold text-2xl text-white">
+            {`₩${formatCurrency(totalGiving)}`}
+          </h1>
+          <Image
+            src={IMAGE_PATH.ONBOARDING_CHECKIN}
+            alt="하나은행 마스코트"
+            width={300}
+            height={300}
+            className="mx-3 mt-5 mb-2 animate-hanabot-float object-contain"
+            priority
+          />
+
+          {wordOfTheDay && (
+            <>
+              <h1 className="whitespace-pre-line pt-4 text-center font-hana-medium text-hana-white text-xl">
+                {wordOfTheDay.text}
+              </h1>
+              <h1 className="pt-4 font-hana-medium text-hana-white text-l">
+                {`- ${wordOfTheDay.ref}`}
+              </h1>
+            </>
+          )}
+        </div>
+        <div className="absolute bottom-6 left-0 w-full text-center text-white">
+          {`>> 밀어서 넘기기`}
+        </div>
+      </div>
+
+>>>>>>> 8f47ae6 (feat: checkin 화면 UI 구현 #12)
       <div
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -81,6 +121,7 @@ export default function CheckIn() {
         style={{
           transform: `translateX(${dragX}px)`,
           transition: dragging ? 'none' : 'transform 240ms ease',
+<<<<<<< HEAD
           opacity: 1 - progress * 0.5,
         }}
       >
@@ -117,6 +158,10 @@ export default function CheckIn() {
           </div>
         </div>
       </div>
+=======
+        }}
+      ></div>
+>>>>>>> 8f47ae6 (feat: checkin 화면 UI 구현 #12)
     </div>
   );
 }
