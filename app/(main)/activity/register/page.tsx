@@ -8,6 +8,13 @@ import ActivityPeriodField, {
 import Header from '@/components/ui/cmm/Header';
 import Nav from '@/components/ui/cmm/Nav';
 
+/**
+ * @page: 소모임 - 활동 등록 페이지
+ * @description: 활동 등록 페이지입니다. 제목, 설명글, 활동 기간을 입력받는 폼으로 구성되어 있습니다. 아직 제출 기능은 구현되어 있지 않습니다.
+ * @author: typeYu
+ * @date: 2026-04-13
+ */
+
 const INITIAL_PERIOD_VALUE: ActivityPeriodValue = {
   meetingType: 'single',
   recurringType: 'daily',
