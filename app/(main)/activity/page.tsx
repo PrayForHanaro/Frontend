@@ -3,11 +3,11 @@
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
-import ActivityCard from '@/app/components/cmm/ActivityCard';
-import BoardToggle from '@/app/components/cmm/BoardToggle';
-import Calendar from '@/app/components/cmm/Calendar';
-import LongButton from '@/app/components/cmm/LongBtn';
-import SearchInput from '@/app/components/cmm/SearchInput';
+import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
+import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
+import Calendar from '@/components/ui/cmm/Activity/Calendar';
+import LongButton from '@/components/ui/cmm/Activity/LongBtn';
+import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
 import Nav from '@/components/ui/cmm/Nav';
 import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import ActivityPeriodField, {
   type ActivityPeriodValue,
-} from '@/app/components/cmm/ActivityPeriodField';
+} from '@/components/ui/cmm/Activity/ActivityPeriodField';
 import Header from '@/components/ui/cmm/Header';
 import Nav from '@/components/ui/cmm/Nav';
 
