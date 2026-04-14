@@ -1,6 +1,6 @@
 import type { BibleVerse } from '../_types';
 
-const BIBLE_VERSES: BibleVerse[] = [
+export const BIBLE_VERSES: BibleVerse[] = [
   {
     text: '네 마음을 다하여 여호와를 신뢰하고 네 명철을 의지하지 말라',
     reference: '잠언 3:5',
