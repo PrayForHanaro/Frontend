@@ -227,4 +227,28 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Activity페이지 스크롤 바 */
+
+  .member-horizontal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #8ecfc6 transparent;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar-thumb {
+    background: #8ecfc6;
+    border-radius: 9999px;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+    background: #56a99e;
+  }
 }
