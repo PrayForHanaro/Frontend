@@ -28,7 +28,7 @@ export default function BlessInterval() {
   return (
     <div className="relative h-full w-full">
       <div className="relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
-        <BackButton />
+        <BackButton to="/bless/interval" />
 
         {/* Heart icon — outside card */}
         <div className="mt-4 mb-4 flex justify-center">
