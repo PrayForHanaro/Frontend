@@ -113,7 +113,7 @@ export default function ActivityMemberSection({
                 <button
                   type="button"
                   onClick={handleMoveActivity}
-                  className="h-12 flex-1 rounded-2xl bg-hana-main font-hana-main text-[16px] text-white transition hover:bg-hana-main-hover hover:bg-hana-mint"
+                  className="h-12 flex-1 rounded-2xl bg-hana-main font-hana-main text-[16px] text-white transition hover:bg-hana-mint"
                 >
                   참여하기
                 </button>

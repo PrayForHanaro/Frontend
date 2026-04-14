@@ -74,7 +74,7 @@ export default function ActivityJoinToast() {
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
       }`}
     >
-      <div className="rounded-2xl border-2 border-hana-dark-navy bg-white px-5 py-3 shadow-[0_10px_28px_rgba(0,0,0,0.2)] backdrop-blur-sm">
+      <div className="rounded-2xl bg-hana-bless-icon-bg px-4 py-2 shadow-[0_10px_28px_rgba(0,0,0,0.2)] backdrop-blur-sm">
         <p className="whitespace-nowrap font-hana-main text-[14px] text-hana-dark-navy">
           참여 신청이 완료되었습니다.
         </p>
