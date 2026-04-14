@@ -404,15 +404,7 @@ export default function Calendar({
   const days = buildCalendarDays(resolvedYear, resolvedMonth);
 
   return (
-    <div
-      style={{
-        background: '#FFFFFF',
-        borderRadius: '20px',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        padding: '16px',
-        width: '100%',
-      }}
-    >
+    <div className="mb-20 w-full rounded-[20px] bg-white p-4 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
       <CalendarHeader
         year={resolvedYear}
         month={resolvedMonth}

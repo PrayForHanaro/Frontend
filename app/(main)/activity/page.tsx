@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
-import ActivityCard from '@/app/components/cmm/ActivityCard';
-import BoardToggle from '@/app/components/cmm/BoardToggle';
-import Calendar from '@/app/components/cmm/Calendar';
-import LongButton from '@/app/components/cmm/LongBtn';
-import SearchInput from '@/app/components/cmm/SearchInput';
+import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
+import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
+import Calendar from '@/components/ui/cmm/Activity/Calendar';
+import LongButton from '@/components/ui/cmm/Activity/LongBtn';
+import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
+import Header from '@/components/ui/cmm/Header';
+import Nav from '@/components/ui/cmm/Nav';
 import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
 
 /**
@@ -17,23 +20,50 @@ import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
  */
 
 export default function Activity() {
-  const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
+  const router = useRouter();
 
-  const filteredActivities =
-    selectedTab === '전체'
-      ? ACTIVITY_LIST
-      : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+  const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const filteredActivities = useMemo(() => {
+    const trimmedKeyword = searchKeyword.trim().toLowerCase();
+
+    const tabFilteredActivities =
+      selectedTab === '전체'
+        ? ACTIVITY_LIST
+        : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+
+    if (!trimmedKeyword) {
+      return tabFilteredActivities;
+    }
+
+    return tabFilteredActivities.filter((activity) => {
+      return (
+        activity.title.toLowerCase().includes(trimmedKeyword) ||
+        activity.location.toLowerCase().includes(trimmedKeyword) ||
+        activity.schedule.toLowerCase().includes(trimmedKeyword) ||
+        activity.category.toLowerCase().includes(trimmedKeyword)
+      );
+    });
+  }, [searchKeyword, selectedTab]);
+
+  function handleMoveRegisterPage() {
+    router.push('/activity/register');
+  }
 
   return (
     <div className="flex flex-col gap-4">
+      <Header content="소모임" />
+
       <BoardToggle selectedTab={selectedTab} onChangeTab={setSelectedTab} />
 
-      <SearchInput />
+      <SearchInput value={searchKeyword} onChangeValue={setSearchKeyword} />
 
       <div className="flex flex-col gap-4">
         {filteredActivities.map((activity) => (
           <ActivityCard
-            key={`${activity.category}-${activity.title}`}
+            key={activity.id}
+            id={activity.id}
             category={activity.category}
             title={activity.title}
             location={activity.location}
@@ -41,12 +71,15 @@ export default function Activity() {
             currentCount={activity.currentCount}
             maxCount={activity.maxCount}
             point={activity.point}
+            isApplied={false}
           />
         ))}
       </div>
 
-      <LongButton text="활동 만들기" />
+      <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
+
       <Calendar />
+      <Nav />
     </div>
   );
 }
