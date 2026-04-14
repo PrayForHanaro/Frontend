@@ -3,6 +3,13 @@
 import { CalendarDays, Clock3 } from 'lucide-react';
 import { useRef } from 'react';
 
+/**
+ * @page: 모임 생성/수정 페이지
+ * @description:  모임의 활동 기간을 설정하는 컴포넌트입니다. 일회성 모임과 정기 모임을 모두 지원하며, 정기 모임의 경우 매일, 요일 선택, 매월 옵션을 제공합니다.
+ * @author: typeYu
+ * @date: 2026-04-14
+ */
+
 type MeetingType = 'single' | 'recurring';
 type RecurringType = 'daily' | 'weekday' | 'monthly';
 type Weekday = '일' | '월' | '화' | '수' | '목' | '금' | '토';
