@@ -1,5 +1,3 @@
-'use client';
-
 import type { BibleVerse } from '../_types';
 
 type BibleVerseBoxProps = {
@@ -8,12 +6,12 @@ type BibleVerseBoxProps = {
 
 export default function BibleVerseBox({ verse }: BibleVerseBoxProps) {
   return (
-    <div className="rounded-2xl bg-white px-6 py-5">
-      <p className="text-center font-hana-regular text-gray-700 text-sm leading-relaxed">
-        &ldquo;{verse.text}&rdquo;
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#F9E9B6] via-[#D9B15C] to-[#A87817] px-6 py-7 shadow-sm">
+      <p className="text-center font-hana-bold text-[#3E2B08] text-base leading-relaxed">
+        {verse.text}
       </p>
-      <p className="mt-2 text-right font-hana-regular text-hana-gray-600 text-xs">
-        &mdash; {verse.reference}
+      <p className="mt-3 text-right font-hana-medium text-[#6B4F15] text-xs">
+        — {verse.reference}
       </p>
     </div>
   );
