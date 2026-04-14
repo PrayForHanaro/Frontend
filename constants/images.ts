@@ -3,4 +3,5 @@ export const IMAGE_PATH = {
   NAV_GIVING: '/nav/giving',
   NAV_ACTIVITY: '/nav/activity',
   NAV_MY: '/nav/my',
+  ONBOARDING_CHECKIN: '/onboarding/checkin.svg',
 };
