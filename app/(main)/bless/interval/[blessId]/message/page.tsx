@@ -18,7 +18,10 @@ export default function BlessIntervalMessage() {
 
   const target = MOCK_TARGETS.find((t) => t.id === blessId);
 
+  const isMessageEmpty = message.trim().length === 0;
+
   const handleNext = () => {
+    if (isMessageEmpty) return;
     router.push('/bless/interval/complete');
   };
 
@@ -91,7 +94,7 @@ export default function BlessIntervalMessage() {
         </div>
 
         <div className="mt-auto px-4 pt-8 pb-6">
-          <BlessActionButton onClick={handleNext}>
+          <BlessActionButton disabled={isMessageEmpty} onClick={handleNext}>
             다음 단계로
           </BlessActionButton>
         </div>
