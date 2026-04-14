@@ -11,7 +11,7 @@ export default function KakaoShareButton() {
     <button
       type="button"
       onClick={handleShare}
-      className="flex w-full items-center justify-center gap-2 rounded-xl border border-hana-gray-300 bg-white py-3.5 font-hana-medium text-base text-gray-700 transition-colors active:bg-hana-gray-100"
+      className="flex w-full items-center justify-center gap-2 rounded-xl bg-hana-bless-icon-bg py-3.5 font-hana-medium text-base text-hana-bless-icon transition-opacity active:opacity-70"
     >
       <MessageCircle className="size-5" />
       카카오톡으로 공유
