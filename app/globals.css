@@ -30,6 +30,8 @@
   --color-hana-linear-deep-green-end: #0b9c97;
   --color-hana-carousel-bg-green: #e5f5f2;
   --color-hana-gray-green: #aacfca;
+  --color-hana-checkin-green-t: #214d41;
+  --color-hana-checkin-green-b: #4db396;
 
   /* ========== Gray ========== */
   --color-hana-gray-50: #eeeeef;
@@ -209,7 +211,7 @@
       transform: translateY(0px);
     }
     50% {
-      transform: translateY(-10px);
+      transform: translateY(-1px);
     }
     100% {
       transform: translateY(0px);
@@ -224,5 +226,29 @@
   /* 크롬, 사파리, 오페라 */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Activity페이지 스크롤 바 */
+
+  .member-horizontal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #8ecfc6 transparent;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar-thumb {
+    background: #8ecfc6;
+    border-radius: 9999px;
+  }
+
+  .member-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+    background: #56a99e;
   }
 }

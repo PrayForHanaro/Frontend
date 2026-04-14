@@ -3,6 +3,7 @@ export const IMAGE_PATH = {
   NAV_GIVING: '/nav/giving',
   NAV_ACTIVITY: '/nav/activity',
   NAV_MY: '/nav/my',
+  ONBOARDING_CHECKIN: '/onboarding/checkin.svg',
   HOME_CHARACTER: '/home/home_charactor.svg',
   HOME_PRAY: '/home/home_pray.svg',
   HOME_GIVING: '/home/home_giving.svg',

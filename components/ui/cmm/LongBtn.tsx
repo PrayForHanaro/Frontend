@@ -25,10 +25,8 @@ export default function LongButton({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`h-14 w-full rounded-2xl bg-hana-main font-hana-main text-[18px] text-white transition-colors hover:bg-hana-mint ${
-        disabled
-          ? 'cursor-not-allowed opacity-50'
-          : 'cursor-pointer hover:bg-hana-main-hover'
+      className={`h-13 w-full rounded-2xl bg-hana-main font-hana-main text-[18px] text-white transition-colors hover:bg-hana-mint ${
+        disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
       }`}
     >
       {text}
