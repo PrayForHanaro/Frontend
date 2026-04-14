@@ -7,7 +7,7 @@
  */
 
 export function debounce<T extends (...args: any[]) => any>(
-  fn: T,
+  fn: T, // T는 함수 타입, 매개변수와 반환 타입이 있는 함수
   delay: number,
 ) {
   let timeout: ReturnType<typeof setTimeout>;
@@ -17,14 +17,17 @@ export function debounce<T extends (...args: any[]) => any>(
       if (timeout) clearTimeout(timeout);
 
       timeout = setTimeout(() => {
-        const result = fn(...args);
-        resolve(result);
+        const result = fn(...args); // 함수 실행
+        resolve(result); // 함수 실행 결과 반환
       }, delay);
     });
   };
 }
 
-export function useDebounce(fn: (...args: any[]) => any, delay: number) {
+export function useDebounce<T extends (...args: any[]) => any>(
+  fn: T, // T는 함수 타입
+  delay: number,
+): (...args: Parameters<T>) => Promise<ReturnType<T>> {
   const debouncedFn = debounce(fn, delay);
   return debouncedFn;
 }
