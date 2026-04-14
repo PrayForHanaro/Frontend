@@ -91,7 +91,7 @@ export default function GivingOnce() {
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (Number(val) <= data.maxPoint) setPoint(val);
+    if (Number(val) >= 0 && Number(val) <= data.maxPoint) setPoint(val);
   };
 
   const handleGivingSubmit = async () => {
