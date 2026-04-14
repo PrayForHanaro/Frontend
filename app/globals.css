@@ -203,19 +203,6 @@
 }
 
 @layer utilities {
-  /* AI 분석 화면 애니메이션 */
-  @keyframes hanabot-float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
-  }
-
   .animate-hanabot-float {
     animation: hanabot-float 1.8s ease-in-out infinite;
     will-change: transform;
@@ -225,4 +212,28 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Activity페이지 스크롤 바 */
+
+  .member-horizontal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #8ecfc6 transparent;
+}
+
+.member-horizontal-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.member-horizontal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.member-horizontal-scroll::-webkit-scrollbar-thumb {
+  background: #8ecfc6;
+  border-radius: 9999px;
+}
+
+.member-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #56a99e;
+}
 }
