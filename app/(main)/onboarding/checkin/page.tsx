@@ -63,7 +63,7 @@ export default function CheckIn() {
       setDragX(window.innerWidth);
 
       setTimeout(() => {
-        router.push('/onboarding/auth/login');
+        router.replace('/onboarding/auth/login');
       }, 240);
     } else {
       setDragX(0);
