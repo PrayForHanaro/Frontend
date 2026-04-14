@@ -1,0 +1,30 @@
+/**
+ * @page: 검색 시에 사용되는 디바운스 함수입니다.
+ * @description: 검색 시에 사용되는 디바운스 함수입니다.
+ * any 타입 사용에 대한 리팩토링 필요합니다.
+ * @author: 이정수
+ * @date: 2026-04-14
+ */
+
+export function debounce<T extends (...args: any[]) => any>(
+  fn: T,
+  delay: number,
+) {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (...args: Parameters<T>): Promise<ReturnType<T>> => {
+    return new Promise((resolve) => {
+      if (timeout) clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        const result = fn(...args);
+        resolve(result);
+      }, delay);
+    });
+  };
+}
+
+export function useDebounce(fn: (...args: any[]) => any, delay: number) {
+  const debouncedFn = debounce(fn, delay);
+  return debouncedFn;
+}
