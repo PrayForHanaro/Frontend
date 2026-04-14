@@ -203,10 +203,6 @@
 }
 
 @layer utilities {
-  .animate-hanabot-float {
-    animation: hanabot-float 1.8s ease-in-out infinite;
-    will-change: transform;
-  }
 
   /* 크롬, 사파리, 오페라 */
   .scrollbar-hide::-webkit-scrollbar {
