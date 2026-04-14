@@ -56,6 +56,12 @@
   --color-hana-white-yellow: #fcf8f1;
   --color-hana-white-mint: #e8fff6;
 
+  /* ========== Bless ========== */
+  --color-hana-bless-bg: #faf8f5;
+  --color-hana-bless-icon: #533d2d;
+  --color-hana-bless-icon-bg: #ecdbc6;
+  --color-hana-bless-progress: #6aaf87;
+
   /* ========== Pastel ========== */
   --color-hana-pastel-yellow: #f4edde;
   --color-hana-pastel-blue: #e0e8f3;
