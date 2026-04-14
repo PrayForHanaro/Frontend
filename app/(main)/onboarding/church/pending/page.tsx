@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import WhiteCard from '@/components/ui/cmm/WhiteCard';
 import { Input } from '@/components/ui/input';
+import { useDebounce } from '@/lib/debounce';
 
 //종교, 교회이름, 구역
 
@@ -32,6 +33,8 @@ export default function Pending() {
     setFilteredChurches(filteredList);
   };
 
+  const debouncedSearch = useDebounce(findChurch, 300);
+
   return (
     <form className="relative min-h-full w-full">
       <h1 className="pt-24 text-center font-hana-medium text-3xl text-hana-light-mint">
@@ -46,7 +49,7 @@ export default function Pending() {
           id="fieldgroup-phone"
           placeholder="다니시는 교회, 성당, 절을 검색해보세요"
           className="flex-1 bg-white p-5 pt-5 pb-5 text-2xl placeholder:text-gray-500"
-          onChange={(e) => findChurch(e.target.value)}
+          onChange={(e) => debouncedSearch(e.target.value)}
         />
       </div>
       <div className="grid grid-cols-1 gap-3 pt-5">
