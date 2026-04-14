@@ -156,7 +156,7 @@ export default function ActivityCommentItem({
           <button
             type="button"
             onClick={() => onSubmitReply(comment.id)}
-            className="shrink-0 rounded-xl bg-hana-main px-4 py-3 font-hana-main font-semibold text-[14px] text-white hover:bg-hana-main-hover hover:bg-hana-mint"
+            className="shrink-0 rounded-xl bg-hana-main px-4 py-3 font-hana-main font-semibold text-[14px] text-white hover:bg-hana-mint"
             aria-label="답글 등록"
           >
             등록
