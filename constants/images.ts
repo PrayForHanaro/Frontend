@@ -3,4 +3,12 @@ export const IMAGE_PATH = {
   NAV_GIVING: '/nav/giving',
   NAV_ACTIVITY: '/nav/activity',
   NAV_MY: '/nav/my',
+  HOME_CHARACTER: '/home/home_charactor.svg',
+  HOME_PRAY: '/home/home_pray.svg',
+  HOME_GIVING: '/home/home_giving.svg',
+  HOME_POINT: '/home/home_point.svg',
+  HOME_MAN: '/home/home_man.svg',
+  HOME_WOMAN: '/home/home_woman.svg',
+  HOME_BABY: '/home/home_baby.svg',
+  GIVINGONCE_COMPLETE: '/givingOnce/givingOnce_complete.svg',
 };
