@@ -14,11 +14,6 @@ import { IMAGE_PATH } from '@/constants/images';
  * @date: 2026-04-14
  */
 
-type UserInfo = {
-  name: string;
-  pointRate: number;
-};
-
 export default function GivingOnceComplete() {
   const router = useRouter();
   const [amount, setAmount] = useState<number>(0);
@@ -33,14 +28,18 @@ export default function GivingOnceComplete() {
         const numAmount = savedAmount ? Number(savedAmount) : 0;
         setAmount(numAmount);
 
+        // !!! api 확인 필요
         const res = await fetch('/api/me');
         let pointRate = 0.01;
         let name = '하나';
 
         if (res.ok) {
-          const userData: UserInfo = await res.json();
-          pointRate = userData.pointRate || 0.01;
-          name = userData.name || '하나';
+          const result = await res.json();
+          // 백엔드 성공 시에만 데이터 반영 (실패 시 기본값 유지)
+          if (result.success && result.data) {
+            pointRate = result.data.pointRate || 0.01;
+            name = result.data.name || '하나';
+          }
         }
 
         setUserName(name);

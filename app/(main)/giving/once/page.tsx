@@ -9,8 +9,8 @@ import TypeButton from '@/components/ui/giving/TypeButton';
 
 /**
  * @page: 일회성 헌금 내용 작성
- * @description: 일회성 헌금 내용 작성 페이지입니다. GET 호출 실패시 목업데이터를 넣습니다.
- * @author: 작성자명
+ * @description: 일회성 헌금 내용 작성 페이지입니다. /api/giving/once 를 통해 데이터를 가져옵니다.
+ * @author: 이승빈
  * @date: 2026-04-14
  */
 
@@ -24,7 +24,7 @@ const GIVING_TYPES = [
 
 type GivingData = {
   name: string;
-  maxPoint: number;
+  myPoint: number;
   bankAccount: string;
   churchName: string;
 };
@@ -38,7 +38,7 @@ export default function GivingOnce() {
   const [prayerTopic, setPrayerTopic] = useState('');
   const [data, setData] = useState<GivingData>({
     name: '',
-    maxPoint: 0,
+    myPoint: 0,
     bankAccount: '정보를 불러오는 중...',
     churchName: '정보를 불러오는 중...',
   });
@@ -52,32 +52,25 @@ export default function GivingOnce() {
   const amountRef = useRef<HTMLInputElement>(null);
 
   const route = useRouter();
+
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await fetch('/api/giving/once');
-        if (res.ok) {
-          const json = await res.json();
-          if (json.code === '200' && json.data) {
-            setData(json.data);
-            setName(json.data.name);
-          } else {
-            throw new Error(json.message || '정보를 불러오지 못했습니다.');
-          }
+        const result = await res.json();
+
+        if (res.ok && result.success && result.data) {
+          setData(result.data);
+          setName(result.data.name);
         } else {
-          throw new Error('네트워크 응답이 올바르지 않습니다.');
+          throw new Error(result.message || '정보를 불러오지 못했습니다.');
         }
-      } catch (e) {
-        console.error('Failed to fetch giving data, using mock data', e);
-        // 목업 데이터 설정
-        const mockData = {
-          name: '하나',
-          maxPoint: 5000,
-          bankAccount: '하나은행 123-456789-01234',
-          churchName: '한마음 교회',
-        };
-        setData(mockData);
-        setName(mockData.name);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.error('데이터 로딩 오류:', e.message);
+        } else {
+          console.error('알 수 없는 데이터 로딩 오류 발생');
+        }
       }
     }
     fetchData();
@@ -91,7 +84,7 @@ export default function GivingOnce() {
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (Number(val) >= 0 && Number(val) <= data.maxPoint) setPoint(val);
+    if (Number(val) >= 0 && Number(val) <= data.myPoint) setPoint(val);
   };
 
   const handleGivingSubmit = async () => {
@@ -136,9 +129,6 @@ export default function GivingOnce() {
         sessionStorage.setItem('latest_giving_amount', amount);
         route.push('/giving/once/complete');
       } else {
-        // !!! 백엔드 연결 전 플로우 테스트를 위함. 연결 후 삭제 요망.
-        sessionStorage.setItem('latest_giving_amount', amount);
-        route.push('/giving/once/complete');
         alert(result.message || '헌금 접수에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (e) {
@@ -222,7 +212,7 @@ export default function GivingOnce() {
             onChange={handlePointChange}
             className="w-full rounded-xl border border-gray-200 bg-white p-3 outline-none transition-colors focus:border-hana-main"
           />
-          <p className="text-gray-500 text-xs">보유 포인트: {data.maxPoint}P</p>
+          <p className="text-gray-500 text-xs">보유 포인트: {data.myPoint}P</p>
         </section>
 
         <div className="space-y-4 border-t pt-4 pb-5">

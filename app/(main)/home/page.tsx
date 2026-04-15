@@ -14,7 +14,6 @@ import { IMAGE_PATH } from '@/constants/images';
  */
 
 const API_ROUTE = '/api/home';
-
 interface HomeData {
   userName: string;
   myPoint: number;
@@ -23,10 +22,22 @@ interface HomeData {
   prayerPeople: {
     id: number;
     name: string;
-    imagePath: string;
+    type: 'man' | 'woman' | 'baby'; // imagePath 대신 type 사용
     relation: string;
   }[];
 }
+
+// 타입에 따라 알맞은 이미지를 반환하는 함수
+const getPersonImage = (type: string) => {
+  switch (type) {
+    case 'woman':
+      return IMAGE_PATH.HOME_WOMAN;
+    case 'baby':
+      return IMAGE_PATH.HOME_BABY;
+    default:
+      return IMAGE_PATH.HOME_MAN;
+  }
+};
 
 export default function Home() {
   const [data, setData] = useState<HomeData | null>(null);
@@ -41,43 +52,26 @@ export default function Home() {
             'Content-Type': 'application/json',
           },
         });
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.data) {
-            setData(result.data);
-          } else {
-            throw new Error(result.message || '데이터를 불러오지 못했습니다.');
-          }
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          setData(result.data);
         } else {
-          setData({
-            userName: '하나',
-            myPoint: 1200,
-            churchName: '한마음',
-            totalDonation: 1250,
-            prayerPeople: [
-              {
-                id: 1,
-                name: '김성도',
-                imagePath: IMAGE_PATH.HOME_MAN,
-                relation: '아들',
-              },
-              {
-                id: 2,
-                name: '이성도',
-                imagePath: IMAGE_PATH.HOME_WOMAN,
-                relation: '딸',
-              },
-              {
-                id: 3,
-                name: '박성도',
-                imagePath: IMAGE_PATH.HOME_BABY,
-                relation: '손주',
-              },
-            ],
-          });
+          throw new Error(result.message || '데이터를 불러오지 못했습니다.');
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
+        setData({
+          userName: '하나',
+          myPoint: 1200,
+          churchName: '한마음',
+          totalDonation: 1250,
+          prayerPeople: [
+            { id: 1, name: '김성도', type: 'man', relation: '아들' },
+            { id: 2, name: '이성도', type: 'woman', relation: '딸' },
+            { id: 3, name: '박성도', type: 'baby', relation: '손주' },
+          ],
+        });
       } finally {
         setLoading(false);
       }
@@ -85,7 +79,6 @@ export default function Home() {
 
     fetchHomeData();
   }, []);
-
   if (loading)
     return (
       <div className="flex h-screen animate-spin items-center justify-center text-hana-mint">
@@ -141,7 +134,7 @@ export default function Home() {
                 <h1 className="font-hana-heavy text-5xl tracking-tighter sm:text-6xl">
                   {data?.totalDonation?.toLocaleString() || '0'}
                 </h1>
-                <span className="font-hana-bold text-2xl opacity-90">만원</span>
+                <span className="font-hana-bold text-2xl opacity-90">원</span>
               </div>
             </div>
           </div>
@@ -257,7 +250,7 @@ export default function Home() {
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FFF9F2] shadow-inner">
                       <Image
-                        src={person.imagePath}
+                        src={getPersonImage(person.type)}
                         alt={person.name}
                         width={32}
                         height={32}
