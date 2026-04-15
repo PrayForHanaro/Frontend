@@ -33,7 +33,7 @@ export default function ApplyButton({
         isApplied ? 'bg-hana-pink' : 'bg-hana-main hover:bg-hana-mint'
       }`}
     >
-      신청하기
+      {isApplied ? '취소하기' : '신청하기'}
     </button>
   );
 }

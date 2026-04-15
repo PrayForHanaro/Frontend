@@ -211,7 +211,7 @@ export default function Home() {
           </Link>
 
           <Link
-            href="/mypage"
+            href="/mypage/points"
             className="relative col-span-2 flex h-32 flex-col items-center justify-center rounded-[32px] border border-hana-mint/10 bg-[#f0f9f8] shadow-[0px_4px_0px_0px_#e6f4f1,0px_8px_0px_0px_#d1ede8] transition-all active:translate-y-[4px] active:shadow-none"
           >
             <div className="relative z-10 flex flex-col items-center gap-1 px-4 text-center">
