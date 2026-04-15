@@ -1,21 +1,19 @@
-'use client';
-
 import { Heart } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import BackButton from '@/components/ui/cmm/BackButton';
 import Nav from '@/components/ui/cmm/Nav';
+import { getMessages, getTarget } from '@/lib/api/bless';
 import DetailButtons from '../../_components/detail-buttons';
 import MessageHistoryItem from '../../_components/message-history-item';
-import { MOCK_MESSAGES } from '../../_data/mock-messages';
-import { MOCK_TARGETS } from '../../_data/mock-targets';
 
 const TOTAL_PRAYER_DAYS = 200;
 
-export default function BlessInterval() {
-  const { blessId } = useParams<{ blessId: string }>();
-
-  const target = MOCK_TARGETS.find((t) => t.id === blessId);
-  const messages = MOCK_MESSAGES[blessId] ?? [];
+export default async function BlessInterval({
+  params,
+}: {
+  params: Promise<{ blessId: string }>;
+}) {
+  const { blessId } = await params;
+  const target = await getTarget(blessId);
 
   if (!target) {
     return (
@@ -27,19 +25,19 @@ export default function BlessInterval() {
     );
   }
 
+  const messages = await getMessages(blessId);
+
   return (
     <div className="relative h-full w-full">
-      <div className="relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+      <div className="scrollbar-hide relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
         <BackButton to="/bless/interval" />
 
-        {/* Heart icon — outside card */}
         <div className="mt-4 mb-4 flex justify-center">
           <div className="flex size-14 items-center justify-center rounded-full bg-hana-bless-progress">
             <Heart className="size-7 fill-white text-white" />
           </div>
         </div>
 
-        {/* Hero card */}
         <div className="mx-4 rounded-2xl border border-gray-200 bg-hana-bless-bg px-6 py-6 shadow-sm">
           <div className="flex flex-col items-center text-center">
             <p className="font-hana-medium text-[#568F6E] text-sm">
@@ -62,7 +60,6 @@ export default function BlessInterval() {
             />
           </div>
 
-          {/* Stats */}
           <div className="mt-2 flex justify-between">
             <div>
               <p className="font-hana-regular text-[10px] text-hana-gray-400">
@@ -83,12 +80,10 @@ export default function BlessInterval() {
           </div>
         </div>
 
-        {/* Navigation buttons */}
         <div className="px-4 pt-4">
           <DetailButtons blessId={blessId} />
         </div>
 
-        {/* Message history */}
         <div className="flex flex-1 flex-col gap-3 px-4 pt-4">
           {messages.map((msg, idx) => (
             <MessageHistoryItem
