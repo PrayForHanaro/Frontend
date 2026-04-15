@@ -43,7 +43,7 @@ export default function Home() {
         });
         if (response.ok) {
           const result = await response.json();
-          if (result.code === '200' && result.data) {
+          if (result.success && result.data) {
             setData(result.data);
           } else {
             throw new Error(result.message || '데이터를 불러오지 못했습니다.');
