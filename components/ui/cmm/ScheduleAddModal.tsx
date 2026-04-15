@@ -1,7 +1,15 @@
 'use client';
 
-import { CalendarDays, X } from 'lucide-react';
+import { CalendarDays, ChevronDown, X } from 'lucide-react';
+import { useRef } from 'react';
 import LongButton from './LongBtn';
+
+/**
+ * @page: 일정/헌금 추가 모달
+ * @description: 일정 또는 헌금 일정을 추가할 때 사용하는 모달 컴포넌트입니다.
+ * @author: typeYu
+ * @date: 2026-04-15
+ */
 
 type ModalType = 'schedule' | 'cash';
 
@@ -65,11 +73,11 @@ export default function ScheduleAddModal({
       aria-modal="true"
       aria-labelledby="schedule-add-modal-title"
     >
-      <div className="w-full max-w-2xl rounded-[2rem] bg-white px-8 pt-10 pb-8 shadow-lg">
-        <div className="mb-8 flex items-start justify-between">
+      <div className="w-[90vw] max-w-[353px] rounded-[2rem] bg-white px-6 pt-7 pb-6 shadow-lg">
+        <div className="mb-6 flex items-start justify-between">
           <h2
             id="schedule-add-modal-title"
-            className="font-hana-title text-3xl text-hana-black"
+            className="font-hana-title text-[20px] text-hana-black"
           >
             {type === 'schedule' ? '새 일정 추가' : '새 헌금 일정 추가'}
           </h2>
@@ -80,11 +88,11 @@ export default function ScheduleAddModal({
             aria-label="모달 닫기"
             className="rounded-full p-1 text-hana-black transition-colors hover:bg-gray-100"
           >
-            <X className="size-8" />
+            <X className="size-7" />
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {type === 'schedule' ? (
             <TextInput
               value={titleValue}
@@ -102,7 +110,7 @@ export default function ScheduleAddModal({
             />
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <DateInput
               label="시작일"
               value={startDate}
@@ -120,7 +128,7 @@ export default function ScheduleAddModal({
 
           {type === 'schedule' ? (
             <>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <ChipButton
                   text="개인 일정"
                   isActive={category === 'personal'}
@@ -151,7 +159,7 @@ export default function ScheduleAddModal({
             />
           )}
 
-          <div className="pt-2">
+          <div className="pt-1">
             <LongButton
               text="저장하기"
               type="button"
@@ -185,7 +193,7 @@ function TextInput({
       placeholder={placeholder}
       aria-label={ariaLabel}
       onChange={(event) => onChange(event.target.value)}
-      className="h-16 w-full rounded-3xl border border-[#ddd8cf] bg-[#fcfbf8] px-5 font-hana-main text-2xl text-hana-black outline-none placeholder:text-[#b5b8bf] focus:border-hana-main"
+      className="h-14 w-full rounded-3xl border border-[#ddd8cf] bg-[#fcfbf8] px-4 font-hana-main text-[16px] text-hana-black outline-none placeholder:text-[#b5b8bf] focus:border-hana-main"
     />
   );
 }
@@ -206,24 +214,31 @@ function SelectInput({
   onChange,
 }: SelectInputProps) {
   return (
-    <select
-      value={value}
-      aria-label={ariaLabel}
-      onChange={(event) => onChange(event.target.value)}
-      className={`h-16 w-full rounded-3xl border border-[#ddd8cf] bg-[#fcfbf8] px-5 font-hana-main text-2xl outline-none focus:border-hana-main ${
-        value ? 'text-hana-black' : 'text-[#b5b8bf]'
-      }`}
-    >
-      <option value="" disabled>
-        {placeholder}
-      </option>
-
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
+    <div className="relative">
+      <select
+        value={value}
+        aria-label={ariaLabel}
+        onChange={(event) => onChange(event.target.value)}
+        className={`h-14 w-full appearance-none rounded-3xl border border-[#ddd8cf] bg-[#fcfbf8] px-4 pr-12 font-hana-main text-[16px] outline-none focus:border-hana-main ${
+          value ? 'text-hana-black' : 'text-[#b5b8bf]'
+        }`}
+      >
+        <option value="" disabled>
+          {placeholder}
         </option>
-      ))}
-    </select>
+
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      <ChevronDown
+        aria-hidden="true"
+        className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-5 size-5 text-[#8d8d8d]"
+      />
+    </div>
   );
 }
 
@@ -235,25 +250,45 @@ type DateInputProps = {
 };
 
 function DateInput({ label, value, ariaLabel, onChange }: DateInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleOpenPicker() {
+    if (!inputRef.current) {
+      return;
+    }
+
+    if (typeof inputRef.current.showPicker === 'function') {
+      inputRef.current.showPicker();
+      return;
+    }
+
+    inputRef.current.focus();
+  }
+
   return (
     <label className="block">
-      <span className="mb-2 block pl-1 font-hana-main text-[#8d8d8d] text-xl">
+      <span className="mb-2 block pl-1 font-hana-main text-[#8d8d8d] text-[14px]">
         {label}
       </span>
 
       <div className="relative">
         <input
+          ref={inputRef}
           value={value}
           type="date"
           aria-label={ariaLabel}
           onChange={(event) => onChange(event.target.value)}
-          className="h-16 w-full rounded-3xl border border-[#ddd8cf] bg-[#fcfbf8] px-5 pr-14 font-hana-main text-2xl text-hana-black outline-none focus:border-hana-main"
+          className="h-14 w-full rounded-3xl border border-[#ddd8cf] bg-[#fcfbf8] px-4 pr-12 font-hana-main text-[15px] text-hana-black outline-none focus:border-hana-main [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:opacity-0"
         />
 
-        <CalendarDays
-          aria-hidden="true"
-          className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-5 size-6 text-hana-black"
-        />
+        <button
+          type="button"
+          aria-label={`${label} 날짜 선택`}
+          onClick={handleOpenPicker}
+          className="-translate-y-1/2 absolute top-1/2 right-4 text-hana-black"
+        >
+          <CalendarDays aria-hidden="true" className="size-5" />
+        </button>
       </div>
     </label>
   );
@@ -271,7 +306,7 @@ function ChipButton({ text, isActive, onClick }: ChipButtonProps) {
       type="button"
       onClick={onClick}
       aria-pressed={isActive}
-      className={`rounded-full px-5 py-3 font-hana-main text-xl transition-colors ${
+      className={`rounded-full px-4 py-2 font-hana-main text-[14px] transition-colors ${
         isActive
           ? 'bg-[#8f8f8f] text-white'
           : 'bg-[#f0efeb] text-[#8d8d8d] hover:bg-[#e7e5df]'
