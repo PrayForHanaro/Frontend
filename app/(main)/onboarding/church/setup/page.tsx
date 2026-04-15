@@ -23,7 +23,7 @@ export default function SetUp() {
         <WhiteCard contents={name} description={location} isSelected={false} />
       </div>
 
-      <div className="absolute bottom-4 w-full items-center pt-10">
+      <div className="absolute bottom-1 w-full items-center pt-10">
         <Button
           type="button"
           className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"

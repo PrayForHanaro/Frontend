@@ -1,6 +1,8 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
@@ -13,85 +15,96 @@ import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
  */
 
 export default function Signup() {
+  const router = useRouter();
+
   const [birthDate, setBirthDate] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  const routeToIntro = () => {
+    router.push('/onboarding/intro');
+  };
 
   const handleReset = () => {
     setBirthDate('');
     setPhoneNumber('');
   };
   return (
-    <form className="relative min-h-full">
-      <h1 className="pt-15 text-center font-hana-medium text-3xl text-hana-light-mint">
-        회원가입
-      </h1>
-      <FieldGroup className="flex flex-col items-center pt-10">
-        <Field>
-          <FieldLabel
-            className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-name"
-          >
-            이름
-          </FieldLabel>
-          <Input
-            id="fieldgroup-name"
-            placeholder="성함을 적어주세요."
-            className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
-          />
-        </Field>
-        <Field>
-          <FieldLabel
-            className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-birth"
-          >
-            생년월일
-          </FieldLabel>
-          <Input
-            id="fieldgroup-birth"
-            name="birthDate"
-            type="text"
-            inputMode="numeric"
-            autoComplete="bday"
-            placeholder="19xx.xx.xx"
-            value={birthDate}
-            onChange={(e) => setBirthDate(formatBirthDate(e.target.value))}
-            maxLength={10}
-            className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
-          />
-        </Field>
-        <Field>
-          <FieldLabel
-            className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-phone"
-          >
-            전화번호
-          </FieldLabel>
-          <Input
-            id="fieldgroup-phone"
-            name="phoneNumber"
-            type="text"
-            inputMode="numeric"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
-            placeholder="010-0000-0000"
-            className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
-          />
-        </Field>
-        <Field>
-          <FieldLabel
-            className="px-1 pb-3 text-hana-gray-600 text-xl"
-            htmlFor="fieldgroup-password"
-          >
-            비밀번호
-          </FieldLabel>
-          <Input
-            id="fieldgroup-password"
-            type="password"
-            className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
-          />
-        </Field>
-      </FieldGroup>
-      <Field className="absolute bottom-4 items-center pt-10">
+    <div className="relative min-h-full">
+      <Header content="회원가입" />
+      <form className="min-h-full">
+        <h1 className="pt-15 text-center font-hana-medium text-3xl text-hana-light-mint">
+          회원가입
+        </h1>
+        <FieldGroup className="flex flex-col items-center pt-10">
+          <Field>
+            <FieldLabel
+              className="px-1 pb-3 text-hana-gray-600 text-xl"
+              htmlFor="fieldgroup-name"
+            >
+              이름
+            </FieldLabel>
+            <Input
+              id="fieldgroup-name"
+              placeholder="성함을 적어주세요."
+              className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
+            />
+          </Field>
+          <Field>
+            <FieldLabel
+              className="px-1 pb-3 text-hana-gray-600 text-xl"
+              htmlFor="fieldgroup-birth"
+            >
+              생년월일
+            </FieldLabel>
+            <Input
+              id="fieldgroup-birth"
+              name="birthDate"
+              type="text"
+              inputMode="numeric"
+              autoComplete="bday"
+              placeholder="19xx.xx.xx"
+              value={birthDate}
+              onChange={(e) => setBirthDate(formatBirthDate(e.target.value))}
+              maxLength={10}
+              className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
+            />
+          </Field>
+          <Field>
+            <FieldLabel
+              className="px-1 pb-3 text-hana-gray-600 text-xl"
+              htmlFor="fieldgroup-phone"
+            >
+              전화번호
+            </FieldLabel>
+            <Input
+              id="fieldgroup-phone"
+              name="phoneNumber"
+              type="text"
+              inputMode="numeric"
+              value={phoneNumber}
+              onChange={(e) =>
+                setPhoneNumber(formatPhoneNumber(e.target.value))
+              }
+              placeholder="010-0000-0000"
+              className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
+            />
+          </Field>
+          <Field>
+            <FieldLabel
+              className="px-1 pb-3 text-hana-gray-600 text-xl"
+              htmlFor="fieldgroup-password"
+            >
+              비밀번호
+            </FieldLabel>
+            <Input
+              id="fieldgroup-password"
+              type="password"
+              className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
+            />
+          </Field>
+        </FieldGroup>
+      </form>
+      <Field className="absolute bottom-1 items-center pt-10">
         <Button
           type="reset"
           variant="outline"
@@ -103,10 +116,11 @@ export default function Signup() {
         <Button
           type="submit"
           className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+          onClick={routeToIntro}
         >
-          시작하기
+          회원가입하기
         </Button>
       </Field>
-    </form>
+    </div>
   );
 }
