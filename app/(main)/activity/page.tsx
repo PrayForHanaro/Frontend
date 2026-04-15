@@ -6,9 +6,9 @@ import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
 import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
 import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
 import Calendar from '@/components/ui/cmm/Activity/Calendar';
-import LongButton from '@/components/ui/cmm/Activity/LongBtn';
 import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
+import LongButton from '@/components/ui/cmm/LongBtn';
 import Nav from '@/components/ui/cmm/Nav';
 import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
 
