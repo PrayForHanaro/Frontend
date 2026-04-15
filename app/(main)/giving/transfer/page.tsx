@@ -125,8 +125,9 @@ export default function Transfer() {
         {hanaBankPensionList.map((p) => (
           <div key={p.pensionId} className="pt-3">
             <WhiteCard
-              contents={`${p.institutionName} | ${p.productName}`}
-              description={`${p.accountNumber} | ${p.productName}`}
+              align="left"
+              contents={`${p.institutionName} - ${p.productName}`}
+              description={`${p.accountNumber}`}
               isSelected={false}
               setIsSelected={() => {}}
               badgeContent="연결됨"
@@ -156,8 +157,9 @@ export default function Transfer() {
         {nonHanaBankPensionList.map((p) => (
           <div key={p.pensionId} className="pt-3">
             <WhiteCard
-              contents={`${p.institutionName} | ${p.productName}`}
-              description={`${p.accountNumber} | ${p.productName}`}
+              align="left"
+              contents={`${p.institutionName} - ${p.productName}`}
+              description={`${p.accountNumber}`}
               isSelected={selectedPensions?.includes(p.pensionId) || false}
               setIsSelected={() => togglePension(p.pensionId)}
             />
