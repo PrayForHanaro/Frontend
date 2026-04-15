@@ -78,7 +78,7 @@ export default function GivingHistorySection() {
       {offering.map((o) => (
         <WhiteCard
           key={o.offeringId}
-          contents={o.offeringType.toString()}
+          contents={o.offeringType}
           description={`+${formatCurrency(o.amount)}원`}
           isSelected={false}
           align="left"
