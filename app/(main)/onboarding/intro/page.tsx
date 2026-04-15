@@ -1,7 +1,9 @@
 'use client';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
+import { IMAGE_PATH } from '@/constants/images';
 
 /**
  * @page: 인트로 페이지입니다.
@@ -23,6 +25,17 @@ export default function OnboardingIntroPage() {
       <h1 className="pt-24 text-center font-hana-bold text-3xl text-hana-light-mint">
         PRAY4HANA
       </h1>
+      <div className="flex justify-center">
+        <Image
+          src={IMAGE_PATH.LOGO}
+          alt="로고"
+          width={300}
+          height={300}
+          className="mx-3 mt-5 mb-2 animate-hanabot-float object-contain"
+          priority
+        />
+      </div>
+
       <Field className="absolute bottom-30 items-center pt-10">
         <Button
           type="button"
