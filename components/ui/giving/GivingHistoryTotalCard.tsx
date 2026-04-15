@@ -16,13 +16,13 @@ export default function GivingHistoryTotalCard({
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-lg">총 헌금액</h3>
         {points > 0 && (
-          <div className="rounded-full bg-white px-3 py-1 font-semibold text-hana-checkin-green-b text-sm">
+          <div className="rounded-full bg-white px-3 py-1 font-bold text-hana-checkin-green-b text-sm">
             +{points}P
           </div>
         )}
       </div>
 
-      <div className="mt-4 font-bold text-4xl">₩{formattedAmount}</div>
+      <div className="mt-4 font-bold text-3xl">₩{formattedAmount}</div>
 
       {nextPaymentDate && (
         <div className="mt-3 text-white/80 text-xs">
