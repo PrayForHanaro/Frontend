@@ -11,7 +11,7 @@ export default async function BlessIntervalList() {
 
   return (
     <div className="relative h-full w-full">
-      <div className="flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+      <div className="scrollbar-hide flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
         <BlessHeader
           greeting={`안녕하세요, ${USER_NAME}님.`}
           title="적금 가입으로"
@@ -24,10 +24,18 @@ export default async function BlessIntervalList() {
           {USER_NAME}님이 기도드리며 적금하는 사람들이에요
         </p>
 
-        <div className="flex flex-col">
-          {targets.map((target) => (
-            <TargetListItem key={target.id} target={target} />
-          ))}
+        <div className="space-y-3 px-5 pt-2">
+          {targets.length > 0 ? (
+            targets.map((target) => (
+              <TargetListItem key={target.id} target={target} />
+            ))
+          ) : (
+            <div className="rounded-2xl bg-white py-10 text-center shadow-sm">
+              <p className="text-hana-gray-400 text-sm">
+                아직 기도 중인 분이 없어요.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center py-4">
