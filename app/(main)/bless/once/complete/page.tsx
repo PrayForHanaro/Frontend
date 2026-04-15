@@ -47,7 +47,7 @@ export default function BlessOnceComplete() {
         <p className="font-hana-bold text-gray-900 text-sm">HANA님</p>
       </div>
 
-      <div className="flex h-full flex-col overflow-y-auto pb-[70px]">
+      <div className="scrollbar-hide flex h-full flex-col overflow-y-auto pb-[70px]">
         <BlessHeader
           title="이번 달 축복 보내기"
           subtitle="사랑하는 사람에게 기도와 마음을 전하세요."

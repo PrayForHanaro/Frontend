@@ -92,7 +92,7 @@ export default function BlessOnceInput() {
 
   return (
     <div className="relative h-full w-full">
-      <div className="relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+      <div className="scrollbar-hide relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
         <BackButton to="/home" />
 
         <BlessHeader
