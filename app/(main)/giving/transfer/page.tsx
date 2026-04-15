@@ -60,9 +60,7 @@ const pensions: Pension[] = [
 ];
 
 export default function Transfer() {
-  const [selectedPensions, setSelectedPensions] = useState<number[] | null>(
-    null,
-  );
+  const [selectedPensions, setSelectedPensions] = useState<number[]>([]);
 
   const router = useRouter();
 
@@ -100,7 +98,7 @@ export default function Transfer() {
   };
 
   const deselectAllNonHanaBank = () => {
-    setSelectedPensions(null);
+    setSelectedPensions([]);
   };
 
   const nonHanaBankPensionList = pensions.filter((p) => !p.isHanaBank);
@@ -113,14 +111,14 @@ export default function Transfer() {
   return (
     <div className="relative min-h-full w-full">
       <Header content="헌금 관리" />
-      <div className="absolute pt-7">
+      <div className="relative pt-7">
         <div className="text-l">내 연금 목록</div>
         <div className="pt-3 text-hana-gray-600">
           추가할 연금을 선택해주세요.
         </div>
       </div>
 
-      <div className="pt-25">
+      <div className="pt-7">
         <div className="text-l">하나은행 연결된 연금</div>
         {hanaBankPensionList.map((p) => (
           <div key={p.pensionId} className="pt-3">

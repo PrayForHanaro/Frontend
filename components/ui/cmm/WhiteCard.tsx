@@ -32,7 +32,7 @@ export default function WhiteCard({
       : 'font-hana-light';
   return (
     <div
-      className={`flex h-20 w-full max-w-md items-center justify-between ${isSelected ? `border-4 border-hana-checkin-green-b bg-white` : `bg-white`} rounded-2xl p-5 text-center shadow-sm`}
+      className={`items-between flex h-20 w-full max-w-md justify-between ${isSelected ? `border-4 border-hana-checkin-green-b bg-white` : `bg-white`} rounded-2xl p-5 text-center shadow-sm`}
     >
       <button
         type="button"
