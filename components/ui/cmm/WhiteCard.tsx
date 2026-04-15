@@ -38,7 +38,10 @@ export default function WhiteCard({
         type="button"
         onClick={setIsSelected ? () => setIsSelected(!isSelected) : undefined}
         disabled={!setIsSelected}
-        className={`h-full w-full text-center font-semibold text-gray-800 text-lg ${setIsSelected ? '' : 'cursor-not-allowed opacity-70'}`}
+        className={
+          'h-full flex-1 font-semibold text-gray-800 text-lg' +
+          (setIsSelected ? '' : 'cursor-not-allowed opacity-70')
+        }
       >
         <div className={`flex h-full w-full flex-col gap-2 ${alignClasses}`}>
           <div>{contents}</div>
