@@ -127,9 +127,9 @@ export default function Transfer() {
             <WhiteCard
               contents={`${p.institutionName} | ${p.productName}`}
               description={`${p.accountNumber} | ${p.productName}`}
-              isSelected={false} // 이미 선택됨
-              setIsSelected={() => {}} // 클릭 불가
-              badgeContent="연결됨" // "연결됨" 배지
+              isSelected={false}
+              setIsSelected={() => {}}
+              badgeContent="연결됨"
             />
           </div>
         ))}
@@ -158,8 +158,8 @@ export default function Transfer() {
             <WhiteCard
               contents={`${p.institutionName} | ${p.productName}`}
               description={`${p.accountNumber} | ${p.productName}`}
-              isSelected={selectedPensions?.includes(p.pensionId) || false} // 선택 여부
-              setIsSelected={() => togglePension(p.pensionId)} // 상태 토글
+              isSelected={selectedPensions?.includes(p.pensionId) || false}
+              setIsSelected={() => togglePension(p.pensionId)}
             />
           </div>
         ))}
