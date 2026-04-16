@@ -9,7 +9,7 @@ const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
 export async function GET() {
   try {
-    const response = await fetch(`${GATEWAY_URL}/user/api/users/me/home`, {
+    const response = await fetch(`${GATEWAY_URL}/apis/user/users/me/home`, {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
