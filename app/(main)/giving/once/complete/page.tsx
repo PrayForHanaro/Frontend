@@ -9,15 +9,10 @@ import { IMAGE_PATH } from '@/constants/images';
 
 /**
  * @page: 헌금완료페이지
- * @description: 헌금완료페이지 입니다. 헌금액수와 지급받은 포인트를 표시해줍니다
+ * @description: 헌금완료페이지 입니다. 유저 서비스(8083)를 호출하여 데이터를 표시합니다.
  * @author: 이승빈
  * @date: 2026-04-14
  */
-
-type UserInfo = {
-  name: string;
-  pointRate: number;
-};
 
 export default function GivingOnceComplete() {
   const router = useRouter();
@@ -33,14 +28,18 @@ export default function GivingOnceComplete() {
         const numAmount = savedAmount ? Number(savedAmount) : 0;
         setAmount(numAmount);
 
+        // [BFF] 유저 정보 조회
         const res = await fetch('/api/me');
         let pointRate = 0.01;
         let name = '하나';
 
         if (res.ok) {
-          const userData: UserInfo = await res.json();
-          pointRate = userData.pointRate || 0.01;
-          name = userData.name || '하나';
+          const result = await res.json();
+          // BFF 응답 구조에 따라 데이터 접근 (result.data)
+          if (result.success && result.data) {
+            pointRate = result.data.pointRate || 0.01;
+            name = result.data.name || '하나';
+          }
         }
 
         setUserName(name);
