@@ -1,5 +1,3 @@
-'use client';
-
 import type { BlessMessage } from '../_types';
 
 type MessageHistoryItemProps = {
