@@ -145,7 +145,7 @@ export async function POST(request: Request) {
     }
 
     // 3. [비동기/병렬 작업] 후처리
-    Promise.all([
+    await Promise.all([
       // A. 포인트 적립 (Earn)
       fetch(`${GATEWAY_URL}/user/api/users/me/points/process`, {
         method: 'POST',
