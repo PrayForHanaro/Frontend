@@ -12,7 +12,7 @@ export default function PointCard() {
 
         {/* 👇 버튼 가로 정렬 */}
         <div className="mt-4 flex gap-2">
-          <Link href="/giving" className="flex-1">
+          <Link href="/giving/once" className="flex-1">
             <button className="w-full rounded-xl bg-hana-main py-3 text-white">
               헌금하기
             </button>

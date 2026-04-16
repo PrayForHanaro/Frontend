@@ -56,10 +56,15 @@ export default function PointPage() {
       <Header content="포인트 내역" />
 
       {/* 👉 상단 요약 (props로 받기) */}
-      <PointSummary totalPoint={totalPoint} count={points.length} />
+      <PointSummary totalPoint={totalPoint} />
 
-      {/* 👉 리스트 */}
-      <div className="flex flex-col gap-3 px-4">
+      <div className="mt-8 flex flex-col gap-3 px-4">
+        {/* 포인트 내역 텍스트 */}
+        <span className="text-gray-500 text-sm">
+          포인트 내역 총 {points.length}건
+        </span>
+
+        {/* 리스트 */}
         {points.map((point) => (
           <PointItem
             key={point.id}

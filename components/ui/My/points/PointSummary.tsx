@@ -1,18 +1,15 @@
 type Props = {
   totalPoint: number;
-  count: number;
 };
 
-export default function PointSummary({ totalPoint, count }: Props) {
+export default function PointSummary({ totalPoint }: Props) {
   return (
-    <div className="flex flex-col items-center gap-3 py-6">
-      <img src="/pointgiving.svg" alt="point" className="w-50 h-50" />
+    <div className="flex flex-col items-center">
+      <img src="/pointgiving.svg" alt="point" className="mb-0 h-35 w-50" />
 
-      <span className="text-3xl font-extrabold text-green-600">
+      <span className="mt-0 font-extrabold text-3xl text-green-600">
         {totalPoint.toLocaleString()}P
       </span>
-
-      <span className="text-sm text-gray-500">포인트 내역 총 {count}건</span>
     </div>
   );
 }

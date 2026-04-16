@@ -60,14 +60,13 @@ export default function ProfileSection() {
       {/* 👇 클릭 가능 */}
       <div
         onClick={handleClick}
-        className="w-20 h-20 rounded-full overflow-hidden cursor-pointer bg-gray-200 flex items-center justify-center"
+        className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gray-200"
       >
         <img
-        src={image || 'default-profile.png'}
-        alt="profile"
-        className="h-full w-full object-cover"
+          src={image || '/profile-default.png'}
+          alt="profile"
+          className="h-full w-full object-cover"
         />
-    
       </div>
 
       {/* 숨겨진 input */}
@@ -80,7 +79,7 @@ export default function ProfileSection() {
       />
 
       <span className="font-hana-bold text-lg">김성도</span>
-      <span className="text-sm text-gray-400">○○교회 성도</span>
+      <span className="text-gray-400 text-sm">○○교회 성도</span>
     </div>
   );
 }

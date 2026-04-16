@@ -20,7 +20,9 @@ export type ActivityItem = {
   currentCount: number;
   maxCount: number;
   point: number;
-  isApplied?: boolean;
+  isApplied: boolean;
+  isOwner: boolean;
+  status: 'RECRUITING' | 'CLOSED' | 'CANCELLED';
 };
 
 export const ACTIVITY_LIST: ActivityItem[] = [
@@ -33,6 +35,9 @@ export const ACTIVITY_LIST: ActivityItem[] = [
     currentCount: 3,
     maxCount: 10,
     point: 50,
+    isApplied: true,
+    isOwner: true,
+    status: 'CLOSED',
   },
   {
     id: 2,
@@ -43,6 +48,9 @@ export const ACTIVITY_LIST: ActivityItem[] = [
     currentCount: 15,
     maxCount: 30,
     point: 30,
+    isApplied: false,
+    isOwner: false,
+    status: 'RECRUITING',
   },
   {
     id: 3,
@@ -53,6 +61,9 @@ export const ACTIVITY_LIST: ActivityItem[] = [
     currentCount: 5,
     maxCount: 8,
     point: 20,
+    isApplied: true,
+    isOwner: false,
+    status: 'RECRUITING',
   },
 ];
 
@@ -67,6 +78,8 @@ export const MY_ACTIVITY_LIST: ActivityItem[] = [
     maxCount: 10,
     point: 50,
     isApplied: true,
+    isOwner: true,
+    status: 'RECRUITING',
   },
   {
     id: 2,
@@ -78,6 +91,8 @@ export const MY_ACTIVITY_LIST: ActivityItem[] = [
     maxCount: 30,
     point: 30,
     isApplied: true,
+    isOwner: true,
+    status: 'RECRUITING',
   },
   {
     id: 3,
@@ -89,5 +104,7 @@ export const MY_ACTIVITY_LIST: ActivityItem[] = [
     maxCount: 8,
     point: 20,
     isApplied: true,
+    isOwner: true,
+    status: 'CANCELLED',
   },
 ];
