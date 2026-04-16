@@ -94,7 +94,7 @@ export default function Pending() {
           />
         ))}
       </div>
-      <div className="absolute bottom-4 w-full items-center pt-10">
+      <div className="absolute bottom-1 w-full items-center pt-10">
         <Button
           type="button"
           disabled={!selectedItem}
