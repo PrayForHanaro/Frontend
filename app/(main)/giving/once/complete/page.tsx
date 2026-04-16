@@ -9,7 +9,7 @@ import { IMAGE_PATH } from '@/constants/images';
 
 /**
  * @page: 헌금완료페이지
- * @description: 헌금완료페이지 입니다. 헌금액수와 지급받은 포인트를 표시해줍니다
+ * @description: 헌금완료페이지 입니다. 유저 서비스(8083)를 호출하여 데이터를 표시합니다.
  * @author: 이승빈
  * @date: 2026-04-14
  */
@@ -28,14 +28,13 @@ export default function GivingOnceComplete() {
         const numAmount = savedAmount ? Number(savedAmount) : 0;
         setAmount(numAmount);
 
-        // !!! api 확인 필요
-        const res = await fetch('/api/me');
+        // [User Service] 유저 정보 조회 (Port: 8083)
+        const res = await fetch('http://localhost:8083/api/users/me/home');
         let pointRate = 0.01;
         let name = '하나';
 
         if (res.ok) {
           const result = await res.json();
-          // 백엔드 성공 시에만 데이터 반영 (실패 시 기본값 유지)
           if (result.success && result.data) {
             pointRate = result.data.pointRate || 0.01;
             name = result.data.name || '하나';

@@ -9,7 +9,7 @@ import TypeButton from '@/components/ui/giving/TypeButton';
 
 /**
  * @page: 일회성 헌금 내용 작성
- * @description: 일회성 헌금 내용 작성 페이지입니다. /api/giving/once 를 통해 데이터를 가져옵니다.
+ * @description: 일회성 헌금 내용 작성 페이지입니다.
  * @author: 이승빈
  * @date: 2026-04-14
  */
@@ -24,13 +24,16 @@ const GIVING_TYPES = [
 
 type GivingData = {
   name: string;
-  myPoint: number;
+  maxPoint: number;
   bankAccount: string;
   churchName: string;
+  orgId: number;
+  accountId: number;
+  donationRate: number;
 };
 
 export default function GivingOnce() {
-  const [selectedType, setSelectedType] = useState<string>('십일조');
+  const [selectedType, setSelectedType] = useState<string>('감사헌금');
   const [givingPerson, setGivingPerson] = useState<'기명' | '무기명'>('기명');
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -38,9 +41,12 @@ export default function GivingOnce() {
   const [prayerTopic, setPrayerTopic] = useState('');
   const [data, setData] = useState<GivingData>({
     name: '',
-    myPoint: 0,
+    maxPoint: 0,
     bankAccount: '정보를 불러오는 중...',
     churchName: '정보를 불러오는 중...',
+    orgId: 0,
+    accountId: 0,
+    donationRate: 1,
   });
 
   const [errors, setErrors] = useState({
@@ -51,40 +57,55 @@ export default function GivingOnce() {
   const nameRef = useRef<HTMLInputElement>(null);
   const amountRef = useRef<HTMLInputElement>(null);
 
-  const route = useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/giving/once');
-        const result = await res.json();
+        const userRes = await fetch(
+          'http://localhost:8083/api/users/me/givingOnce',
+        );
+        const userResult = await userRes.json();
 
-        if (res.ok && result.success && result.data) {
-          setData(result.data);
-          setName(result.data.name);
-        } else {
-          throw new Error(result.message || '정보를 불러오지 못했습니다.');
+        if (userRes.ok && userResult.success && userResult.data) {
+          const userData = userResult.data;
+
+          const orgRes = await fetch(
+            `http://localhost:8082/api/orgs/${userData.orgId}/summary`,
+          );
+          const orgResult = await orgRes.json();
+          const orgName = orgResult.data?.orgName || '정보 없음';
+
+          setData({
+            name: userData.name,
+            maxPoint: userData.maxPoint, // 명세 필드 반영
+            bankAccount: userData.bankAccount, // 명세 필드 반영
+            churchName: orgName,
+            orgId: userData.orgId,
+            accountId: userData.accountId,
+            donationRate: userData.donationRate || 1,
+          });
+          setName(userData.name);
         }
       } catch (e: unknown) {
-        if (e instanceof Error) {
-          console.error('데이터 로딩 오류:', e.message);
-        } else {
-          console.error('알 수 없는 데이터 로딩 오류 발생');
-        }
+        console.error('데이터 로딩 오류:', e);
       }
     }
     fetchData();
 
-    // 작성된 기도제목 불러오기
     const savedPrayer = sessionStorage.getItem('giving_message');
     if (savedPrayer) {
       setPrayerTopic(savedPrayer);
     }
   }, []);
 
+  const estimatedEarnedPoint = Math.floor(
+    Number(amount) * (data.donationRate / 100),
+  );
+
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (Number(val) >= 0 && Number(val) <= data.myPoint) setPoint(val);
+    if (Number(val) >= 0 && Number(val) <= data.maxPoint) setPoint(val);
   };
 
   const handleGivingSubmit = async () => {
@@ -106,34 +127,42 @@ export default function GivingOnce() {
     }
 
     const payload = {
-      type: selectedType,
-      personType: givingPerson,
-      name: givingPerson === '기명' ? name : null,
+      orgId: data.orgId,
+      accountId: data.accountId,
+      offeringType: selectedType,
       amount: Number(amount),
-      point: Number(point),
-      prayerTopic: prayerTopic,
+      offererName: givingPerson === '기명' ? name : null,
+      prayerContent: prayerTopic,
     };
 
     try {
-      const res = await fetch('/api/giving/once', {
+      const res = await fetch('http://localhost:8084/api/offerings', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       const result = await res.json();
 
       if (res.ok && result.success) {
+        if (Number(point) > 0) {
+          fetch('http://localhost:8083/api/users/me/points/use', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: Number(point),
+              refId: result.data,
+            }),
+          }).catch(console.error);
+        }
+
         sessionStorage.setItem('latest_giving_amount', amount);
-        route.push('/giving/once/complete');
+        router.push('/giving/once/complete');
       } else {
-        alert(result.message || '헌금 접수에 실패했습니다. 다시 시도해주세요.');
+        alert(result.message || '헌금 접수에 실패했습니다.');
       }
     } catch (e) {
       console.error('Failed to submit giving', e);
-      alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
     }
   };
 
@@ -201,10 +230,19 @@ export default function GivingOnce() {
                 : 'border-gray-200 focus:border-hana-main'
             } bg-white`}
           />
+          {Number(amount) > 0 && (
+            <p className="px-1 font-hana-medium text-hana-mint text-sm">
+              이번 헌금으로{' '}
+              <span className="font-hana-bold">
+                {estimatedEarnedPoint.toLocaleString()}P
+              </span>
+              가 적립됩니다.
+            </p>
+          )}
         </section>
 
         <section className="flex flex-col gap-3">
-          <p className="font-hana-bold text-lg">포인트</p>
+          <p className="font-hana-bold text-lg">포인트 사용</p>
           <input
             type="number"
             placeholder="사용할 포인트를 입력하세요"
@@ -212,7 +250,9 @@ export default function GivingOnce() {
             onChange={handlePointChange}
             className="w-full rounded-xl border border-gray-200 bg-white p-3 outline-none transition-colors focus:border-hana-main"
           />
-          <p className="text-gray-500 text-xs">보유 포인트: {data.myPoint}P</p>
+          <p className="px-1 text-gray-500 text-xs">
+            보유 포인트: {data.maxPoint.toLocaleString()}P
+          </p>
         </section>
 
         <div className="space-y-4 border-t pt-4 pb-5">

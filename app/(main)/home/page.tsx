@@ -8,12 +8,10 @@ import { IMAGE_PATH } from '@/constants/images';
 
 /**
  * @page: 홈
- * @description: 홈페이지입니다. 토탈 헌금액을 보여주며 페이지 이동을 위한 버튼으로 구성되어있습니다. api 호출 실패시 목업데이터를 넣습니다.
- * @author: 이승빈
+ * @description: 토탈 헌금액을 보여주며 페이지 이동을 위한 버튼으로 구성되어있습니다.
  * @date: 2026-04-14
  */
 
-const API_ROUTE = '/api/home';
 interface HomeData {
   userName: string;
   myPoint: number;
@@ -22,12 +20,22 @@ interface HomeData {
   prayerPeople: {
     id: number;
     name: string;
-    type: 'man' | 'woman' | 'baby'; // imagePath 대신 type 사용
+    type: 'man' | 'woman' | 'baby';
     relation: string;
   }[];
 }
 
-// 타입에 따라 알맞은 이미지를 반환하는 함수
+interface PrayerData {
+  receiverId: number;
+  relation: string;
+}
+
+interface UserSimpleResponse {
+  userId: number;
+  name: string;
+  imageType: 'man' | 'woman' | 'baby';
+}
+
 const getPersonImage = (type: string) => {
   switch (type) {
     case 'woman':
@@ -47,18 +55,70 @@ export default function Home() {
     const fetchHomeData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(API_ROUTE, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const result = await response.json();
 
-        if (response.ok && result.success) {
-          setData(result.data);
-        } else {
-          throw new Error(result.message || '데이터를 불러오지 못했습니다.');
+        const userRes = await fetch('http://localhost:8083/api/users/me/home', {
+          headers: { 'Content-Type': 'application/json' },
+          cache: 'no-store',
+        });
+        const userResult = await userRes.json();
+
+        if (!userRes.ok || !userResult.success) {
+          throw new Error(
+            userResult.message || '사용자 정보를 불러오지 못했습니다.',
+          );
         }
+
+        const { userName, myPoint, orgId } = userResult.data;
+
+        const [orgData, prayerData] = await Promise.all([
+          fetch(`http://localhost:8082/api/orgs/${orgId}/summary`, {
+            cache: 'no-store',
+          })
+            .then((res) => res.json())
+            .catch(() => ({ success: false, data: null })),
+          fetch('http://localhost:8086/api/prayers/me', { cache: 'no-store' })
+            .then((res) => res.json())
+            .catch(() => ({ success: false, data: [] })),
+        ]);
+
+        let prayerPeople: HomeData['prayerPeople'] = [];
+        const prayers: PrayerData[] = prayerData.data || [];
+
+        if (Array.isArray(prayers) && prayers.length > 0) {
+          const ids = prayers
+            .map((p) => p.receiverId)
+            .filter(Boolean)
+            .join(',');
+          if (ids) {
+            const userListRes = await fetch(
+              `http://localhost:8083/api/users/list?ids=${ids}`,
+              { cache: 'no-store' },
+            );
+            const userList = await userListRes.json();
+            if (userList.success && userList.data) {
+              const userDetails = userList.data as UserSimpleResponse[];
+              prayerPeople = prayers.map((p): HomeData['prayerPeople'][0] => {
+                const detail = userDetails.find(
+                  (u) => u.userId === p.receiverId,
+                );
+                return {
+                  id: p.receiverId,
+                  name: detail?.name || '성도',
+                  type: detail?.imageType || 'man',
+                  relation: p.relation || '교우',
+                };
+              });
+            }
+          }
+        }
+
+        setData({
+          userName: userName,
+          myPoint: myPoint || 0,
+          churchName: orgData.data?.orgName || '소속 교회 없음',
+          totalDonation: orgData.data?.totalDonation || 0,
+          prayerPeople,
+        });
       } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
         setData({
@@ -70,7 +130,7 @@ export default function Home() {
             { id: 1, name: '김성도', type: 'man', relation: '아들' },
             { id: 2, name: '이성도', type: 'woman', relation: '딸' },
             { id: 3, name: '박성도', type: 'baby', relation: '손주' },
-          ],
+          ] as HomeData['prayerPeople'],
         });
       } finally {
         setLoading(false);
@@ -79,6 +139,7 @@ export default function Home() {
 
     fetchHomeData();
   }, []);
+
   if (loading)
     return (
       <div className="flex h-screen animate-spin items-center justify-center text-hana-mint">
@@ -134,7 +195,7 @@ export default function Home() {
                 <h1 className="font-hana-heavy text-5xl tracking-tighter sm:text-6xl">
                   {data?.totalDonation?.toLocaleString() || '0'}
                 </h1>
-                <span className="font-hana-bold text-2xl opacity-90">원</span>
+                <span className="font-hana-bold text-2xl opacity-90">만원</span>
               </div>
             </div>
           </div>
