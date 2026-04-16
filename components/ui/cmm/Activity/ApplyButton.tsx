@@ -10,18 +10,28 @@ import { useRouter } from 'next/navigation';
  */
 
 type ApplyButtonProps = {
+  mode: 'APPLY' | 'CANCEL' | 'STOP';
   activityId: number;
-  isApplied?: boolean;
 };
 
 export default function ApplyButton({
-  activityId,
-  isApplied = false,
+  mode,
+  activityId
 }: ApplyButtonProps) {
   const router = useRouter();
 
   function handleClick() {
-    router.push(`/activity/${activityId}`);
+      if (mode === 'STOP') {
+        
+      }
+
+      if(mode === 'CANCEL'){
+        
+      }
+
+      if(mode === 'APPLY'){
+        router.push(`/activity/${activityId}`);
+      }
   }
 
   return (
@@ -30,10 +40,18 @@ export default function ApplyButton({
       aria-label="활동 신청하기"
       onClick={handleClick}
       className={`h-12 shrink-0 whitespace-nowrap rounded-xl px-4 font-hana-main text-[14px] text-white ${
-        isApplied ? 'bg-hana-pink' : 'bg-hana-main hover:bg-hana-mint'
+        mode === 'STOP'
+          ? 'bg-hana-badge-orange'
+          : mode === 'CANCEL'
+            ? 'bg-hana-pink'
+            : 'bg-hana-main hover:bg-hana-mint'
       }`}
     >
-      신청하기
+      {mode === 'STOP'
+        ? '모집 중단'
+        : mode === 'CANCEL'
+        ? '취소하기'
+        : '신청하기'}
     </button>
   );
 }

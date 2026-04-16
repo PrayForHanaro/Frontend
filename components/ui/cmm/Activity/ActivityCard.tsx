@@ -3,6 +3,7 @@
 import { MapPin, Users } from 'lucide-react';
 
 import type { ActivityCategory } from '@/constants/activity';
+import { getActivityMode } from '@/utils/activity/getActivityMode';
 import ApplyButton from './ApplyButton';
 import CategoryTag from './Tag';
 
@@ -22,7 +23,9 @@ type ActivityCardProps = {
   currentCount: number;
   maxCount: number;
   point: number;
-  isApplied?: boolean;
+  isApplied: boolean;
+  isOwner: boolean;
+  status: 'RECRUITING' | 'CLOSED' | 'CANCELLED';
 };
 
 export default function ActivityCard({
@@ -34,13 +37,25 @@ export default function ActivityCard({
   currentCount,
   maxCount,
   point,
-  isApplied = false,
+  isApplied,
+  isOwner,
+  status,
 }: ActivityCardProps) {
+  
+  const mode = getActivityMode({
+    isApplied,
+    isOwner,
+  });
+
+  const isInactive = status !== 'RECRUITING';
+
   return (
     <article
-      className="w-full rounded-3xl bg-white p-6 hover:scale-102"
+      className={`w-full rounded-3xl p-6 transition ${
+        isInactive ? 'bg-gray-100 opacity-60' : 'bg-white hover:scale-102'
+      }`}
       style={{
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        boxShadow: isInactive ? 'none' : '0 4px 20px rgba(0, 0, 0, 0.08)',
       }}
       aria-label={`${title} 활동 카드`}
     >
@@ -80,7 +95,7 @@ export default function ActivityCard({
           <CategoryTag label="포인트" text={`+${point}포인트`} />
         </div>
 
-        <ApplyButton activityId={id} isApplied={isApplied} />
+        <ApplyButton activityId={id} mode={mode} />
       </div>
     </article>
   );
