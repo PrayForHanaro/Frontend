@@ -38,7 +38,7 @@ export default function BlessOnceInput() {
 
   useEffect(() => {
     if (!showAccounts) return;
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = (e: PointerEvent) => {
       if (
         accountBlockRef.current &&
         !accountBlockRef.current.contains(e.target as Node)
@@ -46,8 +46,9 @@ export default function BlessOnceInput() {
         setShowAccounts(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () =>
+      document.removeEventListener('pointerdown', handleClickOutside);
   }, [showAccounts]);
 
   const handleAmountChange = (value: string) => {
