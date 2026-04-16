@@ -15,7 +15,7 @@ import WhiteCard from '@/components/ui/cmm/WhiteCard';
 
 type PensionType = '국민연금' | '퇴직연금' | '개인연금'; // 연금 종류에 대한 타입
 
-interface Pension {
+type Pension = {
   pensionId: number; // 연금 ID
   userId: number; // 사용자 ID
   accountNumber: string; // 연결된 계좌 ID (null 허용)
@@ -27,7 +27,7 @@ interface Pension {
   returnRate: number; // 수익률 (%)
   institutionName: string; // 연금 기관명
   productName: string; // 상품 이름
-}
+};
 
 //TODO 임시 데이터, API 연동 필요
 const pensions: Pension[] = [

@@ -28,13 +28,14 @@ export default function GivingOnceComplete() {
         const numAmount = savedAmount ? Number(savedAmount) : 0;
         setAmount(numAmount);
 
-        // [User Service] 유저 정보 조회 (Port: 8083)
-        const res = await fetch('http://localhost:8083/api/users/me/home');
+        // [BFF] 유저 정보 조회
+        const res = await fetch('/api/me');
         let pointRate = 0.01;
         let name = '하나';
 
         if (res.ok) {
           const result = await res.json();
+          // BFF 응답 구조에 따라 데이터 접근 (result.data)
           if (result.success && result.data) {
             pointRate = result.data.pointRate || 0.01;
             name = result.data.name || '하나';

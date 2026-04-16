@@ -12,7 +12,7 @@ import { IMAGE_PATH } from '@/constants/images';
  * @date: 2026-04-14
  */
 
-interface HomeData {
+type HomeData = {
   userName: string;
   myPoint: number;
   churchName: string;
@@ -23,18 +23,7 @@ interface HomeData {
     type: 'man' | 'woman' | 'baby';
     relation: string;
   }[];
-}
-
-interface PrayerData {
-  receiverId: number;
-  relation: string;
-}
-
-interface UserSimpleResponse {
-  userId: number;
-  name: string;
-  imageType: 'man' | 'woman' | 'baby';
-}
+};
 
 const getPersonImage = (type: string) => {
   switch (type) {
@@ -56,71 +45,29 @@ export default function Home() {
       try {
         setLoading(true);
 
-        const userRes = await fetch('http://localhost:8083/api/users/me/home', {
+        const homeRes = await fetch('/api/home', {
           headers: { 'Content-Type': 'application/json' },
           cache: 'no-store',
         });
-        const userResult = await userRes.json();
+        const result = await homeRes.json();
 
-        if (!userRes.ok || !userResult.success) {
-          throw new Error(
-            userResult.message || '사용자 정보를 불러오지 못했습니다.',
-          );
+        if (!homeRes.ok || !result.success) {
+          throw new Error(result.message || '홈 정보를 불러오지 못했습니다.');
         }
 
-        const { userName, myPoint, orgId } = userResult.data;
-
-        const [orgData, prayerData] = await Promise.all([
-          fetch(`http://localhost:8082/api/orgs/${orgId}/summary`, {
-            cache: 'no-store',
-          })
-            .then((res) => res.json())
-            .catch(() => ({ success: false, data: null })),
-          fetch('http://localhost:8086/api/prayers/me', { cache: 'no-store' })
-            .then((res) => res.json())
-            .catch(() => ({ success: false, data: [] })),
-        ]);
-
-        let prayerPeople: HomeData['prayerPeople'] = [];
-        const prayers: PrayerData[] = prayerData.data || [];
-
-        if (Array.isArray(prayers) && prayers.length > 0) {
-          const ids = prayers
-            .map((p) => p.receiverId)
-            .filter(Boolean)
-            .join(',');
-          if (ids) {
-            const userListRes = await fetch(
-              `http://localhost:8083/api/users/list?ids=${ids}`,
-              { cache: 'no-store' },
-            );
-            const userList = await userListRes.json();
-            if (userList.success && userList.data) {
-              const userDetails = userList.data as UserSimpleResponse[];
-              prayerPeople = prayers.map((p): HomeData['prayerPeople'][0] => {
-                const detail = userDetails.find(
-                  (u) => u.userId === p.receiverId,
-                );
-                return {
-                  id: p.receiverId,
-                  name: detail?.name || '성도',
-                  type: detail?.imageType || 'man',
-                  relation: p.relation || '교우',
-                };
-              });
-            }
-          }
-        }
+        const { userName, myPoint, churchName, totalDonation, prayerPeople } =
+          result.data;
 
         setData({
-          userName: userName,
-          myPoint: myPoint || 0,
-          churchName: orgData.data?.orgName || '소속 교회 없음',
-          totalDonation: orgData.data?.totalDonation || 0,
+          userName,
+          myPoint,
+          churchName,
+          totalDonation,
           prayerPeople,
         });
       } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
+        // 목데이터
         setData({
           userName: '하나',
           myPoint: 1200,

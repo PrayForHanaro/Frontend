@@ -62,30 +62,21 @@ export default function GivingOnce() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const userRes = await fetch(
-          'http://localhost:8083/api/users/me/givingOnce',
-        );
-        const userResult = await userRes.json();
+        const res = await fetch('/api/giving/once');
+        const result = await res.json();
 
-        if (userRes.ok && userResult.success && userResult.data) {
-          const userData = userResult.data;
-
-          const orgRes = await fetch(
-            `http://localhost:8082/api/orgs/${userData.orgId}/summary`,
-          );
-          const orgResult = await orgRes.json();
-          const orgName = orgResult.data?.orgName || '정보 없음';
-
+        if (res.ok && result.success && result.data) {
+          const data = result.data;
           setData({
-            name: userData.name,
-            maxPoint: userData.maxPoint, // 명세 필드 반영
-            bankAccount: userData.bankAccount, // 명세 필드 반영
-            churchName: orgName,
-            orgId: userData.orgId,
-            accountId: userData.accountId,
-            donationRate: userData.donationRate || 1,
+            name: data.name,
+            maxPoint: data.maxPoint,
+            bankAccount: data.bankAccount,
+            churchName: data.churchName,
+            orgId: data.orgId,
+            accountId: data.accountId,
+            donationRate: data.donationRate || 1,
           });
-          setName(userData.name);
+          setName(data.name);
         }
       } catch (e: unknown) {
         console.error('데이터 로딩 오류:', e);
@@ -99,9 +90,7 @@ export default function GivingOnce() {
     }
   }, []);
 
-  const estimatedEarnedPoint = Math.floor(
-    Number(amount) * (data.donationRate / 100),
-  );
+  const estimatedEarnedPoint = Math.floor(Number(amount) * data.donationRate);
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -131,12 +120,13 @@ export default function GivingOnce() {
       accountId: data.accountId,
       offeringType: selectedType,
       amount: Number(amount),
+      point: Number(point), // 포인트 정보 포함
       offererName: givingPerson === '기명' ? name : null,
       prayerContent: prayerTopic,
     };
 
     try {
-      const res = await fetch('http://localhost:8084/api/offerings', {
+      const res = await fetch('/api/giving/once', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -145,17 +135,6 @@ export default function GivingOnce() {
       const result = await res.json();
 
       if (res.ok && result.success) {
-        if (Number(point) > 0) {
-          fetch('http://localhost:8083/api/users/me/points/use', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              amount: Number(point),
-              refId: result.data,
-            }),
-          }).catch(console.error);
-        }
-
         sessionStorage.setItem('latest_giving_amount', amount);
         router.push('/giving/once/complete');
       } else {

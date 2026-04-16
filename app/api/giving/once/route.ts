@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { orgId, accountId } = userMe.data as GivingOnceUser;
+    const { orgId, accountId, donationRate } = userMe.data as GivingOnceUser;
 
     // 2. [offering-service] 헌금 내역 저장
     const offeringRes = await fetch(`${GATEWAY_URL}/offering/api/offerings`, {
@@ -146,17 +146,31 @@ export async function POST(request: Request) {
 
     // 3. [비동기/병렬 작업] 후처리
     Promise.all([
-      // 포인트 사용 (차감)
+      // A. 포인트 적립 (Earn)
+      fetch(`${GATEWAY_URL}/user/api/users/me/points/process`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: body.amount,
+          donationRate,
+          refId: offeringResult.data,
+          pointType: 'OFFERING_RECURRING',
+          isEarn: true,
+        }),
+      }),
+      // B. 포인트 사용 (차감)
       body.point > 0 &&
-        fetch(`${GATEWAY_URL}/user/api/users/me/points/use`, {
+        fetch(`${GATEWAY_URL}/user/api/users/me/points/process`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             amount: body.point,
             refId: offeringResult.data,
+            pointType: 'OFFERING_RECURRING',
+            isEarn: false,
           }),
         }),
-      // 교회 헌금 누적액 업데이트
+      // C. 교회 헌금 누적액 업데이트
       fetch(`${GATEWAY_URL}/org/api/orgs/${orgId}/offering-amount`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
