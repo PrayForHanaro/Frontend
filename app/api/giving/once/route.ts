@@ -30,7 +30,7 @@ interface GivingOnceRequest {
 export async function GET() {
   try {
     // 1. [user-service] 내 송금용 정보 가져오기
-    const userRes = await fetch(`${GATEWAY_URL}/user/api/users/me/givingOnce`, {
+    const userRes = await fetch(`${GATEWAY_URL}/apis/user/users/me/givingOnce`, {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
@@ -54,7 +54,7 @@ export async function GET() {
     let churchName = '정보 없음';
     try {
       const orgRes = await fetch(
-        `${GATEWAY_URL}/org/api/orgs/${userData.orgId}/summary`,
+        `${GATEWAY_URL}/apis/org/orgs/${userData.orgId}/summary`,
         {
           cache: 'no-store',
         },
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 
     // 1. [user-service] 부족한 정보(orgId, accountId) 가져오기
     const userMeRes = await fetch(
-      `${GATEWAY_URL}/user/api/users/me/givingOnce`,
+      `${GATEWAY_URL}/apis/user/users/me/givingOnce`,
       {
         headers: { 'Content-Type': 'application/json' },
         cache: 'no-store',
@@ -118,7 +118,7 @@ export async function POST(request: Request) {
     const { orgId, accountId, donationRate } = userMe.data as GivingOnceUser;
 
     // 2. [offering-service] 헌금 내역 저장
-    const offeringRes = await fetch(`${GATEWAY_URL}/offering/api/offerings`, {
+    const offeringRes = await fetch(`${GATEWAY_URL}/apis/offering/api/offerings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
     // 3. [비동기/병렬 작업] 후처리
     await Promise.all([
       // A. 포인트 적립 (Earn)
-      fetch(`${GATEWAY_URL}/user/api/users/me/points/process`, {
+      fetch(`${GATEWAY_URL}/apis/user/users/me/points/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -160,7 +160,7 @@ export async function POST(request: Request) {
       }),
       // B. 포인트 사용 (차감)
       body.point > 0 &&
-        fetch(`${GATEWAY_URL}/user/api/users/me/points/process`, {
+        fetch(`${GATEWAY_URL}/apis/user/users/me/points/process`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -171,7 +171,7 @@ export async function POST(request: Request) {
           }),
         }),
       // C. 교회 헌금 누적액 업데이트
-      fetch(`${GATEWAY_URL}/org/api/orgs/${orgId}/offering-amount`, {
+      fetch(`${GATEWAY_URL}/apis/org/orgs/${orgId}/offering-amount`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

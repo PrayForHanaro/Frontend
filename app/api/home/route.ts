@@ -22,7 +22,7 @@ interface UserListItem {
 
 export async function GET() {
   try {
-    const userMeRes = await fetch(`${GATEWAY_URL}/user/api/users/me/home`, {
+    const userMeRes = await fetch(`${GATEWAY_URL}/apis/user/users/me/home`, {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
@@ -42,12 +42,12 @@ export async function GET() {
     const { userName, myPoint, orgId } = userMe.data;
 
     const [orgData, prayerData] = await Promise.all([
-      fetch(`${GATEWAY_URL}/org/api/orgs/${orgId}/summary`, {
+      fetch(`${GATEWAY_URL}/apis/org/orgs/${orgId}/summary`, {
         cache: 'no-store',
       })
         .then((res) => res.json())
         .catch(() => ({ success: false, data: null })),
-      fetch(`${GATEWAY_URL}/prayer/api/prayers/me`, { cache: 'no-store' })
+      fetch(`${GATEWAY_URL}/apis/prayer/prayers/me`, { cache: 'no-store' })
         .then((res) => res.json())
         .catch(() => ({ success: false, data: [] })),
     ]);
@@ -67,7 +67,7 @@ export async function GET() {
 
       if (ids) {
         const userListRes = await fetch(
-          `${GATEWAY_URL}/user/api/users/list?ids=${ids}`,
+          `${GATEWAY_URL}/apis/user/users/list?ids=${ids}`,
           { cache: 'no-store' },
         );
         const userList = await userListRes.json();
