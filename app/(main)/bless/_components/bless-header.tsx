@@ -1,5 +1,3 @@
-'use client';
-
 import { Send } from 'lucide-react';
 
 type BlessHeaderProps = {
