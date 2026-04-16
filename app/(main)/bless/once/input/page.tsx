@@ -8,6 +8,7 @@ import { getRegisteredAccounts } from '@/lib/api/bless';
 import BlessActionButton from '../../_components/bless-action-button';
 import BlessHeader from '../../_components/bless-header';
 import MessageTextarea from '../../_components/message-textarea';
+import { BLESS_ONCE_FORM_KEY } from '../../_constants';
 import type { RegisteredAccount } from '../../_types';
 
 const formatAccountNumber = (raw: string) => {
@@ -78,7 +79,7 @@ export default function BlessOnceInput() {
     }
 
     sessionStorage.setItem(
-      'bless-once-form',
+      BLESS_ONCE_FORM_KEY,
       JSON.stringify({
         message,
         amount: Number(amount),

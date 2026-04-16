@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Nav from '@/components/ui/cmm/Nav';
 import BlessActionButton from '../../_components/bless-action-button';
 import BlessHeader from '../../_components/bless-header';
+import { BLESS_ONCE_FORM_KEY } from '../../_constants';
 import type { OnceBlessFormData } from '../../_types';
 
 const MESSAGE_PREVIEW_LIMIT = 40;
@@ -15,12 +16,27 @@ export default function BlessOnceComplete() {
   const [formData, setFormData] = useState<OnceBlessFormData | null>(null);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('bless-once-form');
+    const stored = sessionStorage.getItem(BLESS_ONCE_FORM_KEY);
     if (!stored) {
       router.replace('/bless/once/input');
       return;
     }
-    setFormData(JSON.parse(stored));
+    try {
+      const parsed = JSON.parse(stored) as OnceBlessFormData;
+      if (
+        !parsed.accountNumber ||
+        !Number.isFinite(parsed.amount) ||
+        parsed.amount <= 0
+      ) {
+        sessionStorage.removeItem(BLESS_ONCE_FORM_KEY);
+        router.replace('/bless/once/input');
+        return;
+      }
+      setFormData(parsed);
+    } catch {
+      sessionStorage.removeItem(BLESS_ONCE_FORM_KEY);
+      router.replace('/bless/once/input');
+    }
   }, [router]);
 
   if (!formData) {
@@ -28,7 +44,7 @@ export default function BlessOnceComplete() {
   }
 
   const handleComplete = () => {
-    sessionStorage.removeItem('bless-once-form');
+    sessionStorage.removeItem(BLESS_ONCE_FORM_KEY);
     router.push('/home');
   };
 
