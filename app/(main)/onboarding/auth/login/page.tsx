@@ -70,7 +70,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
-      <Header title="로그인" />
+      <Header content="로그인" />
       <form onSubmit={handleSubmit} className="px-5 pt-6">
         <FieldGroup>
           <Field>
@@ -101,7 +101,7 @@ export default function Login() {
         </FieldGroup>
 
         {errorMessage ? (
-          <p className="mt-4 text-sm text-red-500">{errorMessage}</p>
+          <p className="mt-4 text-red-500 text-sm">{errorMessage}</p>
         ) : null}
 
         <div className="mt-8 flex gap-3">

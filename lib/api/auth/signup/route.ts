@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { setAuthCookies } from '@/lib/auth-cookies';
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';

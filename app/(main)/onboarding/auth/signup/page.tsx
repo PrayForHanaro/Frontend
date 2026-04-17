@@ -69,7 +69,7 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FA]">
-      <Header title="회원가입" />
+      <Header content="회원가입" />
       <form onSubmit={handleSubmit} className="px-5 pt-6">
         <FieldGroup>
           <Field>
@@ -125,7 +125,7 @@ export default function Signup() {
         </FieldGroup>
 
         {errorMessage ? (
-          <p className="mt-4 text-sm text-red-500">{errorMessage}</p>
+          <p className="mt-4 text-red-500 text-sm">{errorMessage}</p>
         ) : null}
 
         <div className="mt-8 flex gap-3">
