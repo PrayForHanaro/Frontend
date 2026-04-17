@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
 import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
 import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
@@ -10,7 +10,11 @@ import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
 import LongButton from '@/components/ui/cmm/LongBtn';
 import Nav from '@/components/ui/cmm/Nav';
-import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
+import {
+  ACTIVITY_LIST,
+  type ActivityItem,
+  type BoardTab,
+} from '@/constants/activity';
 
 /**
  * @page: 소모임 - 활동 목록 페이지
@@ -24,14 +28,45 @@ export default function Activity() {
 
   const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [activities, setActivities] = useState<ActivityItem[]>(ACTIVITY_LIST);
+
+  // sessionStorage에서 새로운 활동 데이터를 로드
+  useEffect(() => {
+    const newActivityData = sessionStorage.getItem('newActivity');
+    if (newActivityData) {
+      try {
+        const newActivity = JSON.parse(newActivityData);
+
+        // 새로운 활동 객체 생성 (활동 목록 형식에 맞춤)
+        const formattedActivity: ActivityItem = {
+          id: parseInt(newActivity.id),
+          category: '동행찾기', // 기본값으로 동행찾기로 설정
+          title: newActivity.title,
+          location: newActivity.location,
+          schedule: formatSchedule(newActivity.periodValue),
+          currentCount: 1,
+          maxCount: newActivity.capacity,
+          point: 30, // 기본값
+          isApplied: true,
+          isOwner: true,
+          status: 'RECRUITING' as const,
+        };
+
+        // 기존 활동 목록에 새 활동 추가 (맨 앞에)
+        setActivities([formattedActivity, ...ACTIVITY_LIST]);
+      } catch (error) {
+        console.error('Failed to parse newActivity:', error);
+      }
+    }
+  }, []);
 
   const filteredActivities = useMemo(() => {
     const trimmedKeyword = searchKeyword.trim().toLowerCase();
 
     const tabFilteredActivities =
       selectedTab === '전체'
-        ? ACTIVITY_LIST
-        : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+        ? activities
+        : activities.filter((activity) => activity.category === selectedTab);
 
     if (!trimmedKeyword) {
       return tabFilteredActivities;
@@ -45,7 +80,7 @@ export default function Activity() {
         activity.category.toLowerCase().includes(trimmedKeyword)
       );
     });
-  }, [searchKeyword, selectedTab]);
+  }, [searchKeyword, selectedTab, activities]);
 
   function handleMoveRegisterPage() {
     router.push('/activity/register');
@@ -85,4 +120,27 @@ export default function Activity() {
       <ActivityJoinToast />
     </div>
   );
+}
+
+// periodValue를 읽기 좋은 문자열로 변환하는 헬퍼 함수
+function formatSchedule(periodValue: any): string {
+  if (periodValue.meetingType === 'single') {
+    return `${periodValue.singleDate} ${periodValue.singleTime}`;
+  }
+
+  if (periodValue.recurringType === 'daily') {
+    return `매일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  if (periodValue.recurringType === 'weekday') {
+    const days = periodValue.recurringWeekdays.join(', ');
+    return `매주 ${days} ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  if (periodValue.recurringType === 'monthly') {
+    const dates = periodValue.recurringMonthDays.join(', ');
+    return `매월 ${dates}일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  return '날짜 미정';
 }

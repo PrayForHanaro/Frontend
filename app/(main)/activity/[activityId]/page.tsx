@@ -48,14 +48,27 @@ const MEMBERS = [
 
 export default function ActivityId() {
   const [isBannerVisible, setIsBannerVisible] = useState(false);
+  const [activityData, setActivityData] = useState<any>(null);
 
   useEffect(() => {
+    // sessionStorage에서 새로운 활동 데이터를 로드
+    const newActivityData = sessionStorage.getItem('newActivity');
+    if (newActivityData) {
+      try {
+        setActivityData(JSON.parse(newActivityData));
+      } catch (error) {
+        console.error('Failed to parse newActivity:', error);
+      }
+    }
+
     const timer = window.setTimeout(() => {
       setIsBannerVisible(true);
     }, 2000);
 
+    // cleanup 함수: 페이지를 떠날 때 sessionStorage 삭제
     return () => {
       window.clearTimeout(timer);
+      sessionStorage.removeItem('newActivity');
     };
   }, []);
 
@@ -71,7 +84,7 @@ export default function ActivityId() {
       >
         <div className="flex flex-col gap-4">
           <h1 className="font-bold font-hana-regular text-[#1D3050] text-[24px] leading-[1.35]">
-            봄꽃 구경 겸 나들이 가요^^
+            {activityData?.title || '봄꽃 구경 겸 나들이 가요^^'}
           </h1>
 
           <div className="flex items-center gap-2">
@@ -93,7 +106,9 @@ export default function ActivityId() {
                 className="shrink-0"
               />
               <span className="font-hana-regular font-medium text-[#4A4A4A] text-[16px]">
-                4월 둘째주
+                {activityData?.periodValue
+                  ? formatScheduleDisplay(activityData.periodValue)
+                  : '4월 둘째주'}
               </span>
             </div>
 
@@ -105,7 +120,7 @@ export default function ActivityId() {
                 className="shrink-0"
               />
               <span className="font-hana-regular font-medium text-[#4A4A4A] text-[16px]">
-                종로구
+                {activityData?.location || '종로구'}
               </span>
             </div>
 
@@ -117,7 +132,9 @@ export default function ActivityId() {
                 className="shrink-0"
               />
               <span className="font-hana-regular font-medium text-[#1D3050] text-[16px]">
-                5/12명
+                {activityData?.capacity
+                  ? `1/${activityData.capacity}명`
+                  : '5/12명'}
               </span>
             </div>
           </div>
@@ -125,7 +142,7 @@ export default function ActivityId() {
           <div className="overflow-hidden rounded-3xl">
             <Image
               src="/background.svg"
-              alt="봄꽃 풍경 이미지"
+              alt="활동 이미지"
               width={800}
               height={520}
               className="h-auto w-full object-cover"
@@ -134,7 +151,8 @@ export default function ActivityId() {
           </div>
 
           <p className="font-hana-regular text-[#4A4A4A] text-[18px] leading-[1.6]">
-            종로구에서 봄꽃 구경하며 함께 산책할 분을 찾습니다~
+            {activityData?.description ||
+              '종로구에서 봄꽃 구경하며 함께 산책할 분을 찾습니다~'}
           </p>
         </div>
       </section>
@@ -148,4 +166,29 @@ export default function ActivityId() {
       <Nav />
     </div>
   );
+}
+
+// periodValue를 읽기 좋은 문자열로 변환하는 헬퍼 함수
+function formatScheduleDisplay(periodValue: any): string {
+  if (!periodValue) return '날짜 미정';
+
+  if (periodValue.meetingType === 'single') {
+    return `${periodValue.singleDate} ${periodValue.singleTime}`;
+  }
+
+  if (periodValue.recurringType === 'daily') {
+    return `매일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  if (periodValue.recurringType === 'weekday') {
+    const days = periodValue.recurringWeekdays.join(', ');
+    return `매주 ${days} ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  if (periodValue.recurringType === 'monthly') {
+    const dates = periodValue.recurringMonthDays.join(', ');
+    return `매월 ${dates}일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  return '날짜 미정';
 }

@@ -113,7 +113,21 @@ export default function ActivityRegister() {
 
     const activityId = Date.now().toString();
 
-    router.push(`/activity/${activityId}`);
+    // sessionStorage에 새로운 활동 데이터 저장
+    const newActivityData = {
+      id: activityId,
+      title,
+      description,
+      periodValue,
+      capacity,
+      location,
+      images: images.map((file) => file.name), // 파일명만 저장
+    };
+
+    sessionStorage.setItem('newActivity', JSON.stringify(newActivityData));
+
+    // 활동 목록 페이지로 돌아가기
+    router.push('/activity');
   }
 
   return (
