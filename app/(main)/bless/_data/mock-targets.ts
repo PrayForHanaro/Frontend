@@ -4,7 +4,7 @@ export const MOCK_TARGETS: BlessTarget[] = [
   {
     id: '1',
     name: '승빈',
-    relation: 'CHILD',
+    relation: 'SON',
     avatar: '/bless/son.png',
     daysOfPrayer: 37,
     totalAmount: 185000,
@@ -13,8 +13,8 @@ export const MOCK_TARGETS: BlessTarget[] = [
   {
     id: '2',
     name: '정수',
-    relation: 'CHILD',
-    avatar: '/bless/daugher.png',
+    relation: 'DAUGHTER',
+    avatar: '/bless/daughter.png',
     daysOfPrayer: 25,
     totalAmount: 125000,
     dailyAmount: 5000,

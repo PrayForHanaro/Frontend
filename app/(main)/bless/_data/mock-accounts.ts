@@ -5,14 +5,14 @@ export const MOCK_ACCOUNTS: RegisteredAccount[] = [
     id: 'acc-1',
     targetId: '1',
     targetName: '승빈',
-    targetRelation: 'CHILD',
+    targetRelation: 'SON',
     accountNumber: '110-XXX-XXXXXX',
   },
   {
     id: 'acc-2',
     targetId: '2',
     targetName: '정수',
-    targetRelation: 'CHILD',
+    targetRelation: 'DAUGHTER',
     accountNumber: '110-XXX-XXXXXX',
   },
   {
