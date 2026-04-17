@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
 import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
 import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
@@ -10,7 +10,8 @@ import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
 import LongButton from '@/components/ui/cmm/LongBtn';
 import Nav from '@/components/ui/cmm/Nav';
-import { ACTIVITY_LIST, type BoardTab } from '@/constants/activity';
+import type { ActivityItem, BoardTab } from '@/constants/activity';
+import { getActivities } from '@/lib/activity-api';
 
 /**
  * @page: 소모임 - 활동 목록 페이지
@@ -24,14 +25,44 @@ export default function Activity() {
 
   const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [isToastVisible, setIsToastVisible] = useState(false);
+
+  useEffect(() => {
+    async function loadActivities() {
+      try {
+        const nextActivities = await getActivities();
+        setActivities(nextActivities as ActivityItem[]);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadActivities();
+
+    const joinToastValue = sessionStorage.getItem('activityJoinToast');
+
+    if (joinToastValue === 'true') {
+      setIsToastVisible(true);
+      sessionStorage.removeItem('activityJoinToast');
+
+      const timer = window.setTimeout(() => {
+        setIsToastVisible(false);
+      }, 2500);
+
+      return () => {
+        window.clearTimeout(timer);
+      };
+    }
+  }, []);
 
   const filteredActivities = useMemo(() => {
     const trimmedKeyword = searchKeyword.trim().toLowerCase();
 
     const tabFilteredActivities =
       selectedTab === '전체'
-        ? ACTIVITY_LIST
-        : ACTIVITY_LIST.filter((activity) => activity.category === selectedTab);
+        ? activities
+        : activities.filter((activity) => activity.category === selectedTab);
 
     if (!trimmedKeyword) {
       return tabFilteredActivities;
@@ -45,7 +76,7 @@ export default function Activity() {
         activity.category.toLowerCase().includes(trimmedKeyword)
       );
     });
-  }, [searchKeyword, selectedTab]);
+  }, [activities, searchKeyword, selectedTab]);
 
   function handleMoveRegisterPage() {
     router.push('/activity/register');
@@ -71,7 +102,9 @@ export default function Activity() {
             currentCount={activity.currentCount}
             maxCount={activity.maxCount}
             point={activity.point}
-            isApplied={false}
+            isApplied={activity.isApplied}
+            isOwner={activity.isOwner}
+            status={activity.status}
           />
         ))}
       </div>
@@ -80,7 +113,7 @@ export default function Activity() {
 
       <Calendar />
       <Nav />
-      <ActivityJoinToast />
+      <ActivityJoinToast isVisible={isToastVisible} />
     </div>
   );
 }
