@@ -8,6 +8,7 @@ type Props = {
   align?: 'center' | 'left';
   descriptionType?: 'default' | 'amount';
   tag?: string;
+  showCheckbox?: boolean;
 };
 
 export default function WhiteCard({
@@ -20,6 +21,7 @@ export default function WhiteCard({
   align = 'center',
   descriptionType = 'default',
   tag,
+  showCheckbox = false,
 }: Props) {
   const alignClasses =
     align === 'left'
@@ -32,25 +34,52 @@ export default function WhiteCard({
       : 'font-hana-light';
   return (
     <div
-      className={`items-between flex h-20 w-full max-w-md justify-between ${isSelected ? `border-4 border-hana-checkin-green-b bg-white` : `bg-white`} rounded-2xl p-5 text-center shadow-sm`}
+      className={`flex h-20 w-full max-w-md items-center justify-between rounded-2xl p-5 shadow-sm ${
+        isSelected
+          ? 'border-4 border-hana-checkin-green-b bg-white'
+          : 'bg-white'
+      }`}
     >
-      <button
-        type="button"
-        onClick={setIsSelected ? () => setIsSelected(!isSelected) : undefined}
-        disabled={!setIsSelected}
-        className={
-          'h-full flex-1 font-semibold text-gray-800 text-lg' +
-          (setIsSelected ? '' : 'cursor-not-allowed opacity-70')
-        }
-      >
-        <div className={`flex h-full w-full flex-col gap-2 ${alignClasses}`}>
-          <div>{contents}</div>
-
-          {description && (
-            <div className={`${descriptionClasses} text-sm`}>{description}</div>
-          )}
+      {showCheckbox ? (
+        <div className="flex flex-1 items-center gap-3">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => setIsSelected?.(!isSelected)}
+            className="h-5 w-5 cursor-pointer accent-hana-light-mint"
+          />
+          <div
+            className={`flex flex-col gap-2 ${align === 'left' ? 'text-left' : 'text-center'}`}
+          >
+            <div className="font-semibold text-gray-800 text-lg">
+              {contents}
+            </div>
+            {description && (
+              <div className={`${descriptionClasses} text-sm`}>
+                {description}
+              </div>
+            )}
+          </div>
         </div>
-      </button>
+      ) : (
+        <button
+          type="button"
+          onClick={setIsSelected ? () => setIsSelected(!isSelected) : undefined}
+          disabled={!setIsSelected}
+          className={`flex-1 font-semibold text-gray-800 text-lg ${
+            setIsSelected ? '' : 'cursor-not-allowed opacity-70'
+          }`}
+        >
+          <div className={`flex h-full w-full flex-col gap-2 ${alignClasses}`}>
+            <div>{contents}</div>
+            {description && (
+              <div className={`${descriptionClasses} text-sm`}>
+                {description}
+              </div>
+            )}
+          </div>
+        </button>
+      )}
 
       {tag && <div className="text-gray-400 text-xs">{tag}</div>}
       {badgeContent && badgeType === 'badge' && (

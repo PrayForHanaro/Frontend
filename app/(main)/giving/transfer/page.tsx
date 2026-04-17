@@ -34,7 +34,7 @@ const pensions: Pension[] = [
   {
     pensionId: 1,
     userId: 123,
-    accountNumber: '11111-1111111-1111',
+    accountNumber: '1214-xxxxx-5162',
     pensionType: '퇴직연금',
     isHanaBank: true,
     totalContribution: 1000000.0,
@@ -47,7 +47,20 @@ const pensions: Pension[] = [
   {
     pensionId: 2,
     userId: 124,
-    accountNumber: '11111-1111111-1111',
+    accountNumber: '1224-xxxxx-5161',
+    pensionType: '국민연금',
+    isHanaBank: false,
+    totalContribution: 1500000.0,
+    totalWithdrawal: 700000.0,
+    profit: 80000.0,
+    returnRate: 6.0,
+    institutionName: '국민연금공단',
+    productName: '국민연금',
+  },
+  {
+    pensionId: 3,
+    userId: 124,
+    accountNumber: '1224-xxxxx-5161',
     pensionType: '국민연금',
     isHanaBank: false,
     totalContribution: 1500000.0,
@@ -64,32 +77,11 @@ export default function Transfer() {
 
   const router = useRouter();
 
-  const addPension = (pensionId: number) => {
-    setSelectedPensions((prev) => {
-      if (prev === null) {
-        return [pensionId];
-      } else {
-        return [...prev, pensionId];
-      }
-    });
-  };
-
-  const transferPension = () => {
-    router.push('/giving');
-  };
-
-  const removePension = (pensionId: number) => {
-    setSelectedPensions((prev) => {
-      if (prev === null) return null;
-      return prev.filter((id) => id !== pensionId);
-    });
-  };
-
-  const togglePension = (pensionId: number) => {
-    if (selectedPensions?.includes(pensionId)) {
-      removePension(pensionId);
+  const handleSelectPension = (pensionId: number, selected: boolean) => {
+    if (selected) {
+      setSelectedPensions((prev) => [...prev, pensionId]);
     } else {
-      addPension(pensionId);
+      setSelectedPensions((prev) => prev.filter((id) => id !== pensionId));
     }
   };
 
@@ -159,7 +151,10 @@ export default function Transfer() {
               contents={`${p.institutionName} - ${p.productName}`}
               description={`${p.accountNumber}`}
               isSelected={selectedPensions?.includes(p.pensionId) || false}
-              setIsSelected={() => togglePension(p.pensionId)}
+              setIsSelected={(selected) =>
+                handleSelectPension(p.pensionId, selected)
+              }
+              showCheckbox={true}
             />
           </div>
         ))}
@@ -177,7 +172,7 @@ export default function Transfer() {
           <Button
             type="button"
             className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
-            onClick={transferPension}
+            onClick={() => router.push('/giving')}
           >
             선택완료
           </Button>
