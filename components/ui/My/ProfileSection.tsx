@@ -1,5 +1,6 @@
 'use client';
 
+import { Camera } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 export default function ProfileSection() {
@@ -58,15 +59,22 @@ export default function ProfileSection() {
   return (
     <div className="flex flex-col items-center gap-2">
       {/* 👇 클릭 가능 */}
-      <div
-        onClick={handleClick}
-        className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gray-200"
-      >
-        <img
-          src={image || '/profile-default.png'}
-          alt="profile"
-          className="h-full w-full object-cover"
-        />
+      <div className="relative h-20 w-20">
+        <div
+          onClick={handleClick}
+          className="h-full w-full cursor-pointer overflow-hidden rounded-full bg-gray-200 ring-[#1ea698] ring-[3px] ring-offset-2"
+        >
+          <img
+            src={image || '/profile-default.png'}
+            alt="profile"
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        {/* 📸 아이콘 오버레이 */}
+        <div className="absolute right-0 bottom-0 flex h-6 w-6 items-center justify-center rounded-full bg-hana-main">
+          <Camera size={14} className="text-white" />
+        </div>
       </div>
 
       {/* 숨겨진 input */}
@@ -78,8 +86,8 @@ export default function ProfileSection() {
         className="hidden"
       />
 
-      <span className="font-hana-bold text-lg">김성도</span>
-      <span className="text-gray-400 text-sm">○○교회 성도</span>
+      <span className="font-hana-bold text-lg">김하나</span>
+      <span className="text-gray-400 text-sm">하나 교회 성도</span>
     </div>
   );
 }

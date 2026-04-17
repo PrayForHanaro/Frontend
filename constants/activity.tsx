@@ -36,8 +36,8 @@ export const ACTIVITY_LIST: ActivityItem[] = [
     maxCount: 10,
     point: 50,
     isApplied: true,
-    isOwner: true,
-    status: 'CLOSED',
+    isOwner: false,
+    status: 'RECRUITING',
   },
   {
     id: 2,

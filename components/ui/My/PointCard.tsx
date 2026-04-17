@@ -7,7 +7,7 @@ export default function PointCard() {
     <div className="flex flex-col gap-2">
       <div className="mx-4 rounded-2xl bg-white p-4 shadow">
         <div className="flex items-center justify-start">
-          <span className='font-bold text-hana-main text-3xl'>30,000P</span>
+          <span className="font-bold text-3xl text-hana-main">19,000P</span>
         </div>
 
         {/* 👇 버튼 가로 정렬 */}

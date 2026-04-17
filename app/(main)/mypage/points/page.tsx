@@ -24,31 +24,49 @@ export default function PointPage() {
       {
         id: 1,
         title: '정기헌금: 주일헌금',
-        amount: 500,
-        date: '2026.04.06',
+        amount: 200,
+        date: '2026.04.19',
       },
       {
         id: 2,
         title: '헌금: 십일조',
-        amount: 50000,
-        date: '2026.04.01',
+        amount: 500,
+        date: '2026.04.15',
       },
       {
         id: 3,
-        title: '적금 자동이체: 결혼 적금 - 승빈(아들)',
-        amount: 50000,
-        date: '2026.03.28',
+        title: '승빈(아들) - 결혼 적금 자동이체',
+        amount: 300,
+        date: '2026.04.13',
       },
       {
         id: 4,
-        title: '적금 가입: 수능적금 - 정수(딸)',
-        amount: 50000,
+        title: '정기헌금: 주일헌금',
+        amount: 200,
+        date: '2026.04.12',
+      },
+      {
+        id: 5,
+        title: '헌금: 부활절',
+        amount: 100,
+        date: '2026.04.05',
+      },
+      {
+        id: 6,
+        title: '헌금: 부활절',
+        amount: -1000,
+        date: '2026.04.05',
+      },
+      {
+        id: 8,
+        title: '정수(딸) - 대학 적금 가입',
+        amount: 1000,
         date: '2026.03.21',
       },
     ];
 
     setPoints(mockData);
-    setTotalPoint(3255000);
+    setTotalPoint(19000);
   }, []);
 
   return (
@@ -61,7 +79,7 @@ export default function PointPage() {
       <div className="mt-8 flex flex-col gap-3 px-4">
         {/* 포인트 내역 텍스트 */}
         <span className="text-gray-500 text-sm">
-          포인트 내역 총 {points.length}건
+          포인트 내역 총 {57}건
         </span>
 
         {/* 리스트 */}
