@@ -1,4 +1,5 @@
 'use client';
+
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -66,11 +67,11 @@ export default function Transfer() {
 
   const addPension = (pensionId: number) => {
     setSelectedPensions((prev) => {
-      if (prev === null) {
-        return [pensionId];
-      } else {
-        return [...prev, pensionId];
+      if (prev.includes(pensionId)) {
+        return prev;
       }
+
+      return [...prev, pensionId];
     });
   };
 
@@ -80,13 +81,12 @@ export default function Transfer() {
 
   const removePension = (pensionId: number) => {
     setSelectedPensions((prev) => {
-      if (prev === null) return null;
       return prev.filter((id) => id !== pensionId);
     });
   };
 
   const togglePension = (pensionId: number) => {
-    if (selectedPensions?.includes(pensionId)) {
+    if (selectedPensions.includes(pensionId)) {
       removePension(pensionId);
     } else {
       addPension(pensionId);
@@ -104,9 +104,9 @@ export default function Transfer() {
   const nonHanaBankPensionList = pensions.filter((p) => !p.isHanaBank);
   const hanaBankPensionList = pensions.filter((p) => p.isHanaBank);
 
-  const isAllNonHanaBankSelected =
-    selectedPensions !== null &&
-    nonHanaBankPensionList.every((p) => selectedPensions.includes(p.pensionId));
+  const isAllNonHanaBankSelected = nonHanaBankPensionList.every((p) =>
+    selectedPensions.includes(p.pensionId),
+  );
 
   return (
     <div className="relative min-h-full w-full">
@@ -158,7 +158,7 @@ export default function Transfer() {
               align="left"
               contents={`${p.institutionName} - ${p.productName}`}
               description={`${p.accountNumber}`}
-              isSelected={selectedPensions?.includes(p.pensionId) || false}
+              isSelected={selectedPensions.includes(p.pensionId)}
               setIsSelected={() => togglePension(p.pensionId)}
             />
           </div>

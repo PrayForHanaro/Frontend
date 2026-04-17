@@ -1,11 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
+import Link from 'next/link';
 
 type MenuItemProps = {
   label: string;
   subLabel?: string;
-  href: string;
+  href?: Route;
   isDanger?: boolean;
 };
 
@@ -15,13 +16,8 @@ export default function MenuItem({
   href,
   isDanger = false,
 }: MenuItemProps) {
-  const router = useRouter();
-
-  return (
-    <div
-      onClick={() => router.push(href)}
-      className="flex cursor-pointer items-center justify-between rounded-xl bg-white px-4 py-4 hover:bg-gray-50"
-    >
+  const content = (
+    <>
       <div className="flex flex-col">
         <span
           className={`font-hana-main text-[16px] ${
@@ -34,7 +30,30 @@ export default function MenuItem({
         {subLabel && <span className="text-gray-400 text-sm">{subLabel}</span>}
       </div>
 
-      <span className="text-gray-400">{'>'}</span>
-    </div>
+      <span className="text-gray-400" aria-hidden="true">
+        {'>'}
+      </span>
+    </>
+  );
+
+  if (!href) {
+    return (
+      <div
+        aria-disabled="true"
+        className="flex items-center justify-between rounded-xl bg-white px-4 py-4 opacity-60"
+      >
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={subLabel ? `${label} ${subLabel}` : label}
+      className="flex items-center justify-between rounded-xl bg-white px-4 py-4 hover:bg-gray-50"
+    >
+      {content}
+    </Link>
   );
 }
