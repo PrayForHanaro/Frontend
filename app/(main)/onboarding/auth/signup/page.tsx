@@ -16,111 +16,133 @@ import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
 
 export default function Signup() {
   const router = useRouter();
-
+  const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const routeToIntro = () => {
-    router.push('/onboarding/intro');
-  };
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-  const handleReset = () => {
+    try {
+      setIsSubmitting(true);
+      setErrorMessage('');
+
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          name,
+          birthDate: birthDate.replaceAll('.', ''),
+          phoneNumber: phoneNumber.replaceAll('-', ''),
+          password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setErrorMessage(result.message || '회원가입에 실패했습니다.');
+        return;
+      }
+
+      router.push('/onboarding/intro');
+    } catch (_error) {
+      setErrorMessage('회원가입 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function handleReset() {
+    setName('');
     setBirthDate('');
     setPhoneNumber('');
-  };
+    setPassword('');
+    setErrorMessage('');
+  }
+
   return (
-    <div className="relative min-h-full">
-      <Header content="회원가입" />
-      <form className="min-h-full">
-        <h1 className="pt-15 text-center font-hana-medium text-3xl text-hana-light-mint">
-          회원가입
-        </h1>
-        <FieldGroup className="flex flex-col items-center pt-10">
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <Header title="회원가입" />
+      <form onSubmit={handleSubmit} className="px-5 pt-6">
+        <FieldGroup>
           <Field>
-            <FieldLabel
-              className="px-1 pb-3 text-hana-gray-600 text-xl"
-              htmlFor="fieldgroup-name"
-            >
-              이름
-            </FieldLabel>
+            <FieldLabel>이름</FieldLabel>
             <Input
-              id="fieldgroup-name"
-              placeholder="성함을 적어주세요."
+              aria-label="이름"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="이름을 입력해주세요"
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
           </Field>
+
           <Field>
-            <FieldLabel
-              className="px-1 pb-3 text-hana-gray-600 text-xl"
-              htmlFor="fieldgroup-birth"
-            >
-              생년월일
-            </FieldLabel>
+            <FieldLabel>생년월일</FieldLabel>
             <Input
-              id="fieldgroup-birth"
-              name="birthDate"
-              type="text"
-              inputMode="numeric"
-              autoComplete="bday"
-              placeholder="19xx.xx.xx"
+              aria-label="생년월일"
               value={birthDate}
-              onChange={(e) => setBirthDate(formatBirthDate(e.target.value))}
+              onChange={(event) =>
+                setBirthDate(formatBirthDate(event.target.value))
+              }
               maxLength={10}
+              placeholder="YYYY.MM.DD"
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
           </Field>
+
           <Field>
-            <FieldLabel
-              className="px-1 pb-3 text-hana-gray-600 text-xl"
-              htmlFor="fieldgroup-phone"
-            >
-              전화번호
-            </FieldLabel>
+            <FieldLabel>전화번호</FieldLabel>
             <Input
-              id="fieldgroup-phone"
-              name="phoneNumber"
-              type="text"
-              inputMode="numeric"
+              aria-label="전화번호"
               value={phoneNumber}
-              onChange={(e) =>
-                setPhoneNumber(formatPhoneNumber(e.target.value))
+              onChange={(event) =>
+                setPhoneNumber(formatPhoneNumber(event.target.value))
               }
+              maxLength={13}
               placeholder="010-0000-0000"
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
           </Field>
+
           <Field>
-            <FieldLabel
-              className="px-1 pb-3 text-hana-gray-600 text-xl"
-              htmlFor="fieldgroup-password"
-            >
-              비밀번호
-            </FieldLabel>
+            <FieldLabel>비밀번호</FieldLabel>
             <Input
-              id="fieldgroup-password"
+              aria-label="비밀번호"
               type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="비밀번호를 입력해주세요"
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
           </Field>
         </FieldGroup>
+
+        {errorMessage ? (
+          <p className="mt-4 text-sm text-red-500">{errorMessage}</p>
+        ) : null}
+
+        <div className="mt-8 flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={handleReset}
+            disabled={isSubmitting}
+          >
+            초기화
+          </Button>
+          <Button type="submit" className="flex-1" disabled={isSubmitting}>
+            {isSubmitting ? '처리중...' : '회원가입하기'}
+          </Button>
+        </div>
       </form>
-      <Field className="absolute bottom-1 items-center pt-10">
-        <Button
-          type="reset"
-          variant="outline"
-          className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
-          onClick={handleReset}
-        >
-          초기화
-        </Button>
-        <Button
-          type="submit"
-          className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
-          onClick={routeToIntro}
-        >
-          회원가입하기
-        </Button>
-      </Field>
     </div>
   );
 }

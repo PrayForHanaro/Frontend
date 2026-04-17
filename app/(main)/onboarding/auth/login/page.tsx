@@ -14,75 +14,110 @@ import { formatPhoneNumber } from '@/lib/formatters';
  * @date: 2026-04-13
  */
 
+/**
+ * @page: 로그인 페이지
+ * @description: 로그인 호출 로직 추가
+ * @author: typeYu
+ * @date: 2026-04-17
+ */
+
 export default function Login() {
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const routeToHome = () => {
-    router.push('/home');
-  };
-  const handleReset = () => {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    try {
+      setIsSubmitting(true);
+      setErrorMessage('');
+
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          phoneNumber: phoneNumber.replaceAll('-', ''),
+          password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setErrorMessage(result.message || '로그인에 실패했습니다.');
+        return;
+      }
+
+      router.push('/home');
+    } catch (_error) {
+      setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function handleReset() {
     setPhoneNumber('');
-  };
+    setPassword('');
+    setErrorMessage('');
+  }
+
   return (
-    <div className="relative min-h-full">
-      <Header content="로그인하기" />
-      <form className="min-h-full">
-        <h1 className="pt-24 text-center font-hana-medium text-3xl text-hana-light-mint">
-          로그인
-        </h1>
-        <FieldGroup className="flex flex-col items-center pt-24">
+    <div className="min-h-screen bg-[#F7F8FA]">
+      <Header title="로그인" />
+      <form onSubmit={handleSubmit} className="px-5 pt-6">
+        <FieldGroup>
           <Field>
-            <FieldLabel
-              className="px-1 pb-3 text-hana-gray-600 text-xl"
-              htmlFor="fieldgroup-phone"
-            >
-              전화번호
-            </FieldLabel>
+            <FieldLabel>전화번호</FieldLabel>
             <Input
-              id="fieldgroup-phone"
-              name="phoneNumber"
-              type="text"
-              inputMode="numeric"
+              aria-label="전화번호"
               value={phoneNumber}
-              onChange={(e) =>
-                setPhoneNumber(formatPhoneNumber(e.target.value))
+              onChange={(event) =>
+                setPhoneNumber(formatPhoneNumber(event.target.value))
               }
               placeholder="010-0000-0000"
+              maxLength={13}
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
           </Field>
-          <Field className="pt-10">
-            <FieldLabel
-              className="px-1 pb-3 text-hana-gray-600 text-xl"
-              htmlFor="fieldgroup-password"
-            >
-              비밀번호
-            </FieldLabel>
+
+          <Field>
+            <FieldLabel>비밀번호</FieldLabel>
             <Input
-              id="fieldgroup-password"
+              aria-label="비밀번호"
               type="password"
-              className="bg-white p-5 pt-7 pb-7 text-2xl"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="비밀번호를 입력해주세요"
+              className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
           </Field>
         </FieldGroup>
-        <Field className="absolute bottom-1 items-center pt-10">
+
+        {errorMessage ? (
+          <p className="mt-4 text-sm text-red-500">{errorMessage}</p>
+        ) : null}
+
+        <div className="mt-8 flex gap-3">
           <Button
-            type="reset"
+            type="button"
             variant="outline"
-            className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
+            className="flex-1"
             onClick={handleReset}
+            disabled={isSubmitting}
           >
             초기화
           </Button>
-          <Button
-            type="button"
-            className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
-            onClick={routeToHome}
-          >
-            시작하기
+          <Button type="submit" className="flex-1" disabled={isSubmitting}>
+            {isSubmitting ? '처리중...' : '시작하기'}
           </Button>
-        </Field>
+        </div>
       </form>
     </div>
   );

@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * @page: 내 정보 조회 route
@@ -7,10 +7,13 @@ import { NextResponse } from 'next/server';
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const response = await fetch(`${GATEWAY_URL}/apis/user/users/me/home`, {
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: request.headers.get('cookie') ?? '',
+      },
       cache: 'no-store',
     });
 
@@ -27,7 +30,6 @@ export async function GET() {
       );
     }
 
-    // 명세 필드 반영: name, totalPoint, orgId
     return NextResponse.json({
       success: true,
       message: 'success',
@@ -36,12 +38,16 @@ export async function GET() {
         name: result.data.name,
         totalPoint: result.data.totalPoint,
         orgId: result.data.orgId,
+        role: result.data.role ?? request.cookies.get('role')?.value ?? 'USER',
       },
     });
   } catch (_error) {
-    console.error('API Error (Me)');
     return NextResponse.json(
-      { code: 'G001', message: '서버 내부 오류가 발생했습니다.', data: null },
+      {
+        code: 'G001',
+        message: '서버 내부 오류가 발생했습니다.',
+        data: null,
+      },
       { status: 500 },
     );
   }

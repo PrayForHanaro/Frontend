@@ -30,10 +30,13 @@ interface GivingOnceRequest {
 export async function GET() {
   try {
     // 1. [user-service] 내 송금용 정보 가져오기
-    const userRes = await fetch(`${GATEWAY_URL}/apis/user/users/me/givingOnce`, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
-    });
+    const userRes = await fetch(
+      `${GATEWAY_URL}/apis/user/users/me/givingOnce`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      },
+    );
 
     const userResult = await userRes.json();
 
@@ -118,18 +121,21 @@ export async function POST(request: Request) {
     const { orgId, accountId, donationRate } = userMe.data as GivingOnceUser;
 
     // 2. [offering-service] 헌금 내역 저장
-    const offeringRes = await fetch(`${GATEWAY_URL}/apis/offering/api/offerings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orgId,
-        accountId,
-        offeringType: body.offeringType,
-        amount: body.amount,
-        offererName: body.offererName,
-        prayerContent: body.prayerContent,
-      }),
-    });
+    const offeringRes = await fetch(
+      `${GATEWAY_URL}/apis/offering/api/offerings`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orgId,
+          accountId,
+          offeringType: body.offeringType,
+          amount: body.amount,
+          offererName: body.offererName,
+          prayerContent: body.prayerContent,
+        }),
+      },
+    );
 
     const offeringResult = await offeringRes.json();
 

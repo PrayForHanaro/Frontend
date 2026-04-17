@@ -1,3 +1,12 @@
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
+
+/**
+ * @page: 소모임 api
+ * @descriptition: 소모임 api입니다.
+ * @author: typeYu
+ * @date: 2026-04-17
+ */
+
 export type ActivityItem = {
   id: number;
   category: '봉사모집' | '동행찾기' | '교회행사';
@@ -61,7 +70,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export async function getActivities() {
-  const response = await fetch('/api/activity', {
+  const response = await fetchWithAuth('/api/activity', {
     method: 'GET',
     cache: 'no-store',
   });
@@ -70,7 +79,7 @@ export async function getActivities() {
 }
 
 export async function getActivity(activityId: string) {
-  const response = await fetch(`/api/activity/${activityId}`, {
+  const response = await fetchWithAuth(`/api/activity/${activityId}`, {
     method: 'GET',
     cache: 'no-store',
   });
@@ -79,7 +88,7 @@ export async function getActivity(activityId: string) {
 }
 
 export async function createActivity(payload: ActivityCreatePayload) {
-  const response = await fetch('/api/activity', {
+  const response = await fetchWithAuth('/api/activity', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -91,7 +100,7 @@ export async function createActivity(payload: ActivityCreatePayload) {
 }
 
 export async function applyActivity(activityId: string) {
-  const response = await fetch(`/api/activity/${activityId}/apply`, {
+  const response = await fetchWithAuth(`/api/activity/${activityId}/apply`, {
     method: 'POST',
   });
 
