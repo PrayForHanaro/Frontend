@@ -50,7 +50,7 @@ export default function Activity() {
 
         // 새로운 활동 객체 생성 (활동 목록 형식에 맞춤)
         const formattedActivity: ActivityItem = {
-          id: parseInt(newActivity.id),
+          id: parseInt(newActivity.id, 10),
           category: '동행찾기', // 기본값으로 동행찾기로 설정
           title: newActivity.title,
           location: newActivity.location,
