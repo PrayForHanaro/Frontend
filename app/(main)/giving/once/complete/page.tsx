@@ -28,6 +28,11 @@ export default function GivingOnceComplete() {
         const numAmount = savedAmount ? Number(savedAmount) : 0;
         setAmount(numAmount);
 
+        const savedEarnedPoint = sessionStorage.getItem('latest_earned_point');
+        if (savedEarnedPoint) {
+          setPoint(Number(savedEarnedPoint));
+        }
+
         // [BFF] 유저 정보 조회
         const res = await fetch('/api/me');
         let pointRate = 0.01;
@@ -35,7 +40,6 @@ export default function GivingOnceComplete() {
 
         if (res.ok) {
           const result = await res.json();
-          // BFF 응답 구조에 따라 데이터 접근 (result.data)
           if (result.success && result.data) {
             pointRate = result.data.pointRate || 0.01;
             name = result.data.name || '하나';
@@ -43,7 +47,9 @@ export default function GivingOnceComplete() {
         }
 
         setUserName(name);
-        setPoint(Math.floor(numAmount * pointRate));
+        if (!savedEarnedPoint) {
+          setPoint(Math.floor(numAmount * pointRate));
+        }
       } catch (e) {
         console.error('데이터 로딩 오류:', e);
       } finally {
@@ -56,6 +62,7 @@ export default function GivingOnceComplete() {
 
   const handleFinish = () => {
     sessionStorage.removeItem('latest_giving_amount');
+    sessionStorage.removeItem('latest_earned_point');
     sessionStorage.removeItem('giving_message');
     router.push('/home');
   };

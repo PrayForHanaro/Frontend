@@ -21,6 +21,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import Nav from '@/components/ui/cmm/Nav';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,12 +30,21 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={`${HanaLight.variable} ${HanaRegular.variable} ${HanaMedium.variable} ${HanaBold.variable} ${HanaHeavy.variable} ${HanaCM.variable}`}
     >
       <body className="flex h-dvh w-full items-center justify-center overflow-hidden bg-gray-100 antialiased">
-        <div className="scrollbar-hide h-full max-h-[852px] w-full max-w-[393px] overflow-y-auto rounded-4xl bg-hana-bless-bg p-3 shadow-md">
-          {children}
+        {/* 모바일 뷰포트 시뮬레이션 */}
+        <div className="relative h-full max-h-[852px] w-full max-w-[393px] overflow-hidden rounded-[40px] bg-hana-bless-bg shadow-2xl shadow-black/20">
+          {/* 스크롤 가능한 본문 영역 */}
+          <div className="scrollbar-hide h-full overflow-y-auto px-4 pt-4 pb-24">
+            {children}
+          </div>
+
+          {/* 하단 고정 네비게이션 */}
+          <div className="absolute bottom-0 left-0 z-50 w-full">
+            <Nav />
+          </div>
         </div>
       </body>
     </html>
