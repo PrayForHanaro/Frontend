@@ -1,9 +1,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { formatPhoneNumber } from '@/lib/formatters';
 
 /**
  * @page: 로그인 페이지 입니다.
@@ -14,8 +16,13 @@ import { Input } from '@/components/ui/input';
 
 export default function Login() {
   const router = useRouter();
+  const [phoneNumber, setPhoneNumber] = useState('');
+
   const routeToHome = () => {
     router.push('/home');
+  };
+  const handleReset = () => {
+    setPhoneNumber('');
   };
   return (
     <div className="relative min-h-full">
@@ -34,6 +41,13 @@ export default function Login() {
             </FieldLabel>
             <Input
               id="fieldgroup-phone"
+              name="phoneNumber"
+              type="text"
+              inputMode="numeric"
+              value={phoneNumber}
+              onChange={(e) =>
+                setPhoneNumber(formatPhoneNumber(e.target.value))
+              }
               placeholder="010-0000-0000"
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
             />
@@ -57,6 +71,7 @@ export default function Login() {
             type="reset"
             variant="outline"
             className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
+            onClick={handleReset}
           >
             초기화
           </Button>

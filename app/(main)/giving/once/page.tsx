@@ -9,8 +9,8 @@ import TypeButton from '@/components/ui/giving/TypeButton';
 
 /**
  * @page: 일회성 헌금 내용 작성
- * @description: 일회성 헌금 내용 작성 페이지입니다. GET 호출 실패시 목업데이터를 넣습니다.
- * @author: 작성자명
+ * @description: 일회성 헌금 내용 작성 페이지입니다.
+ * @author: 이승빈
  * @date: 2026-04-14
  */
 
@@ -27,10 +27,13 @@ type GivingData = {
   maxPoint: number;
   bankAccount: string;
   churchName: string;
+  orgId: number;
+  accountId: number;
+  donationRate: number;
 };
 
 export default function GivingOnce() {
-  const [selectedType, setSelectedType] = useState<string>('십일조');
+  const [selectedType, setSelectedType] = useState<string>('감사헌금');
   const [givingPerson, setGivingPerson] = useState<'기명' | '무기명'>('기명');
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -41,6 +44,9 @@ export default function GivingOnce() {
     maxPoint: 0,
     bankAccount: '정보를 불러오는 중...',
     churchName: '정보를 불러오는 중...',
+    orgId: 0,
+    accountId: 0,
+    donationRate: 1,
   });
 
   const [errors, setErrors] = useState({
@@ -51,43 +57,40 @@ export default function GivingOnce() {
   const nameRef = useRef<HTMLInputElement>(null);
   const amountRef = useRef<HTMLInputElement>(null);
 
-  const route = useRouter();
+  const router = useRouter();
+
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await fetch('/api/giving/once');
-        if (res.ok) {
-          const json = await res.json();
-          if (json.code === '200' && json.data) {
-            setData(json.data);
-            setName(json.data.name);
-          } else {
-            throw new Error(json.message || '정보를 불러오지 못했습니다.');
-          }
-        } else {
-          throw new Error('네트워크 응답이 올바르지 않습니다.');
+        const result = await res.json();
+
+        if (res.ok && result.success && result.data) {
+          const data = result.data;
+          setData({
+            name: data.name,
+            maxPoint: data.maxPoint,
+            bankAccount: data.bankAccount,
+            churchName: data.churchName,
+            orgId: data.orgId,
+            accountId: data.accountId,
+            donationRate: data.donationRate || 1,
+          });
+          setName(data.name);
         }
-      } catch (e) {
-        console.error('Failed to fetch giving data, using mock data', e);
-        // 목업 데이터 설정
-        const mockData = {
-          name: '하나',
-          maxPoint: 5000,
-          bankAccount: '하나은행 123-456789-01234',
-          churchName: '한마음 교회',
-        };
-        setData(mockData);
-        setName(mockData.name);
+      } catch (e: unknown) {
+        console.error('데이터 로딩 오류:', e);
       }
     }
     fetchData();
 
-    // 작성된 기도제목 불러오기
     const savedPrayer = sessionStorage.getItem('giving_message');
     if (savedPrayer) {
       setPrayerTopic(savedPrayer);
     }
   }, []);
+
+  const estimatedEarnedPoint = Math.floor(Number(amount) * data.donationRate);
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -113,20 +116,19 @@ export default function GivingOnce() {
     }
 
     const payload = {
-      type: selectedType,
-      personType: givingPerson,
-      name: givingPerson === '기명' ? name : null,
+      orgId: data.orgId,
+      accountId: data.accountId,
+      offeringType: selectedType,
       amount: Number(amount),
-      point: Number(point),
-      prayerTopic: prayerTopic,
+      point: Number(point), // 포인트 정보 포함
+      offererName: givingPerson === '기명' ? name : null,
+      prayerContent: prayerTopic,
     };
 
     try {
       const res = await fetch('/api/giving/once', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
@@ -134,16 +136,12 @@ export default function GivingOnce() {
 
       if (res.ok && result.success) {
         sessionStorage.setItem('latest_giving_amount', amount);
-        route.push('/giving/once/complete');
+        router.push('/giving/once/complete');
       } else {
-        // !!! 백엔드 연결 전 플로우 테스트를 위함. 연결 후 삭제 요망.
-        sessionStorage.setItem('latest_giving_amount', amount);
-        route.push('/giving/once/complete');
-        alert(result.message || '헌금 접수에 실패했습니다. 다시 시도해주세요.');
+        alert(result.message || '헌금 접수에 실패했습니다.');
       }
     } catch (e) {
       console.error('Failed to submit giving', e);
-      alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
     }
   };
 
@@ -211,10 +209,19 @@ export default function GivingOnce() {
                 : 'border-gray-200 focus:border-hana-main'
             } bg-white`}
           />
+          {Number(amount) > 0 && (
+            <p className="px-1 font-hana-medium text-hana-mint text-sm">
+              이번 헌금으로{' '}
+              <span className="font-hana-bold">
+                {estimatedEarnedPoint.toLocaleString()}P
+              </span>
+              가 적립됩니다.
+            </p>
+          )}
         </section>
 
         <section className="flex flex-col gap-3">
-          <p className="font-hana-bold text-lg">포인트</p>
+          <p className="font-hana-bold text-lg">포인트 사용</p>
           <input
             type="number"
             placeholder="사용할 포인트를 입력하세요"
@@ -222,7 +229,9 @@ export default function GivingOnce() {
             onChange={handlePointChange}
             className="w-full rounded-xl border border-gray-200 bg-white p-3 outline-none transition-colors focus:border-hana-main"
           />
-          <p className="text-gray-500 text-xs">보유 포인트: {data.maxPoint}P</p>
+          <p className="px-1 text-gray-500 text-xs">
+            보유 포인트: {data.maxPoint.toLocaleString()}P
+          </p>
         </section>
 
         <div className="space-y-4 border-t pt-4 pb-5">
