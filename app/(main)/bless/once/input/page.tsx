@@ -8,7 +8,7 @@ import { getRegisteredAccounts } from '@/lib/api/bless';
 import BlessActionButton from '../../_components/bless-action-button';
 import BlessHeader from '../../_components/bless-header';
 import MessageTextarea from '../../_components/message-textarea';
-import { BLESS_ONCE_FORM_KEY } from '../../_constants';
+import { BLESS_ONCE_FORM_KEY, RELATION_LABELS } from '../../_constants';
 import type { RegisteredAccount } from '../../_types';
 
 const formatAccountNumber = (raw: string) => {
@@ -161,7 +161,7 @@ export default function BlessOnceInput() {
                   >
                     <div>
                       <p className="font-hana-medium text-gray-900 text-sm">
-                        {acc.targetName} ({acc.targetRelation})
+                        {acc.targetName} ({RELATION_LABELS[acc.targetRelation]})
                       </p>
                       <p className="font-hana-regular text-hana-gray-500 text-xs">
                         {acc.accountNumber}

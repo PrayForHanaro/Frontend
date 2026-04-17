@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import Nav from '@/components/ui/cmm/Nav';
 import BlessActionButton from '../../_components/bless-action-button';
 import BlessHeader from '../../_components/bless-header';
-import { BLESS_ONCE_FORM_KEY } from '../../_constants';
+import { BLESS_ONCE_FORM_KEY, RELATION_LABELS } from '../../_constants';
 import type { OnceBlessFormData } from '../../_types';
 
 const MESSAGE_PREVIEW_LIMIT = 40;
@@ -48,9 +48,10 @@ export default function BlessOnceComplete() {
     router.push('/home');
   };
 
-  const recipientDisplay = formData.recipientName
-    ? `${formData.recipientName} (${formData.recipientRelation})`
-    : formData.accountNumber;
+  const recipientDisplay =
+    formData.recipientName && formData.recipientRelation
+      ? `${formData.recipientName} (${RELATION_LABELS[formData.recipientRelation]})`
+      : formData.accountNumber;
 
   const previewMessage =
     formData.message.length > MESSAGE_PREVIEW_LIMIT

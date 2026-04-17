@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { RELATION_LABELS } from '../_constants';
 import type { BlessTarget } from '../_types';
 
 type TargetListItemProps = {
@@ -23,7 +24,7 @@ export default function TargetListItem({ target }: TargetListItemProps) {
             {target.name} 성도님
           </h3>
           <span className="font-hana-medium text-hana-mint text-sm">
-            ({target.relation})
+            ({RELATION_LABELS[target.relation]})
           </span>
         </div>
       </div>

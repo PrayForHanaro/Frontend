@@ -1,7 +1,9 @@
+import type { GiftReceiverType } from '../_constants';
+
 export type BlessTarget = {
   id: string;
   name: string;
-  relation: string;
+  relation: GiftReceiverType;
   avatar: string;
   daysOfPrayer: number;
   totalAmount: number;
@@ -26,7 +28,7 @@ export type RegisteredAccount = {
   id: string;
   targetId: string;
   targetName: string;
-  targetRelation: string;
+  targetRelation: GiftReceiverType;
   accountNumber: string;
 };
 
@@ -35,5 +37,5 @@ export type OnceBlessFormData = {
   amount: number;
   accountNumber: string;
   recipientName: string;
-  recipientRelation: string;
+  recipientRelation: GiftReceiverType | '';
 };
