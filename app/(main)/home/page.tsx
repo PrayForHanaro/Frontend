@@ -8,14 +8,11 @@ import { IMAGE_PATH } from '@/constants/images';
 
 /**
  * @page: 홈
- * @description: 홈페이지입니다. 토탈 헌금액을 보여주며 페이지 이동을 위한 버튼으로 구성되어있습니다. api 호출 실패시 목업데이터를 넣습니다.
- * @author: 이승빈
+ * @description: 토탈 헌금액을 보여주며 페이지 이동을 위한 버튼으로 구성되어있습니다.
  * @date: 2026-04-14
  */
 
-const API_ROUTE = '/api/home';
-
-interface HomeData {
+type HomeData = {
   userName: string;
   myPoint: number;
   churchName: string;
@@ -23,10 +20,21 @@ interface HomeData {
   prayerPeople: {
     id: number;
     name: string;
-    imagePath: string;
+    type: 'man' | 'woman' | 'baby';
     relation: string;
   }[];
-}
+};
+
+const getPersonImage = (type: string) => {
+  switch (type) {
+    case 'woman':
+      return IMAGE_PATH.HOME_WOMAN;
+    case 'baby':
+      return IMAGE_PATH.HOME_BABY;
+    default:
+      return IMAGE_PATH.HOME_MAN;
+  }
+};
 
 export default function Home() {
   const [data, setData] = useState<HomeData | null>(null);
@@ -36,48 +44,41 @@ export default function Home() {
     const fetchHomeData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(API_ROUTE, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+
+        const homeRes = await fetch('/api/home', {
+          headers: { 'Content-Type': 'application/json' },
+          cache: 'no-store',
         });
-        if (response.ok) {
-          const result = await response.json();
-          if (result.code === '200' && result.data) {
-            setData(result.data);
-          } else {
-            throw new Error(result.message || '데이터를 불러오지 못했습니다.');
-          }
-        } else {
-          setData({
-            userName: '하나',
-            myPoint: 1200,
-            churchName: '한마음',
-            totalDonation: 1250,
-            prayerPeople: [
-              {
-                id: 1,
-                name: '김성도',
-                imagePath: IMAGE_PATH.HOME_MAN,
-                relation: '아들',
-              },
-              {
-                id: 2,
-                name: '이성도',
-                imagePath: IMAGE_PATH.HOME_WOMAN,
-                relation: '딸',
-              },
-              {
-                id: 3,
-                name: '박성도',
-                imagePath: IMAGE_PATH.HOME_BABY,
-                relation: '손주',
-              },
-            ],
-          });
+        const result = await homeRes.json();
+
+        if (!homeRes.ok || !result.success) {
+          throw new Error(result.message || '홈 정보를 불러오지 못했습니다.');
         }
-      } catch (error) {
+
+        const { userName, myPoint, churchName, totalDonation, prayerPeople } =
+          result.data;
+
+        setData({
+          userName,
+          myPoint,
+          churchName,
+          totalDonation,
+          prayerPeople,
+        });
+      } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
+        // 목데이터
+        setData({
+          userName: '하나',
+          myPoint: 1200,
+          churchName: '한마음',
+          totalDonation: 1250,
+          prayerPeople: [
+            { id: 1, name: '김성도', type: 'man', relation: '아들' },
+            { id: 2, name: '이성도', type: 'woman', relation: '딸' },
+            { id: 3, name: '박성도', type: 'baby', relation: '손주' },
+          ] as HomeData['prayerPeople'],
+        });
       } finally {
         setLoading(false);
       }
@@ -211,7 +212,7 @@ export default function Home() {
           </Link>
 
           <Link
-            href="/mypage"
+            href="/mypage/points"
             className="relative col-span-2 flex h-32 flex-col items-center justify-center rounded-[32px] border border-hana-mint/10 bg-[#f0f9f8] shadow-[0px_4px_0px_0px_#e6f4f1,0px_8px_0px_0px_#d1ede8] transition-all active:translate-y-[4px] active:shadow-none"
           >
             <div className="relative z-10 flex flex-col items-center gap-1 px-4 text-center">
@@ -257,7 +258,7 @@ export default function Home() {
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FFF9F2] shadow-inner">
                       <Image
-                        src={person.imagePath}
+                        src={getPersonImage(person.type)}
                         alt={person.name}
                         width={32}
                         height={32}

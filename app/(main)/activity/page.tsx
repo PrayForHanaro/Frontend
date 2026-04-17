@@ -102,7 +102,9 @@ export default function Activity() {
             currentCount={activity.currentCount}
             maxCount={activity.maxCount}
             point={activity.point}
-            isApplied={false}
+            isApplied={activity.isApplied}
+            isOwner={activity.isOwner}
+            status={activity.status}
           />
         ))}
       </div>
