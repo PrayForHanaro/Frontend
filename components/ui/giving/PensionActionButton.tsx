@@ -23,7 +23,7 @@ export default function PensionActionButton({
       type="button"
       aria-label={text}
       onClick={onClick}
-      className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl border border-[#D8D2C8] border-dashed bg-white font-hana-main text-[#8E8E8E] text-[18px] transition-colors hover:bg-[#e2e1dd]"
+      className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl border border-[#D8D2C8] border-dashed bg-white font-hana-main text-[#8E8E8E] text-[18px] transition-colors hover:cursor-pointer hover:bg-[#e2e1dd]"
     >
       <Plus size={18} strokeWidth={2.2} aria-hidden="true" />
       <span>{text}</span>
