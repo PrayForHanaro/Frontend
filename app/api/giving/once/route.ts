@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 /**
  * @page: 일시 헌금 오케스트레이션 route (BFF)
- * @description: User, Offering, Org 서비스를 조합하여 헌금 등록을 처리합니다.
+ * @description: User, Offering 서비스를 조합하여 헌금 등록을 처리합니다. 후처리는 백엔드에서 담당합니다.
  * @author: 이승빈
  * @date: 2026-04-14
  */
@@ -20,20 +20,24 @@ interface GivingOnceUser {
 }
 
 interface GivingOnceRequest {
-  offeringType: string;
-  amount: number;
-  point: number;
-  prayerContent: string;
-  offererName: string | null;
+  type: string; // 헌금 종류
+  amount: number; // 금액
+  usedPoint: number; // 사용 포인트
+  personType: string; // 기명/무기명
+  name: string | null; // 성함
+  prayerTopic: string; // 기도 제목
 }
 
 export async function GET() {
   try {
     // 1. [user-service] 내 송금용 정보 가져오기
-    const userRes = await fetch(`${GATEWAY_URL}/apis/user/users/me/givingOnce`, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
-    });
+    const userRes = await fetch(
+      `${GATEWAY_URL}/apis/user/users/me/givingOnce`,
+      {
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      },
+    );
 
     const userResult = await userRes.json();
 
@@ -48,7 +52,7 @@ export async function GET() {
       );
     }
 
-    const userData = userResult.data as GivingOnceUser;
+    const userData = userResult.data;
 
     // 2. [org-service] 교회 이름 가져오기
     let churchName = '정보 없음';
@@ -115,72 +119,45 @@ export async function POST(request: Request) {
       );
     }
 
-    const { orgId, accountId, donationRate } = userMe.data as GivingOnceUser;
+    const { orgId, accountId } = userMe.data;
 
-    // 2. [offering-service] 헌금 내역 저장
-    const offeringRes = await fetch(`${GATEWAY_URL}/apis/offering/api/offerings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orgId,
-        accountId,
-        offeringType: body.offeringType,
-        amount: body.amount,
-        offererName: body.offererName,
-        prayerContent: body.prayerContent,
-      }),
-    });
+    // 2. [offering-service] 헌금 내역 저장 (백엔드 내부에서 포인트 차감/적립 등 후처리 자동 수행)
+    const offeringRes = await fetch(
+      `${GATEWAY_URL}/apis/offering/offerings/once`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orgId,
+          accountId,
+          type: body.type,
+          amount: body.amount,
+          usedPoint: body.usedPoint,
+          personType: body.personType,
+          name: body.name,
+          prayerTopic: body.prayerTopic,
+        }),
+      },
+    );
 
     const offeringResult = await offeringRes.json();
 
     if (!offeringRes.ok || !offeringResult.success) {
+      let errorMessage = offeringResult.message || '헌금 저장에 실패했습니다.';
+      // 백엔드의 잔액 부족 에러 메시지를 한국어로 변환
+      if (errorMessage === 'Insufficient balance') {
+        errorMessage = '계좌 잔액이 부족합니다.';
+      }
+
       return NextResponse.json(
         {
           code: offeringResult.code || 'OF001',
-          message: offeringResult.message || '헌금 저장에 실패했습니다.',
+          message: errorMessage,
           data: null,
         },
         { status: offeringRes.status },
       );
     }
-
-    // 3. [비동기/병렬 작업] 후처리
-    await Promise.all([
-      // A. 포인트 적립 (Earn)
-      fetch(`${GATEWAY_URL}/apis/user/users/me/points/process`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: body.amount,
-          donationRate,
-          refId: offeringResult.data,
-          pointType: 'OFFERING_RECURRING',
-          isEarn: true,
-        }),
-      }),
-      // B. 포인트 사용 (차감)
-      body.point > 0 &&
-        fetch(`${GATEWAY_URL}/apis/user/users/me/points/process`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: body.point,
-            refId: offeringResult.data,
-            pointType: 'OFFERING_RECURRING',
-            isEarn: false,
-          }),
-        }),
-      // C. 교회 헌금 누적액 업데이트
-      fetch(`${GATEWAY_URL}/apis/org/orgs/${orgId}/offering-amount`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: body.amount,
-        }),
-      }),
-    ]).catch((postError) => {
-      console.error('후처리 작업 중 일부 실패:', postError);
-    });
 
     return NextResponse.json(offeringResult);
   } catch (error: unknown) {

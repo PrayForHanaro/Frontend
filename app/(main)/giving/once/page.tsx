@@ -116,13 +116,12 @@ export default function GivingOnce() {
     }
 
     const payload = {
-      orgId: data.orgId,
-      accountId: data.accountId,
-      offeringType: selectedType,
+      type: selectedType, // offeringType -> type
       amount: Number(amount),
-      point: Number(point), // 포인트 정보 포함
-      offererName: givingPerson === '기명' ? name : null,
-      prayerContent: prayerTopic,
+      usedPoint: Number(point), // point -> usedPoint
+      personType: givingPerson, // 신규 추가 ("기명" | "무기명")
+      name: givingPerson === '기명' ? name : null, // offererName -> name
+      prayerTopic: prayerTopic, // prayerContent -> prayerTopic
     };
 
     try {

@@ -20,17 +20,35 @@ type HomeData = {
   prayerPeople: {
     id: number;
     name: string;
-    type: 'man' | 'woman' | 'baby';
-    relation: string;
+    type: 'son' | 'daughter' | 'grandchild';
   }[];
 };
 
-const getPersonImage = (type: string) => {
+const RELATION_MAP = {
+  son: '아들',
+  daughter: '딸',
+  grandchild: '손주',
+} as const;
+
+type HomeInfo = {
+  userName: string;
+  myPoint: number;
+  churchName: string;
+  totalDonation: number;
+  prayerPeople: {
+    id: number;
+    name: string;
+    type: 'son' | 'daughter' | 'grandchild';
+  }[];
+};
+
+const getPersonImage = (type: keyof typeof RELATION_MAP) => {
   switch (type) {
-    case 'woman':
+    case 'daughter':
       return IMAGE_PATH.HOME_WOMAN;
-    case 'baby':
+    case 'grandchild':
       return IMAGE_PATH.HOME_BABY;
+    case 'son':
     default:
       return IMAGE_PATH.HOME_MAN;
   }
@@ -55,8 +73,13 @@ export default function Home() {
           throw new Error(result.message || '홈 정보를 불러오지 못했습니다.');
         }
 
-        const { userName, myPoint, churchName, totalDonation, prayerPeople } =
-          result.data;
+        const {
+          userName,
+          myPoint,
+          churchName,
+          totalDonation,
+          prayerPeople,
+        }: HomeInfo = result.data;
 
         setData({
           userName,
@@ -74,9 +97,9 @@ export default function Home() {
           churchName: '한마음',
           totalDonation: 1250,
           prayerPeople: [
-            { id: 1, name: '김성도', type: 'man', relation: '아들' },
-            { id: 2, name: '이성도', type: 'woman', relation: '딸' },
-            { id: 3, name: '박성도', type: 'baby', relation: '손주' },
+            { id: 1, name: '김성도', type: 'son' },
+            { id: 2, name: '이성도', type: 'daughter' },
+            { id: 3, name: '박성도', type: 'grandchild' },
           ] as HomeData['prayerPeople'],
         });
       } finally {
@@ -269,7 +292,7 @@ export default function Home() {
                         {person.name} 성도님
                       </h3>
                       <span className="font-hana-medium text-hana-mint text-sm">
-                        ({person.relation})
+                        ({RELATION_MAP[person.type]})
                       </span>
                     </div>
                   </div>

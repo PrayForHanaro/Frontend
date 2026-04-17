@@ -27,14 +27,13 @@ export async function GET() {
       );
     }
 
-    // 명세 필드 반영: name, totalPoint, orgId
+    // 명세 필드 반영: userName, myPoint, orgId
     return NextResponse.json({
       success: true,
       message: 'success',
       data: {
-        id: result.data.id,
-        name: result.data.name,
-        totalPoint: result.data.totalPoint,
+        userName: result.data.userName,
+        myPoint: result.data.myPoint,
         orgId: result.data.orgId,
       },
     });

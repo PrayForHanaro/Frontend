@@ -9,16 +9,17 @@ import { NextResponse } from 'next/server';
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
-interface PrayerItem {
+type GiftItem = {
+  giftId: number;
   receiverId: number;
-  relation: string;
-}
+  giftReceiverType: 'SON' | 'DAUGHTER' | 'GRANDCHILD';
+  savingsProductName: string;
+};
 
-interface UserListItem {
+type UserListItem = {
   userId: number;
   name: string;
-  imageType: 'man' | 'woman' | 'baby';
-}
+};
 
 export async function GET() {
   try {
@@ -47,7 +48,7 @@ export async function GET() {
       })
         .then((res) => res.json())
         .catch(() => ({ success: false, data: null })),
-      fetch(`${GATEWAY_URL}/apis/prayer/prayers/me`, { cache: 'no-store' })
+      fetch(`${GATEWAY_URL}/apis/prayer/gifts/me`, { cache: 'no-store' })
         .then((res) => res.json())
         .catch(() => ({ success: false, data: [] })),
     ]);
@@ -55,13 +56,13 @@ export async function GET() {
     let prayerPeople: {
       id: number;
       name: string;
-      type: 'man' | 'woman' | 'baby';
-      relation: string;
+      type: string;
     }[] = [];
+
     if (Array.isArray(prayerData.data) && prayerData.data.length > 0) {
-      const prayers = prayerData.data as PrayerItem[];
-      const ids = prayers
-        .map((p) => p.receiverId)
+      const gifts = prayerData.data as GiftItem[];
+      const ids = gifts
+        .map((g) => g.receiverId)
         .filter(Boolean)
         .join(',');
 
@@ -74,24 +75,14 @@ export async function GET() {
 
         if (userList.success) {
           const userDetails = userList.data as UserListItem[];
-          prayerPeople = prayers.map(
-            (
-              p,
-            ): {
-              id: number;
-              name: string;
-              type: 'man' | 'woman' | 'baby';
-              relation: string;
-            } => {
-              const detail = userDetails.find((u) => u.userId === p.receiverId);
-              return {
-                id: p.receiverId,
-                name: detail?.name || '성도',
-                type: detail?.imageType || 'man',
-                relation: p.relation,
-              };
-            },
-          );
+          prayerPeople = gifts.map((g) => {
+            const detail = userDetails.find((u) => u.userId === g.receiverId);
+            return {
+              id: g.giftId,
+              name: detail?.name || '성도',
+              type: g.giftReceiverType.toLowerCase(), // 'son', 'daughter', 'grandchild'
+            };
+          });
         }
       }
     }
