@@ -2,13 +2,18 @@
 
 import { CalendarDays, MapPin, Users } from 'lucide-react';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
 import ActivityAdBanner from '@/components/ui/cmm/Activity/ActivityAdBanner';
 import ActivityCommentSection from '@/components/ui/cmm/Activity/ActivityCommentSection';
 import ActivityMemberSection from '@/components/ui/cmm/Activity/ActivityMemberSection';
 import Header from '@/components/ui/cmm/Header';
 import Nav from '@/components/ui/cmm/Nav';
+import {
+  type ActivityDetail,
+  applyActivity,
+  getActivity,
+} from '@/lib/activity-api';
 
 /**
  * @page: 소모임 - 활동 상세 페이지
@@ -17,39 +22,28 @@ import Nav from '@/components/ui/cmm/Nav';
  * @date: 2026-04-14
  */
 
-const MEMBERS = [
-  {
-    id: 1,
-    name: '김승빈',
-    initial: '김',
-    isLeader: true,
-  },
-  {
-    id: 2,
-    name: '이장수',
-    initial: '이',
-  },
-  {
-    id: 3,
-    name: '이동한',
-    initial: '이',
-  },
-  {
-    id: 4,
-    name: '권신범',
-    initial: '권',
-  },
-  {
-    id: 5,
-    name: '유지연',
-    initial: '유',
-  },
-];
+const DEFAULT_IMAGE =
+  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop';
 
 export default function ActivityId() {
+  const params = useParams<{ activityId: string }>();
+  const activityId = params.activityId;
+
+  const [detail, setDetail] = useState<ActivityDetail | null>(null);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
 
   useEffect(() => {
+    async function loadActivity() {
+      try {
+        const nextDetail = await getActivity(activityId);
+        setDetail(nextDetail);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadActivity();
+
     const timer = window.setTimeout(() => {
       setIsBannerVisible(true);
     }, 2000);
@@ -57,94 +51,96 @@ export default function ActivityId() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [activityId]);
+
+  async function handleApply() {
+    const nextDetail = await applyActivity(activityId);
+    setDetail(nextDetail);
+  }
+
+  function handleMoveGroupAccountGuidePage() {
+    window.open(
+      'https://www.kebhana.com/cont/mall/mall08/mall0801/mall080103/1524598_115188.jsp',
+      '_blank',
+      'noopener,noreferrer',
+    );
+  }
+
+  if (!detail) {
+    return <div className="p-5">불러오는 중...</div>;
+  }
 
   return (
-    <div className="flex flex-col gap-4 pb-20">
-      <Header content="동행찾기" />
-
-      <section
-        className="w-full rounded-4xl bg-white p-4"
-        style={{
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <div className="flex flex-col gap-4">
-          <h1 className="font-bold font-hana-regular text-[#1D3050] text-[24px] leading-[1.35]">
-            봄꽃 구경 겸 나들이 가요^^
+    <div className="min-h-screen bg-[#F7F8FA] pb-24">
+      <Header content="소모임 상세" />
+      <div className="px-5 py-4">
+        <section className="rounded-2xl bg-white p-5">
+          <h1 className="font-hana-main font-semibold text-[#222222] text-[22px]">
+            {detail.title}
           </h1>
 
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-[#E7F4F3] px-3 py-1 font-hana-regular font-semibold text-[14px] text-hana-main">
-              일회성
+          <div className="mt-3 flex items-center gap-2">
+            <span className="rounded-full bg-[#E7F4F3] px-3 py-1 font-hana-main text-[12px] text-hana-main">
+              {detail.category}
             </span>
-
-            <span className="rounded-full bg-[#EAF6E8] px-3 py-1 font-hana-regular font-semibold text-[#6FAE63] text-[14px]">
-              모집중
+            <span className="rounded-full bg-[#F1F3F5] px-3 py-1 font-hana-main text-[#666666] text-[12px]">
+              {detail.status === 'RECRUITING'
+                ? '모집중'
+                : detail.status === 'CLOSED'
+                  ? '마감'
+                  : '중단'}
             </span>
           </div>
 
-          <div className="flex flex-col gap-3 text-[#7E7E7E]">
-            <div className="flex items-center gap-3">
-              <CalendarDays
-                size={20}
-                strokeWidth={2}
-                aria-hidden="true"
-                className="shrink-0"
-              />
-              <span className="font-hana-regular font-medium text-[#4A4A4A] text-[16px]">
-                4월 둘째주
-              </span>
+          <div className="mt-5 flex flex-col gap-3 text-[#444444]">
+            <div className="flex items-center gap-2">
+              <CalendarDays size={18} />
+              <span>{detail.schedule}</span>
             </div>
-
-            <div className="flex items-center gap-3">
-              <MapPin
-                size={20}
-                strokeWidth={2}
-                aria-hidden="true"
-                className="shrink-0"
-              />
-              <span className="font-hana-regular font-medium text-[#4A4A4A] text-[16px]">
-                종로구
-              </span>
+            <div className="flex items-center gap-2">
+              <MapPin size={18} />
+              <span>{detail.location}</span>
             </div>
-
-            <div className="flex items-center gap-3">
-              <Users
-                size={20}
-                strokeWidth={2}
-                aria-hidden="true"
-                className="shrink-0"
-              />
-              <span className="font-hana-regular font-medium text-[#1D3050] text-[16px]">
-                5/12명
+            <div className="flex items-center gap-2">
+              <Users size={18} />
+              <span>
+                {detail.currentCount}/{detail.maxCount}명
               </span>
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-3xl">
+          <div className="relative mt-5 aspect-[16/10] overflow-hidden rounded-2xl">
             <Image
-              src="/background.svg"
-              alt="봄꽃 풍경 이미지"
-              width={800}
-              height={520}
-              className="h-auto w-full object-cover"
-              priority
+              src={detail.imageUrls[0] || DEFAULT_IMAGE}
+              alt={detail.title}
+              fill
+              className="object-cover"
+              unoptimized
             />
           </div>
 
-          <p className="font-hana-regular text-[#4A4A4A] text-[18px] leading-[1.6]">
-            종로구에서 봄꽃 구경하며 함께 산책할 분을 찾습니다~
+          <p className="mt-5 whitespace-pre-wrap font-hana-main text-[#444444] text-[15px] leading-6">
+            {detail.description}
           </p>
-        </div>
-      </section>
+        </section>
 
-      <ActivityMemberSection currentCount={5} maxCount={12} members={MEMBERS} />
+        <ActivityMemberSection
+          currentCount={detail.currentCount}
+          maxCount={detail.maxCount}
+          members={detail.members}
+          isApplied={detail.isApplied}
+          isOwner={detail.isOwner}
+          status={detail.status}
+          onApply={handleApply}
+        />
 
-      <ActivityCommentSection />
+        <ActivityCommentSection />
+      </div>
 
-      <ActivityAdBanner isVisible={isBannerVisible} />
-
+      <ActivityAdBanner
+        isVisible={isBannerVisible}
+        onClick={handleMoveGroupAccountGuidePage}
+      />
       <Nav />
     </div>
   );

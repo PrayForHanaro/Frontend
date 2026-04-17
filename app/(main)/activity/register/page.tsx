@@ -13,6 +13,7 @@ import ActivityPeriodField, {
 import Header from '@/components/ui/cmm/Header';
 import LongButton from '@/components/ui/cmm/LongBtn';
 import Nav from '@/components/ui/cmm/Nav';
+import { createActivity } from '@/lib/activity-api';
 
 /**
  * @page: 소모임 - 활동 등록 페이지
@@ -106,14 +107,36 @@ export default function ActivityRegister() {
     );
   }
 
-  function handleRegisterActivity() {
+  async function handleRegisterActivity() {
     if (!isFormValid) {
       return;
     }
 
-    const activityId = Date.now().toString();
+    try {
+      const createdActivity = await createActivity({
+        category: '동행찾기',
+        meetingType: periodValue.meetingType,
+        recurringType: periodValue.recurringType,
+        title,
+        description,
+        location,
+        maxMembers: capacity,
+        pointAmount: 30,
+        singleDate: periodValue.singleDate,
+        singleTime: periodValue.singleTime,
+        recurringStartDate: periodValue.recurringStartDate,
+        recurringEndDate: periodValue.recurringEndDate,
+        recurringTime: periodValue.recurringTime,
+        recurringWeekdays: periodValue.recurringWeekdays,
+        recurringMonthDays: periodValue.recurringMonthDays,
+        imageUrls: [],
+      });
 
-    router.push(`/activity/${activityId}`);
+      router.push(`/activity/${createdActivity.id}`);
+    } catch (error) {
+      console.error(error);
+      alert('활동 등록에 실패했습니다.');
+    }
   }
 
   return (
