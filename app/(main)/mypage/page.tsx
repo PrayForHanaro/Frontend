@@ -29,11 +29,9 @@ export default function MyPage() {
         />
       </Section>
 
-      <Section title="설정">
-        <MenuItem label="알림 설정" href="/settings/notification" />
-        <MenuItem label="약관 및 개인정보" href="/settings/policy" />
-        <MenuItem label="로그아웃" href="/logout" isDanger={true} />
-      </Section>
+      <MenuItem label="알림 설정" />
+      <MenuItem label="약관 및 개인정보" />
+      <MenuItem label="로그아웃" />
 
       <Nav />
     </div>

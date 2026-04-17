@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import ActivityMemberAvatar from '@/components/ui/cmm/Activity/ActivityMemberAvatar';
@@ -24,17 +23,40 @@ type ActivityMemberSectionProps = {
   currentCount: number;
   maxCount: number;
   members: ActivityMember[];
+  isApplied: boolean;
+  isOwner: boolean;
+  status: 'RECRUITING' | 'CLOSED' | 'CANCELLED';
+  onApply: () => Promise<void>;
 };
 
 export default function ActivityMemberSection({
   currentCount,
   maxCount,
   members,
+  isApplied,
+  isOwner,
+  status,
+  onApply,
 }: ActivityMemberSectionProps) {
-  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isClosed = status !== 'RECRUITING' || currentCount >= maxCount;
+  const isDisabled = isSubmitting || isApplied || isOwner || isClosed;
+
+  const buttonText = isOwner
+    ? '내가 만든 활동'
+    : isApplied
+      ? '참여 완료'
+      : isClosed
+        ? '모집 마감'
+        : '참여하기';
 
   function handleOpenModal() {
+    if (isDisabled) {
+      return;
+    }
+
     setIsModalOpen(true);
   }
 
@@ -42,82 +64,73 @@ export default function ActivityMemberSection({
     setIsModalOpen(false);
   }
 
-  function handleMoveActivity() {
-    sessionStorage.setItem('activityJoinToast', 'true');
-    setIsModalOpen(false);
-    router.push('/activity');
+  async function handleApply() {
+    try {
+      setIsSubmitting(true);
+      await onApply();
+      sessionStorage.setItem('activityJoinToast', 'true');
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert('활동 참여에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <>
-      <section
-        className="w-full rounded-[24px] bg-white p-6"
-        style={{
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <div className="flex flex-col gap-6">
-          <h2 className="font-bold font-hana-main text-[#1D3050] text-[18px]">
-            팀원 {currentCount}/{maxCount}
-          </h2>
-
-          <div className="member-horizontal-scroll overflow-x-auto pb-2">
-            <div className="flex min-w-max items-start gap-6 pr-2">
-              {members.map((member) => (
-                <ActivityMemberAvatar
-                  key={member.id}
-                  name={member.name}
-                  initial={member.initial}
-                  isLeader={member.isLeader}
-                />
-              ))}
-            </div>
-          </div>
-
-          <LongButton text="참여하기" onClick={handleOpenModal} />
+      <section className="mt-6 rounded-2xl bg-white p-5">
+        <h2 className="font-hana-main font-semibold text-[#222222] text-[18px]">
+          팀원 {currentCount}/{maxCount}
+        </h2>
+        <div className="mt-4 flex flex-col gap-3">
+          {members.map((member) => (
+            <ActivityMemberAvatar
+              key={member.id}
+              name={member.name}
+              initial={member.initial}
+              isLeader={member.isLeader}
+            />
+          ))}
+        </div>
+        <div className="mt-5">
+          <LongButton
+            text={buttonText}
+            onClick={handleOpenModal}
+            disabled={isDisabled}
+          />
         </div>
       </section>
 
       {isModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-5">
-          <div className="w-full max-w-sm rounded-[28px] bg-white px-6 py-7 shadow-[0_12px_40px_rgba(0,0,0,0.18)]">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#E7F4F3]">
-                <span
-                  className="font-hana-main text-[26px] text-hana-main leading-none"
-                  aria-hidden="true"
-                >
-                  ✓
-                </span>
-              </div>
-
-              <h3 className="font-bold font-hana-main text-[#1D3050] text-[20px]">
-                이 활동에 참여하시겠어요?
-              </h3>
-
-              <p className="mt-2 break-keep font-hana-main text-[#5B6573] text-[15px] leading-6">
-                함께할 준비가 되셨네요.
-                <br />
-                참여하시겠습니까?
-              </p>
-
-              <div className="mt-6 flex w-full gap-3">
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
-                  className="h-12 flex-1 rounded-2xl border border-[#D7E2E0] bg-white font-hana-main text-[#4B5563] text-[16px] transition hover:bg-[#F8FAFA]"
-                >
-                  닫기
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleMoveActivity}
-                  className="h-12 flex-1 rounded-2xl bg-hana-main font-hana-main text-[16px] text-white transition hover:bg-hana-mint"
-                >
-                  참여하기
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6">
+            <div className="mb-4 text-center text-3xl">✓</div>
+            <h3 className="text-center font-hana-main font-semibold text-[#222222] text-[18px]">
+              이 활동에 참여하시겠어요?
+            </h3>
+            <p className="mt-2 text-center font-hana-main text-[#666666] text-[14px]">
+              함께할 준비가 되셨네요.
+              <br />
+              참여하시겠습니까?
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="h-12 rounded-xl border border-[#DEDEDE] bg-white font-hana-main font-semibold text-[#666666]"
+              >
+                닫기
+              </button>
+              <button
+                type="button"
+                onClick={handleApply}
+                disabled={isSubmitting}
+                className="h-12 rounded-xl bg-hana-main font-hana-main font-semibold text-white disabled:opacity-50"
+              >
+                {isSubmitting ? '처리중...' : '참여하기'}
+              </button>
             </div>
           </div>
         </div>
