@@ -7,8 +7,19 @@ import { useEffect, useState } from 'react';
 import ActivityAdBanner from '@/components/ui/cmm/Activity/ActivityAdBanner';
 import ActivityCommentSection from '@/components/ui/cmm/Activity/ActivityCommentSection';
 import ActivityMemberSection from '@/components/ui/cmm/Activity/ActivityMemberSection';
+import type { ActivityPeriodValue } from '@/components/ui/cmm/Activity/ActivityPeriodField';
 import Header from '@/components/ui/cmm/Header';
 import Nav from '@/components/ui/cmm/Nav';
+
+type NewActivityData = {
+  id: string;
+  title: string;
+  description: string;
+  periodValue: ActivityPeriodValue;
+  capacity: number;
+  location: string;
+  images: string[];
+};
 
 /**
  * @page: 소모임 - 활동 상세 페이지
@@ -48,14 +59,16 @@ const MEMBERS = [
 
 export default function ActivityId() {
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const [activityData, setActivityData] = useState<any>(null);
+  const [activityData, setActivityData] = useState<NewActivityData | null>(
+    null,
+  );
 
   useEffect(() => {
     // sessionStorage에서 새로운 활동 데이터를 로드
     const newActivityData = sessionStorage.getItem('newActivity');
     if (newActivityData) {
       try {
-        setActivityData(JSON.parse(newActivityData));
+        setActivityData(JSON.parse(newActivityData) as NewActivityData);
       } catch (error) {
         console.error('Failed to parse newActivity:', error);
       }
@@ -169,7 +182,9 @@ export default function ActivityId() {
 }
 
 // periodValue를 읽기 좋은 문자열로 변환하는 헬퍼 함수
-function formatScheduleDisplay(periodValue: any): string {
+function formatScheduleDisplay(
+  periodValue: ActivityPeriodValue | undefined,
+): string {
   if (!periodValue) return '날짜 미정';
 
   if (periodValue.meetingType === 'single') {

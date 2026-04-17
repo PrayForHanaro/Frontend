@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
 import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
+import type { ActivityPeriodValue } from '@/components/ui/cmm/Activity/ActivityPeriodField';
 import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
 import Calendar from '@/components/ui/cmm/Activity/Calendar';
 import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
@@ -15,6 +16,16 @@ import {
   type ActivityItem,
   type BoardTab,
 } from '@/constants/activity';
+
+type NewActivityData = {
+  id: string;
+  title: string;
+  description: string;
+  periodValue: ActivityPeriodValue;
+  capacity: number;
+  location: string;
+  images: string[];
+};
 
 /**
  * @page: 소모임 - 활동 목록 페이지
@@ -35,7 +46,7 @@ export default function Activity() {
     const newActivityData = sessionStorage.getItem('newActivity');
     if (newActivityData) {
       try {
-        const newActivity = JSON.parse(newActivityData);
+        const newActivity = JSON.parse(newActivityData) as NewActivityData;
 
         // 새로운 활동 객체 생성 (활동 목록 형식에 맞춤)
         const formattedActivity: ActivityItem = {
@@ -123,7 +134,7 @@ export default function Activity() {
 }
 
 // periodValue를 읽기 좋은 문자열로 변환하는 헬퍼 함수
-function formatSchedule(periodValue: any): string {
+function formatSchedule(periodValue: ActivityPeriodValue): string {
   if (periodValue.meetingType === 'single') {
     return `${periodValue.singleDate} ${periodValue.singleTime}`;
   }

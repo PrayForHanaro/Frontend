@@ -78,9 +78,7 @@ export default function PointPage() {
 
       <div className="mt-8 flex flex-col gap-3 px-4">
         {/* 포인트 내역 텍스트 */}
-        <span className="text-gray-500 text-sm">
-          포인트 내역 총 {57}건
-        </span>
+        <span className="text-gray-500 text-sm">포인트 내역 총 {57}건</span>
 
         {/* 리스트 */}
         {points.map((point) => (
