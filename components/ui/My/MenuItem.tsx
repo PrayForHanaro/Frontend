@@ -22,8 +22,7 @@ export default function MenuItem({
   const router = useRouter();
 
   const normalizedLabel = label.replace(/\s/g, '');
-  const isDonationTrust = normalizedLabel.includes('유산기부신탁');
-  const displayLabel = isDonationTrust ? '유산기부 신탁 🏛️' : label.trim();
+  const displayLabel = label.trim();
 
   function handleMove() {
     router.push(href);
@@ -40,11 +39,7 @@ export default function MenuItem({
         {icon ? (
           <div
             className={`mr-1 flex size-10 shrink-0 items-center justify-center rounded-xl ${
-              isDonationTrust
-                ? 'bg-gray-200 text-hana-main'
-                : isDanger
-                  ? 'text-red-500'
-                  : 'text-gray-500'
+              isDanger ? 'text-red-500' : 'text-gray-500'
             }`}
           >
             {icon}
@@ -53,9 +48,7 @@ export default function MenuItem({
 
         <div className="flex min-w-0 flex-col items-start">
           <span
-            className={`font-hana-main text-[18px] ${
-              isDonationTrust ? 'font-semibold' : 'font-medium'
-            } ${isDanger ? 'text-red-500' : 'text-gray-800'}`}
+            className={`font-hana-main text-[18px] ${'font-medium'} ${isDanger ? 'text-red-500' : 'text-gray-800'}`}
           >
             {displayLabel}
           </span>
