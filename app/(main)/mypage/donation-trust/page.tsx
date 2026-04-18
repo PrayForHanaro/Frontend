@@ -6,7 +6,7 @@ import CounselingForm from '@/components/ui/My/CounselingForm';
 
 export default function CounselingPage() {
   return (
-    <div className="flex flex-col gap-4 pb-20">
+    <div className="flex flex-col gap-4">
       <Header content="상담 예약" />
 
       <CounselingForm />

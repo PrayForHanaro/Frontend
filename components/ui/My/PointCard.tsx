@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function PointCard() {
   return (
     <div className="flex flex-col gap-2">
-      <div className="mx-4 rounded-2xl bg-white p-4 shadow">
+      <div className="rounded-2xl bg-white p-4 shadow">
         <div className="flex items-center justify-start">
           <span className="font-bold text-3xl text-hana-main">19,000P</span>
         </div>

@@ -5,12 +5,12 @@ type SectionProps = {
 
 export default function Section({ title, children }: SectionProps) {
   return (
-    <div className="flex flex-col gap-3 px-4">
-      {title && (
-        <span className="text-sm font-semibold text-gray-500">{title}</span>
-      )}
+    <div className="flex w-full flex-col gap-3">
+      {title ? (
+        <span className="font-semibold text-gray-500 text-sm">{title}</span>
+      ) : null}
 
-      <div className="flex flex-col gap-2">{children}</div>
+      <div className="flex w-full flex-col gap-2">{children}</div>
     </div>
   );
 }

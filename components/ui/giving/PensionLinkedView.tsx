@@ -81,7 +81,7 @@ export default function PensionLinkedView() {
   }
 
   return (
-    <section className="mb-20 flex flex-col gap-6">
+    <section className="mb-10 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h2 className="font-hana-main text-[18px] text-hana-black">
           하나은행 연금 목록

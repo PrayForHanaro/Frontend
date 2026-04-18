@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight, LoaderCircle } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import { IMAGE_PATH } from '@/constants/images';
 
 /**
  * @page: 홈
- * @description: 토탈 헌금액을 보여주며 페이지 이동을 위한 버튼으로 구성되어있습니다.
+ * @description: 토탈 헌금액을 보여주며 페이지 이동을 위한 버튼으로 구성되어있습니다. 로딩 제거 및 시연용 목데이터 적용 버전.
  * @date: 2026-04-14
  */
 
@@ -37,65 +37,40 @@ const getPersonImage = (type: string) => {
 };
 
 export default function Home() {
-  const [data, setData] = useState<HomeData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<HomeData | null>({
+    userName: '하나',
+    myPoint: 19000,
+    churchName: '하나',
+    totalDonation: 1250,
+    prayerPeople: [
+      { id: 1, name: '김성도', type: 'man', relation: '아들' },
+      { id: 2, name: '이성도', type: 'woman', relation: '딸' },
+      { id: 3, name: '박성도', type: 'baby', relation: '손주' },
+    ],
+  });
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        setLoading(true);
-
         const homeRes = await fetch('/api/home', {
           headers: { 'Content-Type': 'application/json' },
           cache: 'no-store',
         });
         const result = await homeRes.json();
 
-        if (!homeRes.ok || !result.success) {
-          throw new Error(result.message || '홈 정보를 불러오지 못했습니다.');
+        if (homeRes.ok && result.success) {
+          setData(result.data);
         }
-
-        const { userName, myPoint, churchName, totalDonation, prayerPeople } =
-          result.data;
-
-        setData({
-          userName,
-          myPoint,
-          churchName,
-          totalDonation,
-          prayerPeople,
-        });
       } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
-        // 목데이터
-        setData({
-          userName: '하나',
-          myPoint: 1200,
-          churchName: '한마음',
-          totalDonation: 1250,
-          prayerPeople: [
-            { id: 1, name: '김성도', type: 'man', relation: '아들' },
-            { id: 2, name: '이성도', type: 'woman', relation: '딸' },
-            { id: 3, name: '박성도', type: 'baby', relation: '손주' },
-          ] as HomeData['prayerPeople'],
-        });
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchHomeData();
   }, []);
 
-  if (loading)
-    return (
-      <div className="flex h-screen animate-spin items-center justify-center text-hana-mint">
-        <LoaderCircle />
-      </div>
-    );
-
   return (
-    <div className="flex min-h-screen flex-col pb-20">
+    <div className="flex min-h-screen flex-col pb-24">
       <style>{`
         @keyframes slowFade {
           0%, 100% { opacity: 0; }
@@ -107,7 +82,7 @@ export default function Home() {
           <h2 className="font-hana-medium text-2xl text-hana-black leading-tight">
             안녕하세요, <br />
             <span className="font-hana-bold text-hana-mint">
-              {data?.userName || '#'}
+              {data?.userName || '하나'}
             </span>
             님 반갑습니다!
           </h2>
@@ -125,7 +100,7 @@ export default function Home() {
           <div className="relative z-10 flex h-full flex-col justify-between">
             <div className="space-y-1">
               <p className="font-hana-medium text-lg text-white/90">
-                이번 달 {data?.churchName || '#'}교회 성도들의 헌금과
+                이번 달 {data?.churchName || '하나'}교회 성도들의 헌금과
               </p>
               <p className="font-hana-bold text-white text-xl">
                 하나은행의 기부금
@@ -140,19 +115,19 @@ export default function Home() {
               </div>
               <div className="mt-2 flex items-baseline gap-1">
                 <h1 className="font-hana-heavy text-5xl tracking-tighter sm:text-6xl">
-                  {data?.totalDonation?.toLocaleString() || '0'}
+                  {data?.totalDonation?.toLocaleString() || '1,250'}
                 </h1>
                 <span className="font-hana-bold text-2xl opacity-90">만원</span>
               </div>
             </div>
           </div>
 
-          <div className="-bottom-2 -right-1 absolute z-10 w-32 overflow-visible">
+          <div className="-bottom-6 -right-3 absolute z-0 w-32 overflow-visible">
             <Image
               src={IMAGE_PATH.HOME_CHARACTER}
               alt="하나은행 캐릭터"
-              width={128}
-              height={128}
+              width={140}
+              height={140}
               className="object-contain"
             />
           </div>
@@ -226,7 +201,7 @@ export default function Home() {
 
             <div className="relative z-10 mt-2 flex items-baseline gap-1.5 rounded-full bg-white/60 px-8 py-1.5 shadow-inner">
               <span className="font-hana-bold text-2xl text-hana-mint tracking-tight">
-                {data?.myPoint?.toLocaleString()}
+                {data?.myPoint?.toLocaleString() || '19,000'}
               </span>
               <span className="font-hana-bold text-hana-mint text-lg">P</span>
             </div>
@@ -245,7 +220,7 @@ export default function Home() {
               자세히 보기 〉
             </Link>
           </div>
-          <div className="mb-4 text-hana-gray-600">{`${data?.userName}님이 기도드리는 성도님들이에요`}</div>
+          <div className="mb-4 text-hana-gray-600">{`${data?.userName || '하나'}님이 기도드리는 성도님들이에요`}</div>
           <div className="space-y-3">
             {data?.prayerPeople && data.prayerPeople.length > 0 ? (
               data.prayerPeople.map((person) => (

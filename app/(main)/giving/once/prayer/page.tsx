@@ -26,6 +26,11 @@ export default function GivingPrayer() {
     router.back();
   };
 
+  const handleCancel = () => {
+    sessionStorage.removeItem('giving_message');
+    router.back();
+  };
+
   return (
     <div className="flex flex-col">
       <Header content="기도제목 작성" />
@@ -62,7 +67,7 @@ export default function GivingPrayer() {
       <div className="flex gap-5 p-5 pb-10">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={handleCancel}
           className="w-[200px] rounded-2xl bg-hana-fade-green py-4 font-hana-bold text-hana-main text-xl shadow-lg transition-transform active:scale-[0.98]"
         >
           취소

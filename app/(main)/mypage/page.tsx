@@ -37,14 +37,12 @@ export default function MyPage() {
         />
       </Section>
 
-      <Section title="기부">
-        <MenuItem
-          label=" 유산 기부 신탁"
-          subLabel="내 교회에 소중한 자산을 남기세요"
-          href="/mypage/donation-trust"
-          icon={<Church size={20} />}
-        />
-      </Section>
+      <MenuItem
+        label="유산 기부 신탁"
+        subLabel="내 교회에 소중한 자산을 남기세요"
+        href="/mypage/donation-trust"
+        icon={<Church size={20} />}
+      />
 
       <Section title="설정">
         <MenuItem

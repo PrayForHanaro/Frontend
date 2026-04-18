@@ -9,7 +9,7 @@ import { createPortal } from 'react-dom';
  * @page: 소모임 - 하나 모임통장 배너 컴포넌트
  * @description: 광고 배너 컴포넌트입니다. 클릭 시 하나은행 모임통장 안내 페이지로 이동하며 x표시로 삭제할 수 있습니다.
  * @author: typeYu
- * @date: 2026-04-14
+ * @date: 2026-04-18
  */
 
 type ActivityAdBannerProps = {
@@ -23,6 +23,10 @@ type ActivityAdBannerContentProps = {
   isFixed: boolean;
   isVisible: boolean;
 };
+
+const NAV_HEIGHT = 70;
+const BANNER_GAP = 12;
+const BANNER_BOTTOM_OFFSET = NAV_HEIGHT + BANNER_GAP;
 
 function ActivityAdBannerContent({
   onClick,
@@ -46,17 +50,24 @@ function ActivityAdBannerContent({
 
   return (
     <div
-      className={`z-40 transition-all duration-500 ease-out ${
+      className={`z-[60] transition-all duration-500 ease-out ${
         isFixed
-          ? '-translate-x-1/2 fixed bottom-18 left-1/2 w-[calc(100vw-24px)] max-w-[393px]'
+          ? '-translate-x-1/2 fixed left-1/2 w-[calc(100vw-24px)] max-w-[393px]'
           : 'relative w-full'
       } ${
         isRendered
           ? 'pointer-events-auto translate-y-0 opacity-100'
           : 'pointer-events-none translate-y-4 opacity-0'
       }`}
+      style={
+        isFixed
+          ? {
+              bottom: `calc(env(safe-area-inset-bottom, 0px) + ${BANNER_BOTTOM_OFFSET}px)`,
+            }
+          : undefined
+      }
     >
-      <div className="relative w-full border-2 border-[#56A99E] bg-white px-2 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+      <div className="relative mb-[40px] w-full border-2 border-[#56A99E] bg-white px-2 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
         <button
           type="button"
           onClick={onClick}

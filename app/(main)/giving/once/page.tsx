@@ -1,5 +1,6 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -9,7 +10,7 @@ import TypeButton from '@/components/ui/giving/TypeButton';
 
 /**
  * @page: 일회성 헌금 내용 작성
- * @description: 일회성 헌금 내용 작성 페이지입니다.
+ * @description: 일회성 헌금 내용 작성 페이지입니다. 로딩을 제거하고 시연용 목데이터를 즉시 표시합니다.
  * @author: 이승빈
  * @date: 2026-04-14
  */
@@ -35,18 +36,19 @@ type GivingData = {
 export default function GivingOnce() {
   const [selectedType, setSelectedType] = useState<string>('감사헌금');
   const [givingPerson, setGivingPerson] = useState<'기명' | '무기명'>('기명');
-  const [name, setName] = useState('');
+  const [name, setName] = useState('하나');
   const [amount, setAmount] = useState('');
-  const [point, setPoint] = useState('');
+  const [point, setPoint] = useState('19000');
+  const [useAllPoints, setUseAllPoints] = useState(true);
   const [prayerTopic, setPrayerTopic] = useState('');
   const [data, setData] = useState<GivingData>({
-    name: '',
-    maxPoint: 0,
-    bankAccount: '정보를 불러오는 중...',
-    churchName: '정보를 불러오는 중...',
-    orgId: 0,
-    accountId: 0,
-    donationRate: 1,
+    name: '하나',
+    maxPoint: 19000,
+    bankAccount: '하나은행 123-456789-01107',
+    churchName: '한마음교회',
+    orgId: 1,
+    accountId: 1,
+    donationRate: 0.01,
   });
 
   const [errors, setErrors] = useState({
@@ -56,6 +58,12 @@ export default function GivingOnce() {
 
   const nameRef = useRef<HTMLInputElement>(null);
   const amountRef = useRef<HTMLInputElement>(null);
+  const useAllPointsRef = useRef(useAllPoints);
+
+  // useAllPoints 상태가 변할 때마다 ref 업데이트
+  useEffect(() => {
+    useAllPointsRef.current = useAllPoints;
+  }, [useAllPoints]);
 
   const router = useRouter();
 
@@ -66,17 +74,24 @@ export default function GivingOnce() {
         const result = await res.json();
 
         if (res.ok && result.success && result.data) {
-          const data = result.data;
+          const fetchedData = result.data;
           setData({
-            name: data.name,
-            maxPoint: data.maxPoint,
-            bankAccount: data.bankAccount,
-            churchName: data.churchName,
-            orgId: data.orgId,
-            accountId: data.accountId,
-            donationRate: data.donationRate || 1,
+            name: fetchedData.name,
+            maxPoint: fetchedData.maxPoint,
+            bankAccount: fetchedData.bankAccount,
+            churchName: fetchedData.churchName,
+            orgId: fetchedData.orgId,
+            accountId: fetchedData.accountId,
+            donationRate: fetchedData.donationRate || 1,
           });
-          setName(data.name);
+
+          if (useAllPointsRef.current)
+            setPoint(fetchedData.maxPoint.toString());
+
+          const savedState = sessionStorage.getItem('giving_once_state');
+          if (!savedState) {
+            setName(fetchedData.name);
+          }
         }
       } catch (e: unknown) {
         console.error('데이터 로딩 오류:', e);
@@ -84,17 +99,57 @@ export default function GivingOnce() {
     }
     fetchData();
 
+    // 폼 데이터 복원
+    const savedState = sessionStorage.getItem('giving_once_state');
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState);
+        setSelectedType(parsed.selectedType || '감사헌금');
+        setGivingPerson(parsed.givingPerson || '기명');
+        setName(parsed.name || '하나');
+        setAmount(parsed.amount || '');
+        setPoint(parsed.point || '19000');
+        setUseAllPoints(parsed.useAllPoints ?? true);
+      } catch (e) {
+        console.error('세션 데이터 파싱 오류:', e);
+      }
+    }
+
     const savedPrayer = sessionStorage.getItem('giving_message');
     if (savedPrayer) {
       setPrayerTopic(savedPrayer);
     }
   }, []);
+  const handleSaveState = () => {
+    const state = {
+      selectedType,
+      givingPerson,
+      name,
+      amount,
+      point,
+      useAllPoints,
+    };
+    sessionStorage.setItem('giving_once_state', JSON.stringify(state));
+  };
 
   const estimatedEarnedPoint = Math.floor(Number(amount) * data.donationRate);
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    if (Number(val) >= 0 && Number(val) <= data.maxPoint) setPoint(val);
+    if (Number(val) >= 0 && Number(val) <= data.maxPoint) {
+      setPoint(val);
+      setUseAllPoints(Number(val) === data.maxPoint);
+    }
+  };
+
+  const toggleAllPoints = () => {
+    const newVal = !useAllPoints;
+    setUseAllPoints(newVal);
+    if (newVal) {
+      setPoint(data.maxPoint.toString());
+    } else {
+      setPoint('');
+    }
   };
 
   const handleGivingSubmit = async () => {
@@ -115,40 +170,25 @@ export default function GivingOnce() {
       return;
     }
 
-    const payload = {
-      orgId: data.orgId,
-      accountId: data.accountId,
-      offeringType: selectedType,
-      amount: Number(amount),
-      point: Number(point), // 포인트 정보 포함
-      offererName: givingPerson === '기명' ? name : null,
-      prayerContent: prayerTopic,
-    };
-
     try {
-      const res = await fetch('/api/giving/once', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await res.json();
-
-      if (res.ok && result.success) {
-        sessionStorage.setItem('latest_giving_amount', amount);
-        router.push('/giving/once/complete');
-      } else {
-        alert(result.message || '헌금 접수에 실패했습니다.');
-      }
+      sessionStorage.setItem('latest_giving_amount', amount);
+      sessionStorage.setItem(
+        'latest_earned_point',
+        estimatedEarnedPoint.toString(),
+      );
+      sessionStorage.removeItem('giving_once_state');
+      sessionStorage.removeItem('giving_message');
+      router.push('/giving/once/complete');
     } catch (e) {
       console.error('Failed to submit giving', e);
+      router.push('/giving/once/complete');
     }
   };
 
   return (
     <div className="flex flex-col">
       <Header content="헌금하기" />
-      <main className="flex-1 space-y-8 p-5">
+      <main className="flex-1 space-y-8 p-5 pb-20">
         <section className="flex flex-col gap-3">
           <p className="font-hana-bold text-lg">헌금 종류</p>
           <div className="flex flex-wrap gap-2">
@@ -229,9 +269,35 @@ export default function GivingOnce() {
             onChange={handlePointChange}
             className="w-full rounded-xl border border-gray-200 bg-white p-3 outline-none transition-colors focus:border-hana-main"
           />
-          <p className="px-1 text-gray-500 text-xs">
-            보유 포인트: {data.maxPoint.toLocaleString()}P
-          </p>
+          <div className="flex items-center justify-between px-1">
+            <p className="text-gray-500 text-xs">
+              보유 포인트: {data.maxPoint.toLocaleString()}P
+            </p>
+            <button
+              type="button"
+              onClick={toggleAllPoints}
+              className="flex items-center gap-1.5"
+            >
+              <div
+                className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${
+                  useAllPoints
+                    ? 'border-hana-main bg-hana-main text-white'
+                    : 'border-gray-300 bg-white'
+                }`}
+              >
+                {useAllPoints && <Check size={14} strokeWidth={3} />}
+              </div>
+              <span
+                className={`text-xs ${
+                  useAllPoints
+                    ? 'font-hana-bold text-hana-main'
+                    : 'text-gray-500'
+                }`}
+              >
+                전액 사용
+              </span>
+            </button>
+          </div>
         </section>
 
         <div className="space-y-4 border-t pt-4 pb-5">
@@ -250,6 +316,7 @@ export default function GivingOnce() {
             <p className="font-hana-bold text-lg">기도제목</p>
             <Link
               href="/giving/once/prayer"
+              onClick={handleSaveState}
               className="max-w-[200px] cursor-pointer truncate text-right font-hana-medium text-hana-main"
             >
               {prayerTopic ? '이어서 작성하기 >' : '작성하러가기 >'}
