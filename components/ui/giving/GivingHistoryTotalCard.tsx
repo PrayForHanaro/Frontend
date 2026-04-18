@@ -14,7 +14,7 @@ export default function GivingHistoryTotalCard({
   const formattedAmount = totalAmount.toLocaleString('ko-KR');
 
   return (
-    <div className="w-full rounded-3xl bg-gradient-to-br from-hana-linear-deep-green-end to-hana-pastel-mint/80 p-6 text-white">
+    <div className="w-full rounded-3xl bg-gradient-to-br from-hana-linear-deep-green-end to-hana-linear-deep-green p-6 text-white">
       <h3 className="font-semibold text-lg">총 헌금액</h3>
 
       <div className="mt-4 font-bold text-3xl">₩{formattedAmount}</div>

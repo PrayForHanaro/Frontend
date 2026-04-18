@@ -29,46 +29,58 @@ type Pension = {
   productName: string; // 상품 이름
 };
 
-//TODO 임시 데이터, API 연동 필요
 const pensions: Pension[] = [
   {
     pensionId: 1,
-    userId: 123,
-    accountNumber: '1214-xxxxx-5162',
-    pensionType: '퇴직연금',
+    userId: 1,
+    accountNumber: '101-23-***456',
+    pensionType: '국민연금',
     isHanaBank: true,
-    totalContribution: 1000000.0,
-    totalWithdrawal: 500000.0,
-    profit: 50000.0,
-    returnRate: 5.0,
-    institutionName: '하나은행',
-    productName: '하나 IRP',
+    totalContribution: 850000,
+    totalWithdrawal: 0,
+    profit: 9000,
+    returnRate: 10,
+    institutionName: '국민연금공단',
+    productName: '국민연금 기본형',
   },
   {
     pensionId: 2,
-    userId: 124,
-    accountNumber: '1224-xxxxx-5161',
-    pensionType: '국민연금',
-    isHanaBank: false,
-    totalContribution: 1500000.0,
-    totalWithdrawal: 700000.0,
-    profit: 80000.0,
-    returnRate: 6.0,
-    institutionName: '국민연금공단',
-    productName: '국민연금',
+    userId: 1,
+    accountNumber: '213-90-***812',
+    pensionType: '퇴직연금',
+    isHanaBank: true,
+    totalContribution: 850000,
+    totalWithdrawal: 0,
+    profit: 9000,
+    returnRate: 10,
+    institutionName: '하나은행',
+    productName: '하나 퇴직연금',
   },
   {
     pensionId: 3,
-    userId: 124,
-    accountNumber: '1224-xxxxx-5161',
-    pensionType: '국민연금',
+    userId: 1,
+    accountNumber: '334-11-***275',
+    pensionType: '개인연금',
     isHanaBank: false,
-    totalContribution: 1500000.0,
-    totalWithdrawal: 700000.0,
-    profit: 80000.0,
-    returnRate: 6.0,
-    institutionName: '국민연금공단',
-    productName: '국민연금',
+    totalContribution: 850000,
+    totalWithdrawal: 0,
+    profit: 9000,
+    returnRate: 10,
+    institutionName: '두나생명',
+    productName: '두나 개인연금',
+  },
+  {
+    pensionId: 4,
+    userId: 1,
+    accountNumber: '558-72-***904',
+    pensionType: '퇴직연금',
+    isHanaBank: false,
+    totalContribution: 1250000,
+    totalWithdrawal: 0,
+    profit: 12000,
+    returnRate: 9,
+    institutionName: '미래연금보험',
+    productName: '미래 퇴직연금 플랜',
   },
 ];
 
@@ -101,81 +113,85 @@ export default function Transfer() {
     nonHanaBankPensionList.every((p) => selectedPensions.includes(p.pensionId));
 
   return (
-    <div className="relative min-h-full w-full">
+    <div>
       <Header content="헌금 관리" />
-      <div className="relative pt-7">
-        <div className="text-l">내 연금 목록</div>
-        <div className="pt-3 text-hana-gray-600">
-          추가할 연금을 선택해주세요.
-        </div>
-      </div>
-
-      <div className="pt-7">
-        <div className="text-l">하나은행 연결된 연금</div>
-        {hanaBankPensionList.map((p) => (
-          <div key={p.pensionId} className="pt-3">
-            <WhiteCard
-              align="left"
-              contents={`${p.institutionName} - ${p.productName}`}
-              description={`${p.accountNumber}`}
-              isSelected={false}
-              setIsSelected={() => {}}
-              badgeContent="연결됨"
-            />
+      <div className="relative min-h-screen w-full max-w-full overflow-x-hidden pb-28">
+        <div className="relative pt-7">
+          <div className="text-l">내 연금 목록</div>
+          <div className="pt-3 text-hana-gray-600">
+            추가할 연금을 선택해주세요.
           </div>
-        ))}
-      </div>
-
-      <div className="pt-7">
-        <div className="text-l">타은행 연금</div>
-        <div className="flex items-center gap-3 pt-3">
-          <input
-            id="selectAll"
-            type="checkbox"
-            checked={isAllNonHanaBankSelected}
-            onChange={() =>
-              isAllNonHanaBankSelected
-                ? deselectAllNonHanaBank()
-                : selectAllNonHanaBank()
-            }
-            className="h-5 w-5 cursor-pointer accent-hana-light-mint"
-          />
-          <label htmlFor="selectAll" className="cursor-pointer text-l">
-            전체 선택
-          </label>
         </div>
-        {nonHanaBankPensionList.map((p) => (
-          <div key={p.pensionId} className="pt-3">
-            <WhiteCard
-              align="left"
-              contents={`${p.institutionName} - ${p.productName}`}
-              description={`${p.accountNumber}`}
-              isSelected={selectedPensions?.includes(p.pensionId) || false}
-              setIsSelected={(selected) =>
-                handleSelectPension(p.pensionId, selected)
+
+        <div className="pt-7">
+          <div className="text-l">하나은행 연결된 연금</div>
+          {hanaBankPensionList.map((p) => (
+            <div key={p.pensionId} className="pt-3">
+              <WhiteCard
+                align="left"
+                contents={`${p.institutionName}`}
+                description={`${p.accountNumber}`}
+                description2={`${p.productName}`}
+                isSelected={false}
+                setIsSelected={() => {}}
+                badgeContent="연결됨"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="pt-7">
+          <div className="text-l">타은행 연금</div>
+          <div className="flex items-center gap-3 pt-3">
+            <input
+              id="selectAll"
+              type="checkbox"
+              checked={isAllNonHanaBankSelected}
+              onChange={() =>
+                isAllNonHanaBankSelected
+                  ? deselectAllNonHanaBank()
+                  : selectAllNonHanaBank()
               }
-              showCheckbox={true}
+              className="h-5 w-5 cursor-pointer accent-hana-light-mint"
             />
+            <label htmlFor="selectAll" className="cursor-pointer text-l">
+              전체 선택
+            </label>
           </div>
-        ))}
-      </div>
-      <div className="absolute bottom-1 w-full pt-10">
-        <div className="grid grid-cols-1 gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-15 w-full rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
-            onClick={() => router.back()}
-          >
-            돌아가기
-          </Button>
-          <Button
-            type="button"
-            className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
-            onClick={() => router.push('/giving')}
-          >
-            선택완료
-          </Button>
+          {nonHanaBankPensionList.map((p) => (
+            <div key={p.pensionId} className="pt-3">
+              <WhiteCard
+                align="left"
+                contents={`${p.institutionName}`}
+                description={`${p.accountNumber}`}
+                description2={`${p.productName}`}
+                isSelected={selectedPensions?.includes(p.pensionId) || false}
+                setIsSelected={(selected) =>
+                  handleSelectPension(p.pensionId, selected)
+                }
+                showCheckbox={true}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="absolute bottom-1 w-full pt-15">
+          <div className="grid grid-cols-1 gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-15 w-full rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
+              onClick={() => router.back()}
+            >
+              돌아가기
+            </Button>
+            <Button
+              type="button"
+              className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+              onClick={() => router.push('/giving')}
+            >
+              선택완료
+            </Button>
+          </div>
         </div>
       </div>
     </div>

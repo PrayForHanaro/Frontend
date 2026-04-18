@@ -2,6 +2,7 @@ type Props = {
   isSelected: boolean;
   contents: string;
   description?: string;
+  description2?: string;
   setIsSelected?: (s: boolean) => void;
   badgeContent?: string;
   badgeType?: 'badge' | 'tag';
@@ -15,6 +16,7 @@ export default function WhiteCard({
   contents,
   isSelected,
   description,
+  description2,
   setIsSelected,
   badgeContent,
   badgeType = 'badge',
@@ -34,7 +36,7 @@ export default function WhiteCard({
       : 'font-hana-light';
   return (
     <div
-      className={`flex h-20 w-full max-w-md items-center justify-between rounded-2xl p-5 shadow-sm ${
+      className={`flex min-h-[80px] w-full max-w-md items-center justify-between rounded-2xl p-5 shadow-sm ${
         isSelected
           ? 'border-4 border-hana-checkin-green-b bg-white'
           : 'bg-white'
@@ -54,6 +56,9 @@ export default function WhiteCard({
             <div className="font-semibold text-gray-800 text-lg">
               {contents}
             </div>
+            {description2 && (
+              <div className="text-hana-gray-500 text-sm">{description2}</div>
+            )}
             {description && (
               <div className={`${descriptionClasses} text-sm`}>
                 {description}
@@ -72,6 +77,9 @@ export default function WhiteCard({
         >
           <div className={`flex h-full w-full flex-col gap-2 ${alignClasses}`}>
             <div>{contents}</div>
+            {description2 && (
+              <div className="text-hana-gray-500 text-sm">{description2}</div>
+            )}
             {description && (
               <div className={`${descriptionClasses} text-sm`}>
                 {description}
