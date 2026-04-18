@@ -102,7 +102,7 @@ export default function BlessIntervalList() {
         </div>
 
         <div className="flex justify-center py-4">
-          <AddTargetButton />
+          <AddTargetButton className="hover:size-11 hover:cursor-pointer" />
         </div>
       </div>
     </div>
