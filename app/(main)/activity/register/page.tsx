@@ -131,7 +131,7 @@ export default function ActivityRegister() {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-20">
+    <div className="flex flex-col gap-4">
       <Header content="활동 만들기" />
 
       <div className="mt-5 flex flex-col gap-6">

@@ -86,7 +86,7 @@ export default function ActivityId() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 pb-20">
+    <div className="flex flex-col gap-4">
       <Header content="동행찾기" />
 
       <section
