@@ -8,12 +8,12 @@ import LongButton from './LongBtn';
  * @page: 일정/헌금 추가 모달
  * @description: 일정 또는 헌금 일정을 추가할 때 사용하는 모달 컴포넌트입니다.
  * @author: typeYu
- * @date: 2026-04-15
+ * @date: 2026-04-18
  */
 
 type ModalType = 'schedule' | 'cash';
 
-type ScheduleCategory = 'personal' | 'church';
+export type ScheduleCategory = 'personal' | 'church' | 'smallGroup';
 
 type ScheduleAddModalProps = {
   isOpen: boolean;
@@ -128,7 +128,7 @@ export default function ScheduleAddModal({
 
           {type === 'schedule' ? (
             <>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <ChipButton
                   text="개인 일정"
                   isActive={category === 'personal'}
@@ -139,6 +139,12 @@ export default function ScheduleAddModal({
                   text="교회 일정"
                   isActive={category === 'church'}
                   onClick={() => onChangeCategory?.('church')}
+                />
+
+                <ChipButton
+                  text="소모임 일정"
+                  isActive={category === 'smallGroup'}
+                  onClick={() => onChangeCategory?.('smallGroup')}
                 />
               </div>
 
@@ -308,7 +314,7 @@ function ChipButton({ text, isActive, onClick }: ChipButtonProps) {
       aria-pressed={isActive}
       className={`rounded-full px-4 py-2 font-hana-main text-[14px] transition-colors ${
         isActive
-          ? 'bg-[#8f8f8f] text-white'
+          ? 'bg-hana-main text-white'
           : 'bg-[#f0efeb] text-[#8d8d8d] hover:bg-[#e7e5df]'
       }`}
     >
