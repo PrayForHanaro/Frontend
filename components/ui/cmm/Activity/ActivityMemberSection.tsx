@@ -24,12 +24,37 @@ type ActivityMemberSectionProps = {
   currentCount: number;
   maxCount: number;
   members: ActivityMember[];
+  activityId?: number;
 };
+
+const JOINED_ACTIVITY_IDS_KEY = 'joinedActivityIds';
+
+function getStoredJoinedActivityIds() {
+  if (typeof window === 'undefined') {
+    return [] as number[];
+  }
+
+  try {
+    const stored = sessionStorage.getItem(JOINED_ACTIVITY_IDS_KEY);
+    return stored ? (JSON.parse(stored) as number[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveJoinedActivityIds(ids: number[]) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  sessionStorage.setItem(JOINED_ACTIVITY_IDS_KEY, JSON.stringify(ids));
+}
 
 export default function ActivityMemberSection({
   currentCount,
   maxCount,
   members,
+  activityId,
 }: ActivityMemberSectionProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,6 +68,12 @@ export default function ActivityMemberSection({
   }
 
   function handleMoveActivity() {
+    if (activityId && activityId > 0) {
+      const joinedIds = getStoredJoinedActivityIds();
+      const nextIds = Array.from(new Set([...joinedIds, activityId]));
+      saveJoinedActivityIds(nextIds);
+    }
+
     sessionStorage.setItem('activityJoinToast', 'true');
     setIsModalOpen(false);
     router.push('/activity');

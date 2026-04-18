@@ -2,6 +2,7 @@
 
 import { CalendarDays, MapPin, Users } from 'lucide-react';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import ActivityAdBanner from '@/components/ui/cmm/Activity/ActivityAdBanner';
@@ -57,6 +58,7 @@ const MEMBERS = [
 ];
 
 export default function ActivityId() {
+  const params = useParams();
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [activityData, setActivityData] = useState<NewActivityData | null>(
     null,
@@ -169,7 +171,12 @@ export default function ActivityId() {
         </div>
       </section>
 
-      <ActivityMemberSection currentCount={5} maxCount={12} members={MEMBERS} />
+      <ActivityMemberSection
+        activityId={Number(params?.activityId ?? 0)}
+        currentCount={5}
+        maxCount={12}
+        members={MEMBERS}
+      />
 
       <ActivityCommentSection />
 

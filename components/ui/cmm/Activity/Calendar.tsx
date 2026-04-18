@@ -21,7 +21,7 @@ type CalendarProps = {
   month?: number;
   view?: CalendarView;
   selectedDate?: number;
-  events?: Partial<Record<number, EventType[]>>;
+  events?: Partial<Record<string, string[]>>;
   onPrevMonth?: () => void;
   onNextMonth?: () => void;
   onSelectDate?: (date: number) => void;
@@ -134,24 +134,46 @@ function buildDefaultScheduleItems(year: number, month: number) {
 }
 
 function mergeEventMaps(
-  externalEvents: Partial<Record<number, EventType[]>>,
+  externalEvents: Partial<Record<string, string[]>>,
   internalEvents: Partial<Record<number, EventType[]>>,
+  year: number,
+  month: number,
 ) {
   const mergedMap: Partial<Record<number, EventType[]>> = {};
 
-  const keys = new Set([
-    ...Object.keys(externalEvents),
-    ...Object.keys(internalEvents),
+  const externalEntries = Object.entries(externalEvents);
+  const keys = new Set<number>([
+    ...Object.keys(internalEvents).map(Number),
+    ...externalEntries
+      .map(([key]) => {
+        const parsed = parseDateKey(key);
+        if (parsed && parsed.year === year && parsed.month === month) {
+          return parsed.date;
+        }
+
+        const numericKey = Number(key);
+        return Number.isNaN(numericKey) ? null : numericKey;
+      })
+      .filter((value): value is number => value !== null),
   ]);
 
   keys.forEach((key) => {
-    const date = Number(key);
+    const externalValues = externalEntries.find(([entryKey]) => {
+      const parsed = parseDateKey(entryKey);
+      if (parsed) {
+        return (
+          parsed.year === year && parsed.month === month && parsed.date === key
+        );
+      }
+      return Number(entryKey) === key;
+    });
+
     const values = [
-      ...(externalEvents[date] ?? []),
-      ...(internalEvents[date] ?? []),
+      ...(externalValues ? (externalValues[1] as EventType[]) : []),
+      ...(internalEvents[key] ?? []),
     ];
 
-    mergedMap[date] = Array.from(new Set(values));
+    mergedMap[key] = Array.from(new Set(values));
   });
 
   return mergedMap;
@@ -469,8 +491,8 @@ export default function Calendar({
   }, [currentMonth, currentYear, scheduleItems]);
 
   const mergedEventMap = useMemo(() => {
-    return mergeEventMaps(events, internalEventMap);
-  }, [events, internalEventMap]);
+    return mergeEventMaps(events, internalEventMap, currentYear, currentMonth);
+  }, [events, internalEventMap, currentYear, currentMonth]);
 
   const selectedSchedules = useMemo(() => {
     return scheduleItems.filter((item) => item.date === selectedDateKey);
@@ -581,7 +603,7 @@ export default function Calendar({
 
   return (
     <>
-      <div className="w-full rounded-[20px] bg-white p-4 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+      <div className="w-full rounded-4xl bg-white p-4 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
         <CalendarHeader
           year={currentYear}
           month={currentMonth}

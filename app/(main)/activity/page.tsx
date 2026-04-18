@@ -16,6 +16,116 @@ import {
   type BoardTab,
 } from '@/constants/activity';
 
+/**
+ * @page: 소모임 - 활동 목록 페이지
+ * @description:  활동 목록 페이지입니다. 활동 카드 리스트와 활동 등록 페이지로 이동하는 버튼으로 구성되어 있습니다.
+ * @author: typeYu
+ * @date: 2026-04-14
+ */
+
+const JOINED_ACTIVITY_IDS_KEY = 'joinedActivityIds';
+
+function getStoredJoinedActivityIds() {
+  if (typeof window === 'undefined') {
+    return [] as number[];
+  }
+
+  try {
+    const stored = sessionStorage.getItem(JOINED_ACTIVITY_IDS_KEY);
+    return stored ? (JSON.parse(stored) as number[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveJoinedActivityIds(ids: number[]) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  sessionStorage.setItem(JOINED_ACTIVITY_IDS_KEY, JSON.stringify(ids));
+}
+
+function formatDateKey(year: number, month: number, day: number) {
+  const resolvedMonth = String(month).padStart(2, '0');
+  const resolvedDay = String(day).padStart(2, '0');
+
+  return `${year}-${resolvedMonth}-${resolvedDay}`;
+}
+
+function parseScheduleToDateKeys(schedule: string) {
+  const dateKeys: string[] = [];
+
+  const monthDayMatch = schedule.match(/(\d{1,2})\.(\d{1,2})/);
+  if (monthDayMatch) {
+    const month = Number(monthDayMatch[1]);
+    const day = Number(monthDayMatch[2]);
+    dateKeys.push(formatDateKey(2026, month, day));
+    return dateKeys;
+  }
+
+  const monthDayTextMatch = schedule.match(/(\d{1,2})월\s*(\d{1,2})일/);
+  if (monthDayTextMatch) {
+    const month = Number(monthDayTextMatch[1]);
+    const day = Number(monthDayTextMatch[2]);
+    dateKeys.push(formatDateKey(2026, month, day));
+    return dateKeys;
+  }
+
+  const secondWeekMatch = schedule.match(/(\d{1,2})월\s*둘째\s*주/);
+  if (secondWeekMatch) {
+    const month = Number(secondWeekMatch[1]);
+    dateKeys.push(formatDateKey(2026, month, 10));
+    return dateKeys;
+  }
+
+  return dateKeys;
+}
+
+function formatSchedule(periodValue: ActivityPeriodValue): string {
+  if (periodValue.meetingType === 'single') {
+    return `${periodValue.singleDate} ${periodValue.singleTime}`;
+  }
+
+  if (periodValue.recurringType === 'daily') {
+    return `매일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  if (periodValue.recurringType === 'weekday') {
+    const days = periodValue.recurringWeekdays.join(', ');
+    return `매주 ${days} ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  if (periodValue.recurringType === 'monthly') {
+    const dates = periodValue.recurringMonthDays.join(', ');
+    return `매월 ${dates}일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
+  }
+
+  return '날짜 미정';
+}
+
+function getActivityDateKeys(activity: ActivityItem) {
+  return parseScheduleToDateKeys(activity.schedule);
+}
+
+function buildEventsFromActivities(activities: ActivityItem[]) {
+  return activities.reduce(
+    (events, activity) => {
+      if (!activity.isApplied) {
+        return events;
+      }
+
+      getActivityDateKeys(activity).forEach((key) => {
+        const existing = events[key] ?? [];
+        events[key] = Array.from(new Set([...existing, 'smallGroup']));
+      });
+
+      return events;
+    },
+    {} as Record<string, Array<'smallGroup'>>,
+  );
+}
+
 type NewActivityData = {
   id: string;
   title: string;
@@ -26,13 +136,6 @@ type NewActivityData = {
   images: string[];
 };
 
-/**
- * @page: 소모임 - 활동 목록 페이지
- * @description:  활동 목록 페이지입니다. 활동 카드 리스트와 활동 등록 페이지로 이동하는 버튼으로 구성되어 있습니다.
- * @author: typeYu
- * @date: 2026-04-14
- */
-
 export default function Activity() {
   const router = useRouter();
 
@@ -40,35 +143,72 @@ export default function Activity() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [activities, setActivities] = useState<ActivityItem[]>(ACTIVITY_LIST);
 
-  // sessionStorage에서 새로운 활동 데이터를 로드
   useEffect(() => {
+    const joinedIds = getStoredJoinedActivityIds();
+    const hydratedActivities = ACTIVITY_LIST.map((activity) => ({
+      ...activity,
+      isApplied: joinedIds.includes(activity.id),
+    }));
+
     const newActivityData = sessionStorage.getItem('newActivity');
     if (newActivityData) {
       try {
         const newActivity = JSON.parse(newActivityData) as NewActivityData;
 
-        // 새로운 활동 객체 생성 (활동 목록 형식에 맞춤)
         const formattedActivity: ActivityItem = {
           id: parseInt(newActivity.id, 10),
-          category: '동행찾기', // 기본값으로 동행찾기로 설정
+          category: '동행찾기',
           title: newActivity.title,
           location: newActivity.location,
           schedule: formatSchedule(newActivity.periodValue),
           currentCount: 1,
           maxCount: newActivity.capacity,
-          point: 30, // 기본값
+          point: 30,
           isApplied: true,
           isOwner: true,
           status: 'RECRUITING' as const,
         };
 
-        // 기존 활동 목록에 새 활동 추가 (맨 앞에)
-        setActivities([formattedActivity, ...ACTIVITY_LIST]);
+        setActivities([formattedActivity, ...hydratedActivities]);
       } catch (error) {
         console.error('Failed to parse newActivity:', error);
+        setActivities(hydratedActivities);
       }
+
+      return;
     }
+
+    setActivities(hydratedActivities);
   }, []);
+
+  const handleToggleApply = (activityId: number, nextIsApplied: boolean) => {
+    setActivities((prevActivities) =>
+      prevActivities.map((activity) => {
+        if (activity.id !== activityId) {
+          return activity;
+        }
+
+        return {
+          ...activity,
+          isApplied: nextIsApplied,
+          currentCount: nextIsApplied
+            ? activity.currentCount + 1
+            : Math.max(activity.currentCount - 1, 0),
+        };
+      }),
+    );
+
+    const joinedIds = getStoredJoinedActivityIds();
+    const nextIds = nextIsApplied
+      ? Array.from(new Set([...joinedIds, activityId]))
+      : joinedIds.filter((id) => id !== activityId);
+
+    saveJoinedActivityIds(nextIds);
+
+    if (nextIsApplied) {
+      sessionStorage.setItem('activityJoinToast', 'true');
+    }
+  };
 
   const filteredActivities = useMemo(() => {
     const trimmedKeyword = searchKeyword.trim().toLowerCase();
@@ -91,6 +231,10 @@ export default function Activity() {
       );
     });
   }, [searchKeyword, selectedTab, activities]);
+
+  const calendarEvents = useMemo<Partial<Record<string, string[]>>>(() => {
+    return buildEventsFromActivities(activities);
+  }, [activities]);
 
   function handleMoveRegisterPage() {
     router.push('/activity/register');
@@ -119,37 +263,15 @@ export default function Activity() {
             isApplied={activity.isApplied}
             isOwner={activity.isOwner}
             status={activity.status}
+            onToggleApply={handleToggleApply}
           />
         ))}
       </div>
 
       <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
 
-      <Calendar />
+      <Calendar events={calendarEvents} />
       <ActivityJoinToast />
     </div>
   );
-}
-
-// periodValue를 읽기 좋은 문자열로 변환하는 헬퍼 함수
-function formatSchedule(periodValue: ActivityPeriodValue): string {
-  if (periodValue.meetingType === 'single') {
-    return `${periodValue.singleDate} ${periodValue.singleTime}`;
-  }
-
-  if (periodValue.recurringType === 'daily') {
-    return `매일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
-  }
-
-  if (periodValue.recurringType === 'weekday') {
-    const days = periodValue.recurringWeekdays.join(', ');
-    return `매주 ${days} ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
-  }
-
-  if (periodValue.recurringType === 'monthly') {
-    const dates = periodValue.recurringMonthDays.join(', ');
-    return `매월 ${dates}일 ${periodValue.recurringStartDate} ~ ${periodValue.recurringEndDate}`;
-  }
-
-  return '날짜 미정';
 }

@@ -26,6 +26,7 @@ type ActivityCardProps = {
   isApplied: boolean;
   isOwner: boolean;
   status: 'RECRUITING' | 'CLOSED' | 'CANCELLED';
+  onToggleApply?: (activityId: number, nextIsApplied: boolean) => void;
 };
 
 export default function ActivityCard({
@@ -40,8 +41,8 @@ export default function ActivityCard({
   isApplied,
   isOwner,
   status,
+  onToggleApply,
 }: ActivityCardProps) {
-  
   const mode = getActivityMode({
     isApplied,
     isOwner,
@@ -95,7 +96,13 @@ export default function ActivityCard({
           <CategoryTag label="포인트" text={`+${point}포인트`} />
         </div>
 
-        <ApplyButton activityId={id} mode={mode} />
+        <ApplyButton
+          activityId={id}
+          mode={mode}
+          onToggleApply={
+            onToggleApply ? () => onToggleApply(id, !isApplied) : undefined
+          }
+        />
       </div>
     </article>
   );

@@ -45,7 +45,7 @@ const DEFAULT_DATA: HomeData = {
   prayerPeople: [
     { id: 1, name: '권순찬', type: 'man' as const, relation: '자녀' },
     { id: 2, name: '유하영', type: 'baby' as const, relation: '손주' },
-    { id: 3, name: '유지혜', type: 'woman' as const, relation: '자녀' },
+    { id: 3, name: '이정수', type: 'woman' as const, relation: '자녀' },
   ],
 };
 

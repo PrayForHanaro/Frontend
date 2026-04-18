@@ -90,7 +90,7 @@ export default function ActivityCommentSection() {
           ...comment,
           replies: [
             ...comment.replies,
-            createReply('하이미', trimmedReplyValue),
+            createReply('김하나', trimmedReplyValue),
           ],
         };
       }),
@@ -112,7 +112,7 @@ export default function ActivityCommentSection() {
 
     setComments((previousComments) => [
       ...previousComments,
-      createComment('하이미', trimmedCommentValue),
+      createComment('김하나', trimmedCommentValue),
     ]);
     setCommentValue('');
   };

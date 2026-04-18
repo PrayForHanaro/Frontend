@@ -96,7 +96,8 @@ export default function BlessInterval({
             date: '2024-01-15',
             dayOfWeek: '월',
             points: 1000,
-            content: '오늘도 함께 기도합니다.',
+            content:
+              '주님, 정수가 직장에서 좋은 사람들과 함께 하며 보람을 느끼게 해주세요.',
           },
           {
             id: '2',
@@ -104,7 +105,8 @@ export default function BlessInterval({
             date: '2024-01-14',
             dayOfWeek: '일',
             points: 1000,
-            content: '건강하세요.',
+            content:
+              '하나님, 정수의 건강을 지켜주시고 매일 감사하는 마음으로 살게 해주세요.',
           },
           {
             id: '3',
@@ -112,7 +114,8 @@ export default function BlessInterval({
             date: '2024-01-13',
             dayOfWeek: '토',
             points: 1000,
-            content: '행복하세요.',
+            content:
+              '감사합니다. 정수가 주말에 집에 와서 함께 시간을 보냈습니다. 늘 가족을 사랑하는 아이로 자라게 해주세요.',
           },
         ];
 

@@ -12,26 +12,25 @@ import { useRouter } from 'next/navigation';
 type ApplyButtonProps = {
   mode: 'APPLY' | 'CANCEL' | 'STOP';
   activityId: number;
+  onToggleApply?: (mode: 'APPLY' | 'CANCEL' | 'STOP') => void;
 };
 
-export default function ApplyButton({
-  mode,
-  activityId
-}: ApplyButtonProps) {
+export default function ApplyButton({ mode, activityId }: ApplyButtonProps) {
   const router = useRouter();
 
   function handleClick() {
-      if (mode === 'STOP') {
-        
-      }
+    console.log(mode);
+    if (mode === 'STOP') {
+      return;
+    }
+    if (mode === 'APPLY') {
+      router.push(`/activity/${activityId}`);
+    }
 
-      if(mode === 'CANCEL'){
-        
-      }
-
-      if(mode === 'APPLY'){
-        router.push(`/activity/${activityId}`);
-      }
+    // if (onToggleApply) {
+    //   onToggleApply(mode);
+    //   return;
+    // }
   }
 
   return (
@@ -50,8 +49,8 @@ export default function ApplyButton({
       {mode === 'STOP'
         ? '모집 중단'
         : mode === 'CANCEL'
-        ? '취소하기'
-        : '신청하기'}
+          ? '취소하기'
+          : '신청하기'}
     </button>
   );
 }
