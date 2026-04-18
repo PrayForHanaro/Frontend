@@ -9,7 +9,6 @@ import {
   LogOut,
 } from 'lucide-react';
 import Header from '@/components/ui/cmm/Header';
-import Nav from '@/components/ui/cmm/Nav';
 import MenuItem from '@/components/ui/My/MenuItem';
 import PointCard from '@/components/ui/My/PointCard';
 import ProfileSection from '@/components/ui/My/ProfileSection';
@@ -45,26 +44,15 @@ export default function MyPage() {
       />
 
       <Section title="설정">
-        <MenuItem
-          label="알림 설정"
-          href="/settings/notification"
-          icon={<Bell size={20} />}
-        />
+        <MenuItem label="알림 설정" icon={<Bell size={20} />} />
 
-        <MenuItem
-          label="약관 및 개인정보"
-          href="/settings/policy"
-          icon={<LockKeyhole size={20} />}
-        />
+        <MenuItem label="약관 및 개인정보" icon={<LockKeyhole size={20} />} />
         <MenuItem
           label="로그아웃"
-          href="/logout"
           isDanger={true}
           icon={<LogOut size={20} />}
         />
       </Section>
-
-      <Nav />
     </div>
   );
 }

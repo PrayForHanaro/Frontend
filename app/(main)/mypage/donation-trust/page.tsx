@@ -1,7 +1,6 @@
 'use client';
 
 import Header from '@/components/ui/cmm/Header';
-import Nav from '@/components/ui/cmm/Nav';
 import CounselingForm from '@/components/ui/My/CounselingForm';
 
 export default function CounselingPage() {
@@ -10,8 +9,6 @@ export default function CounselingPage() {
       <Header content="상담 예약" />
 
       <CounselingForm />
-
-      <Nav />
     </div>
   );
 }

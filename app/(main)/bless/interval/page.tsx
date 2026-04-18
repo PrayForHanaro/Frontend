@@ -1,4 +1,3 @@
-import Nav from '@/components/ui/cmm/Nav';
 import { getTargets } from '@/lib/api/bless';
 import AddTargetButton from '../_components/add-target-button';
 import BlessHeader from '../_components/bless-header';
@@ -42,7 +41,6 @@ export default async function BlessIntervalList() {
           <AddTargetButton />
         </div>
       </div>
-      <Nav />
     </div>
   );
 }

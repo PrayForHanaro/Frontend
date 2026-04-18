@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 type MenuItemProps = {
   label: string;
   subLabel?: string;
-  href: Route;
+  href?: Route;
   isDanger?: boolean;
   icon?: React.ReactNode;
 };
@@ -25,7 +25,9 @@ export default function MenuItem({
   const displayLabel = label.trim();
 
   function handleMove() {
-    router.push(href);
+    if (href) {
+      router.push(href);
+    }
   }
 
   return (

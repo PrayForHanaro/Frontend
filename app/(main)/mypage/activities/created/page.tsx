@@ -5,7 +5,6 @@ import ActivityCard from '@/components/ui/cmm/Activity/ActivityCard';
 import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
 import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
-import Nav from '@/components/ui/cmm/Nav';
 import { MY_ACTIVITY_LIST } from '@/constants/activity';
 
 export default function MyPageActivities() {
@@ -60,7 +59,6 @@ export default function MyPageActivities() {
         )}
       </div>
 
-      <Nav />
       <ActivityJoinToast />
     </div>
   );

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Header from '@/components/ui/cmm/Header';
-import Nav from '@/components/ui/cmm/Nav';
 import PointItem from '@/components/ui/My/points/PointItem';
 import PointSummary from '@/components/ui/My/points/PointSummary';
 
@@ -90,8 +89,6 @@ export default function PointPage() {
           />
         ))}
       </div>
-
-      <Nav />
     </div>
   );
 }

@@ -3,7 +3,6 @@
 import { Heart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Nav from '@/components/ui/cmm/Nav';
 import BlessActionButton from '../../_components/bless-action-button';
 import BlessHeader from '../../_components/bless-header';
 import { BLESS_ONCE_FORM_KEY } from '../../_constants';
@@ -99,7 +98,6 @@ export default function BlessOnceComplete() {
           <BlessActionButton onClick={handleComplete}>완료</BlessActionButton>
         </div>
       </div>
-      <Nav />
     </div>
   );
 }

@@ -6,7 +6,6 @@ import ActivityJoinToast from '@/components/ui/cmm/Activity/ActivityJoinToast';
 import BoardToggle from '@/components/ui/cmm/Activity/BoardToggle';
 import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
-import Nav from '@/components/ui/cmm/Nav';
 import { type BoardTab, MY_ACTIVITY_LIST } from '@/constants/activity';
 
 export default function MyPageActivities() {
@@ -69,7 +68,6 @@ export default function MyPageActivities() {
         )}
       </div>
 
-      <Nav />
       <ActivityJoinToast />
     </div>
   );

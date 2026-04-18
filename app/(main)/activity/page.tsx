@@ -10,7 +10,6 @@ import Calendar from '@/components/ui/cmm/Activity/Calendar';
 import SearchInput from '@/components/ui/cmm/Activity/SearchInput';
 import Header from '@/components/ui/cmm/Header';
 import LongButton from '@/components/ui/cmm/LongBtn';
-import Nav from '@/components/ui/cmm/Nav';
 import {
   ACTIVITY_LIST,
   type ActivityItem,
@@ -127,7 +126,6 @@ export default function Activity() {
       <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
 
       <Calendar />
-      <Nav />
       <ActivityJoinToast />
     </div>
   );

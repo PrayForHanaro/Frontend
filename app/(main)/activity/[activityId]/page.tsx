@@ -9,7 +9,6 @@ import ActivityCommentSection from '@/components/ui/cmm/Activity/ActivityComment
 import ActivityMemberSection from '@/components/ui/cmm/Activity/ActivityMemberSection';
 import type { ActivityPeriodValue } from '@/components/ui/cmm/Activity/ActivityPeriodField';
 import Header from '@/components/ui/cmm/Header';
-import Nav from '@/components/ui/cmm/Nav';
 
 type NewActivityData = {
   id: string;
@@ -175,8 +174,6 @@ export default function ActivityId() {
       <ActivityCommentSection />
 
       <ActivityAdBanner isVisible={isBannerVisible} />
-
-      <Nav />
     </div>
   );
 }

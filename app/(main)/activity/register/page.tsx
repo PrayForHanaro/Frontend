@@ -12,7 +12,6 @@ import ActivityPeriodField, {
 } from '@/components/ui/cmm/Activity/ActivityPeriodField';
 import Header from '@/components/ui/cmm/Header';
 import LongButton from '@/components/ui/cmm/LongBtn';
-import Nav from '@/components/ui/cmm/Nav';
 
 /**
  * @page: 소모임 - 활동 등록 페이지
@@ -184,8 +183,6 @@ export default function ActivityRegister() {
         isVisible={isBannerVisible}
         onClick={handleMoveGroupAccountGuidePage}
       />
-
-      <Nav />
     </div>
   );
 }

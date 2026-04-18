@@ -1,6 +1,5 @@
 import { Heart } from 'lucide-react';
 import BackButton from '@/components/ui/cmm/BackButton';
-import Nav from '@/components/ui/cmm/Nav';
 import { getMessages, getTarget } from '@/lib/api/bless';
 import DetailButtons from '../../_components/detail-buttons';
 import MessageHistoryItem from '../../_components/message-history-item';
@@ -94,7 +93,6 @@ export default async function BlessInterval({
           ))}
         </div>
       </div>
-      <Nav />
     </div>
   );
 }
