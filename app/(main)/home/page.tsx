@@ -3,6 +3,7 @@
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IMAGE_PATH } from '@/constants/images';
 
@@ -37,6 +38,7 @@ const getPersonImage = (type: string) => {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [data, setData] = useState<HomeData | null>({
     userName: '하나',
     myPoint: 19000,
@@ -73,10 +75,9 @@ export default function Home() {
         // const prayerPeople = 42;
 
         const prayerPeople = [
-          { id: 1, name: '김철수', type: 'man' as const, relation: '친구' },
-          { id: 2, name: '이영희', type: 'woman' as const, relation: '가족' },
-          { id: 3, name: '박장군', type: 'man' as const, relation: '직장동료' },
-          { id: 4, name: '최아기', type: 'baby' as const, relation: '자녀' },
+          { id: 1, name: '권순찬', type: 'baby' as const, relation: '자녀' },
+          { id: 2, name: '유하영', type: 'baby' as const, relation: '손주' },
+          { id: 3, name: '이동형', type: 'baby' as const, relation: '자녀' },
         ];
 
         setData({
@@ -86,6 +87,11 @@ export default function Home() {
           totalDonation,
           prayerPeople,
         });
+        // sessionStorage에 prayerPeople 저장
+        sessionStorage.setItem(
+          'homePrayerPeople',
+          JSON.stringify(prayerPeople),
+        );
       } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       }
@@ -251,10 +257,17 @@ export default function Home() {
           <div className="space-y-3">
             {data?.prayerPeople && data.prayerPeople.length > 0 ? (
               data.prayerPeople.map((person) => (
-                <Link
+                <button
                   key={person.id}
-                  href={`/bless/interval/${person.id}`}
-                  className="group relative flex items-center justify-between overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
+                  onClick={() => {
+                    sessionStorage.setItem(
+                      'selectedPrayerPerson',
+                      JSON.stringify(person),
+                    );
+                    router.push(`/bless/interval/${person.id}`);
+                  }}
+                  className="group relative flex w-full items-center justify-between overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
+                  type="button"
                 >
                   <div className="absolute top-0 left-0 h-full w-1.5 bg-[#F2E5D3]" />
                   <div className="flex items-center gap-4">
@@ -278,7 +291,7 @@ export default function Home() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 transition-colors group-hover:bg-hana-mint/10">
                     <ChevronRight className="h-5 w-5 text-hana-gray-300 group-hover:text-hana-mint" />
                   </div>
-                </Link>
+                </button>
               ))
             ) : (
               <div className="rounded-2xl bg-white py-10 text-center shadow-sm">

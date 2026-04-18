@@ -1,17 +1,27 @@
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import type { BlessTarget } from '../_types';
 
 type TargetListItemProps = {
   target: BlessTarget;
+  onSelect?: (target: BlessTarget) => void;
 };
 
-export default function TargetListItem({ target }: TargetListItemProps) {
+export default function TargetListItem({
+  target,
+  onSelect,
+}: TargetListItemProps) {
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(target);
+    }
+  };
+
   return (
-    <Link
-      href={`/bless/interval/${target.id}`}
-      className="group relative flex items-center justify-between overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
+    <button
+      onClick={handleClick}
+      type="button"
+      className="group relative flex w-full items-center justify-between overflow-hidden rounded-2xl bg-white p-5 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
     >
       <div className="absolute top-0 left-0 h-full w-1.5 bg-[#F2E5D3]" />
       <div className="flex items-center gap-4">
@@ -30,6 +40,6 @@ export default function TargetListItem({ target }: TargetListItemProps) {
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 transition-colors group-hover:bg-hana-mint/10">
         <ChevronRight className="h-5 w-5 text-hana-gray-300 group-hover:text-hana-mint" />
       </div>
-    </Link>
+    </button>
   );
 }

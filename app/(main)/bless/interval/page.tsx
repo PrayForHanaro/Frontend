@@ -1,12 +1,66 @@
-import { getTargets } from '@/lib/api/bless';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { IMAGE_PATH } from '@/constants/images';
 import AddTargetButton from '../_components/add-target-button';
 import BlessHeader from '../_components/bless-header';
 import TargetListItem from '../_components/target-list-item';
+import type { BlessTarget } from '../_types';
 
-const USER_NAME = '순범';
+const USER_NAME = '길동';
 
-export default async function BlessIntervalList() {
-  const targets = await getTargets();
+const getPersonImage = (type: string) => {
+  switch (type) {
+    case 'woman':
+      return IMAGE_PATH.HOME_WOMAN;
+    case 'baby':
+      return IMAGE_PATH.HOME_BABY;
+    default:
+      return IMAGE_PATH.HOME_MAN;
+  }
+};
+
+export default function BlessIntervalList() {
+  const router = useRouter();
+  const [targets, setTargets] = useState<BlessTarget[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // sessionStorage에서 homePrayerPeople 가져오기
+    const storedPrayerPeople = sessionStorage.getItem('homePrayerPeople');
+    if (storedPrayerPeople) {
+      try {
+        const prayerPeople = JSON.parse(storedPrayerPeople);
+        // homePrayerPeople을 BlessTarget 형식으로 변환
+        const formattedTargets: BlessTarget[] = prayerPeople.map(
+          (person: {
+            id: number;
+            name: string;
+            type: string;
+            relation: string;
+          }) => ({
+            id: person.id.toString(),
+            name: person.name,
+            relation: person.relation,
+            avatar: getPersonImage(person.type),
+            daysOfPrayer: Math.floor(Math.random() * 200) + 1,
+            totalAmount: Math.floor(Math.random() * 1000000) + 10000,
+            dailyAmount: Math.floor(Math.random() * 50000) + 1000,
+          }),
+        );
+        setTargets(formattedTargets);
+      } catch (error) {
+        console.error('prayerPeople 파싱 오류:', error);
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  const handleSelectTarget = (target: BlessTarget) => {
+    sessionStorage.setItem('selectedPrayerPerson', JSON.stringify(target));
+    router.push(`/bless/interval/${target.id}`);
+  };
 
   return (
     <div className="relative h-full w-full">
@@ -24,10 +78,18 @@ export default async function BlessIntervalList() {
         </p>
 
         <div className="space-y-3 px-5 pt-2">
-          {targets.length > 0 ? (
+          {!isLoading && targets.length > 0 ? (
             targets.map((target) => (
-              <TargetListItem key={target.id} target={target} />
+              <TargetListItem
+                key={target.id}
+                target={target}
+                onSelect={handleSelectTarget}
+              />
             ))
+          ) : isLoading ? (
+            <div className="rounded-2xl bg-white py-10 text-center shadow-sm">
+              <p className="text-hana-gray-400 text-sm">로딩 중...</p>
+            </div>
           ) : (
             <div className="rounded-2xl bg-white py-10 text-center shadow-sm">
               <p className="text-hana-gray-400 text-sm">

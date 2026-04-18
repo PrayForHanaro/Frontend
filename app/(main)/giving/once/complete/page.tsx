@@ -112,7 +112,7 @@ export default function GivingOnceComplete() {
               성함
             </span>
             <span className="font-hana-bold text-[#333333] text-xl">
-              {userName} 성도님
+              {userName} 님
             </span>
           </div>
 

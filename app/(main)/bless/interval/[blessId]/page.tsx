@@ -1,20 +1,144 @@
+'use client';
+
 import { Heart } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import BackButton from '@/components/ui/cmm/BackButton';
-import { getMessages, getTarget } from '@/lib/api/bless';
 import DetailButtons from '../../_components/detail-buttons';
 import MessageHistoryItem from '../../_components/message-history-item';
+import type { BlessMessage, BlessTarget } from '../../_types';
 
 const TOTAL_PRAYER_DAYS = 200;
 
-export default async function BlessInterval({
-  params,
+const getPersonImage = (type: string) => {
+  const IMAGE_PATH = {
+    HOME_WOMAN: '/images/woman.png',
+    HOME_BABY: '/images/baby.png',
+    HOME_MAN: '/images/man.png',
+  };
+  switch (type) {
+    case 'woman':
+      return IMAGE_PATH.HOME_WOMAN;
+    case 'baby':
+      return IMAGE_PATH.HOME_BABY;
+    default:
+      return IMAGE_PATH.HOME_MAN;
+  }
+};
+
+type BlessIntervalContent = {
+  blessId: string;
+  target: BlessTarget;
+  messages: BlessMessage[];
+};
+
+export default function BlessInterval({
+  params: paramsPromise,
 }: {
   params: Promise<{ blessId: string }>;
 }) {
-  const { blessId } = await params;
-  const target = await getTarget(blessId);
+  const [content, setContent] = useState<BlessIntervalContent | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!target) {
+  useEffect(() => {
+    const loadContent = async () => {
+      const params = await paramsPromise;
+      const { blessId } = params;
+
+      // sessionStorage에서 selectedPrayerPerson 가져오기
+      let target: BlessTarget | null = null;
+      const storedPerson = sessionStorage.getItem('selectedPrayerPerson');
+
+      if (storedPerson) {
+        try {
+          target = JSON.parse(storedPerson);
+        } catch (error) {
+          console.error('selectedPrayerPerson 파싱 오류:', error);
+        }
+      }
+
+      // selectedPrayerPerson이 없으면 homePrayerPeople에서 찾기
+      if (!target) {
+        try {
+          const storedHomePeople = sessionStorage.getItem('homePrayerPeople');
+          if (storedHomePeople) {
+            const prayerPeople = JSON.parse(storedHomePeople);
+            const foundPerson = prayerPeople.find(
+              (person: {
+                id: number;
+                name: string;
+                type: string;
+                relation: string;
+              }) => person.id.toString() === blessId,
+            );
+            if (foundPerson) {
+              target = {
+                id: foundPerson.id.toString(),
+                name: foundPerson.name,
+                relation: foundPerson.relation,
+                avatar: getPersonImage(foundPerson.type),
+                daysOfPrayer: Math.floor(Math.random() * 200) + 1,
+                totalAmount: Math.floor(Math.random() * 1000000) + 10000,
+                dailyAmount: Math.floor(Math.random() * 50000) + 1000,
+              };
+            }
+          }
+        } catch (error) {
+          console.error('homePrayerPeople 파싱 오류:', error);
+        }
+      }
+
+      if (target) {
+        // Mock 메시지 데이터
+        const mockMessages: BlessMessage[] = [
+          {
+            id: '1',
+            targetId: blessId,
+            date: '2024-01-15',
+            dayOfWeek: '월',
+            points: 1000,
+            content: '오늘도 함께 기도합니다.',
+          },
+          {
+            id: '2',
+            targetId: blessId,
+            date: '2024-01-14',
+            dayOfWeek: '일',
+            points: 1000,
+            content: '건강하세요.',
+          },
+          {
+            id: '3',
+            targetId: blessId,
+            date: '2024-01-13',
+            dayOfWeek: '토',
+            points: 1000,
+            content: '행복하세요.',
+          },
+        ];
+
+        setContent({ blessId, target, messages: mockMessages });
+      }
+      setIsLoading(false);
+    };
+
+    loadContent();
+  }, [paramsPromise]);
+
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('selectedPrayerPerson');
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-full items-center justify-center">
+        <p className="font-hana-regular text-hana-gray-500">로딩 중...</p>
+      </div>
+    );
+  }
+
+  if (!content?.target) {
     return (
       <div className="flex min-h-full items-center justify-center">
         <p className="font-hana-regular text-hana-gray-500">
@@ -24,11 +148,11 @@ export default async function BlessInterval({
     );
   }
 
-  const messages = await getMessages(blessId);
+  const { blessId, target } = content;
 
   return (
     <div className="relative h-full w-full">
-      <div className="scrollbar-hide relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+      <div className="scrollbar-hide relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-72">
         <BackButton to="/bless/interval" />
 
         <div className="mt-4 mb-4 flex justify-center">
@@ -84,7 +208,7 @@ export default async function BlessInterval({
         </div>
 
         <div className="flex flex-1 flex-col gap-3 px-4 pt-4">
-          {messages.map((msg, idx) => (
+          {content?.messages.map((msg: BlessMessage, idx: number) => (
             <MessageHistoryItem
               key={msg.id}
               message={msg}
