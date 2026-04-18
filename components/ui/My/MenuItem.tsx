@@ -1,12 +1,13 @@
 'use client';
 
+import { ChevronRight } from 'lucide-react';
+import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
-import { ChevronRight } from 'lucide-react'; // ChevronRight 아이콘 임포트
 
 type MenuItemProps = {
   label: string;
   subLabel?: string;
-  href: string;
+  href: Route;
   isDanger?: boolean;
   icon?: React.ReactNode;
 };
@@ -20,44 +21,56 @@ export default function MenuItem({
 }: MenuItemProps) {
   const router = useRouter();
 
-  return (
-    <div
-      onClick={() => router.push(href)}
-      className="flex cursor-pointer items-center justify-between rounded-xl bg-white px-4 py-4 hover:bg-gray-50 shadow-sm"
-    >
-      {/* 왼쪽 영역: 아이콘 + (라벨/서브라벨) */}
-      <div className="flex items-center gap-3">
-        {icon && (
-          <div
-            className={`flex-shrink-0 ${isDanger ? 'text-red-500' : 'text-hana-bg-green'}`}
-          >
-            {' '}
-            {/* 아이콘 색상 적용 */}
-            {icon}
-          </div>
-        )}
+  const normalizedLabel = label.replace(/\s/g, '');
+  const isDonationTrust = normalizedLabel.includes('유산기부신탁');
+  const displayLabel = isDonationTrust ? '유산기부 신탁 🏛️' : label.trim();
 
-        <div className="flex flex-col">
-          <span
-            className={`font-hana-main text-[16px] font-medium ${
-              isDanger ? 'text-red-500' : 'text-gray-800'
+  function handleMove() {
+    router.push(href);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleMove}
+      className="box-border flex w-full appearance-none items-center justify-between rounded-xl border-0 bg-white px-4 py-4 text-left"
+      aria-label={displayLabel}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        {icon ? (
+          <div
+            className={`mr-1 flex size-10 shrink-0 items-center justify-center rounded-xl ${
+              isDonationTrust
+                ? 'bg-gray-200 text-hana-main'
+                : isDanger
+                  ? 'text-red-500'
+                  : 'text-gray-500'
             }`}
           >
-            {label}
+            {icon}
+          </div>
+        ) : null}
+
+        <div className="flex min-w-0 flex-col items-start">
+          <span
+            className={`font-hana-main text-[18px] ${
+              isDonationTrust ? 'font-semibold' : 'font-medium'
+            } ${isDanger ? 'text-red-500' : 'text-gray-800'}`}
+          >
+            {displayLabel}
           </span>
 
-          {subLabel && (
-            <span className="text-sm text-gray-400">{subLabel}</span>
-          )}
+          {subLabel ? (
+            <span className="font-hana-light text-[14px] text-gray-400">
+              {subLabel}
+            </span>
+          ) : null}
         </div>
       </div>
 
-      {/* 오른쪽 화살표 영역: ChevronRight 아이콘으로 교체 */}
-      <div className="text-bg-hana-badge-green">
-        {' '}
-        {/* 화살표 색상 적용 */}
-        <ChevronRight size={20} /> {/* ChevronRight 아이콘 사용 */}
+      <div className="ml-3 shrink-0 text-gray-400">
+        <ChevronRight size={20} />
       </div>
-    </div>
+    </button>
   );
 }
