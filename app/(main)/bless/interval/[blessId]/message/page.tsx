@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/ui/cmm/BackButton';
+import Header from '@/components/ui/cmm/Header';
 import BibleVerseBox from '../../../_components/bible-verse-box';
 import BlessActionButton from '../../../_components/bless-action-button';
 import MessageTextarea from '../../../_components/message-textarea';
@@ -26,14 +27,16 @@ export default function BlessIntervalMessage() {
   };
 
   return (
-    <div className="relative flex h-full flex-col bg-hana-bless-bg">
-      <BackButton to={`/bless/interval/${blessId}`} />
-      <div className="flex flex-1 flex-col gap-4 px-4 pt-14 pb-4">
-        <BibleVerseBox verse={verse} />
-        <MessageTextarea grow value={message} onChange={setMessage} />
-        <BlessActionButton disabled={isMessageEmpty} onClick={handleNext}>
-          다음 단계로
-        </BlessActionButton>
+    <div>
+      <Header content="기도 작성" />
+      <div className="relative flex h-full flex-col bg-hana-bless-bg">
+        <div className="flex flex-1 flex-col gap-4 px-4 pt-14 pb-4">
+          <BibleVerseBox verse={verse} />
+          <MessageTextarea grow value={message} onChange={setMessage} />
+          <BlessActionButton disabled={isMessageEmpty} onClick={handleNext}>
+            다음 단계로
+          </BlessActionButton>
+        </div>
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ export default function MessageTextarea({
         placeholder="전하고 싶은 기도를 적어주세요..."
         className={cn(
           'resize-none rounded-xl bg-[#EFEBE7] p-4 font-hana-regular text-gray-900 text-sm placeholder:text-hana-gray-400 focus:outline-none focus:ring-2 focus:ring-hana-main/30',
-          grow ? 'flex-1' : 'min-h-[88px]',
+          grow ? 'min-h-[300px] flex-1' : 'min-h-[140px]',
         )}
       />
       <p className="text-right font-hana-regular text-hana-gray-500 text-xs">
