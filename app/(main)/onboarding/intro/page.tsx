@@ -27,7 +27,7 @@ export default function OnboardingIntroPage() {
       </h1>
       <div className="flex justify-center">
         <Image
-          src={IMAGE_PATH.LOGO}
+          src={IMAGE_PATH.ONBOARDING_CHECKIN}
           alt="로고"
           width={300}
           height={300}
