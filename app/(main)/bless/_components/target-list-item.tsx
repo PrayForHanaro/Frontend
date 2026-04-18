@@ -30,7 +30,7 @@ export default function TargetListItem({
         </div>
         <div className="flex flex-row items-center gap-2">
           <h3 className="font-hana-bold text-hana-dark-navy text-lg transition-colors group-hover:text-hana-mint">
-            {target.name} 성도님
+            {target.name} 님
           </h3>
           <span className="font-hana-medium text-hana-mint text-sm">
             ({target.relation})

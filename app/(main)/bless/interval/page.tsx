@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Header from '@/components/ui/cmm/Header';
 import { IMAGE_PATH } from '@/constants/images';
 import AddTargetButton from '../_components/add-target-button';
 import BlessHeader from '../_components/bless-header';
@@ -64,17 +65,18 @@ export default function BlessIntervalList() {
 
   return (
     <div className="relative h-full w-full">
+      <Header content="기도 적금" />
       <div className="scrollbar-hide flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
         <BlessHeader
           greeting={`안녕하세요, ${USER_NAME}님.`}
-          title="적금 가입으로"
+          title="기도와 함께하는 적금"
           subtitle="사랑하는 사람에게 기도와 마음을 전해보세요."
         />
 
         <div className="mx-5 h-1 rounded-full bg-hana-bless-progress" />
 
         <p className="px-5 pt-5 pb-2 font-hana-medium text-gray-900 text-sm">
-          {USER_NAME}님이 기도드리며 적금하는 사람들이에요
+          {USER_NAME}님이 기도드리는 사람들이에요
         </p>
 
         <div className="space-y-3 px-5 pt-2">

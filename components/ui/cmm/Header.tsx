@@ -17,7 +17,7 @@ type Props = {
 export default function Header({ content }: Props) {
   const router = useRouter();
   return (
-    <div className="-mx-3 -my-3 relative flex items-center justify-center p-4 shadow-sm">
+    <div className="-mx-4 -my-4 relative flex items-center justify-center p-4 shadow-sm">
       <button
         className="absolute left-4 cursor-pointer"
         onClick={() => router.back()}

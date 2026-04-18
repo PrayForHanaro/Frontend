@@ -13,7 +13,7 @@ export default function MessageHistoryItem({
   const day = Number.parseInt(message.date.split('-')[2], 10);
 
   return (
-    <div className="flex gap-3 rounded-2xl border border-gray-200 bg-hana-bless-bg p-4 shadow-sm">
+    <div className="flex gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
       <div className="flex flex-col items-center">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-hana-bless-progress font-hana-bold text-sm text-white">
           {dayNumber}
