@@ -31,7 +31,7 @@ const offering: Offering[] = [
     orgId: 456,
     accountId: 789,
     offeringType: OfferingType.십일조,
-    amount: 1500000.0,
+    amount: 300000.0,
     offererName: '김하나',
     prayerContent: '하나님께 기도드립니다. 항상 건강하게 지내게 해주세요.',
     createdAt: new Date('2026-04-28T10:00:00'),
@@ -43,7 +43,7 @@ const offering: Offering[] = [
     orgId: 456,
     accountId: 789,
     offeringType: OfferingType.감사헌금,
-    amount: 1000000.0,
+    amount: 50000.0,
     offererName: '김하나',
     prayerContent: '하나님께 기도드립니다. 항상 건강하게 지내게 해주세요.',
     createdAt: new Date('2026-03-28T10:00:00'),
@@ -55,7 +55,7 @@ const offering: Offering[] = [
     orgId: 456,
     accountId: 789,
     offeringType: OfferingType.선교헌금,
-    amount: 800000.0,
+    amount: 50000.0,
     offererName: '김하나',
     prayerContent: '하나님께 기도드립니다. 항상 건강하게 지내게 해주세요.',
     createdAt: new Date('2026-02-28T10:00:00'),
@@ -67,8 +67,8 @@ export default function GivingHistorySection() {
   return (
     <div className="flex flex-col gap-3">
       <GivingHistoryTotalCard
-        totalAmount={15130000103}
-        points={100}
+        totalAmount={1055200}
+        points={3200}
         nextPaymentDate="2026.05.28"
       />
       {/* TODO 데이터 임시값 */}
