@@ -11,7 +11,14 @@ export default function SetUp() {
 
   const handleClick = () => {
     //TODO Localstorage에 교회 정보 추가
-    router.push(`/home`);
+    sessionStorage.setItem(
+      'selectedChurch',
+      JSON.stringify({
+        name,
+        location,
+      }),
+    );
+    router.push(`/onboarding/checkin`);
   };
 
   return (

@@ -36,16 +36,16 @@ type GivingData = {
 export default function GivingOnce() {
   const [selectedType, setSelectedType] = useState<string>('감사헌금');
   const [givingPerson, setGivingPerson] = useState<'기명' | '무기명'>('기명');
-  const [name, setName] = useState('하나');
+  const [name, setName] = useState('김하나');
   const [amount, setAmount] = useState('');
   const [point, setPoint] = useState('19000');
   const [useAllPoints, setUseAllPoints] = useState(true);
   const [prayerTopic, setPrayerTopic] = useState('');
   const [data, setData] = useState<GivingData>({
-    name: '하나',
+    name: '김하나',
     maxPoint: 19000,
     bankAccount: '하나은행 123-456789-01107',
-    churchName: '한마음교회',
+    churchName: '하나 교회',
     orgId: 1,
     accountId: 1,
     donationRate: 0.01,
@@ -70,28 +70,38 @@ export default function GivingOnce() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('/api/giving/once');
-        const result = await res.json();
+        // sessionStorage에서 교회 이름과 사용자 이름 읽기
+        let churchName = '하나 교회'; // 기본값
+        let userName = '김하나'; // 기본값
 
-        if (res.ok && result.success && result.data) {
-          const fetchedData = result.data;
-          setData({
-            name: fetchedData.name,
-            maxPoint: fetchedData.maxPoint,
-            bankAccount: fetchedData.bankAccount,
-            churchName: fetchedData.churchName,
-            orgId: fetchedData.orgId,
-            accountId: fetchedData.accountId,
-            donationRate: fetchedData.donationRate || 1,
-          });
+        const selectedChurchStr = sessionStorage.getItem('selectedChurch');
+        if (selectedChurchStr) {
+          const selectedChurch = JSON.parse(selectedChurchStr);
+          churchName = selectedChurch.name;
+        }
 
-          if (useAllPointsRef.current)
-            setPoint(fetchedData.maxPoint.toString());
-
-          const savedState = sessionStorage.getItem('giving_once_state');
-          if (!savedState) {
-            setName(fetchedData.name);
+        const savedState = sessionStorage.getItem('giving_once_state');
+        if (savedState) {
+          try {
+            const parsed = JSON.parse(savedState);
+            if (parsed.name) {
+              userName = parsed.name;
+            }
+          } catch (e) {
+            console.error('세션 데이터 파싱 오류:', e);
           }
+        }
+
+        setData((prevData) => ({
+          ...prevData,
+          name: userName,
+          churchName: churchName,
+        }));
+
+        if (useAllPointsRef.current) setPoint('19000'); // 기본값 사용
+
+        if (!savedState) {
+          setName(userName);
         }
       } catch (e: unknown) {
         console.error('데이터 로딩 오류:', e);

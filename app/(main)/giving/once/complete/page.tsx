@@ -19,6 +19,7 @@ export default function GivingOnceComplete() {
   const [amount, setAmount] = useState<number>(0);
   const [point, setPoint] = useState<number>(0);
   const [userName, setUserName] = useState<string>('');
+  const [churchName, setChurchName] = useState<string>('하나 교회');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,18 +34,33 @@ export default function GivingOnceComplete() {
           setPoint(Number(savedEarnedPoint));
         }
 
-        // [BFF] 유저 정보 조회
-        const res = await fetch('/api/me');
-        let pointRate = 0.01;
-        let name = '하나';
-
-        if (res.ok) {
-          const result = await res.json();
-          if (result.success && result.data) {
-            pointRate = result.data.pointRate || 0.01;
-            name = result.data.name || '하나';
-          }
+        // sessionStorage에서 교회 정보 읽기
+        const selectedChurchStr = sessionStorage.getItem('selectedChurch');
+        if (selectedChurchStr) {
+          const selectedChurch = JSON.parse(selectedChurchStr);
+          setChurchName(selectedChurch.name);
         }
+
+        // [BFF] 유저 정보 조회
+        // const res = await fetch('/api/me');
+        // let pointRate = 0.01;
+        // let name = '김하나';
+
+        // if (res.ok) {
+        //   const result = await res.json();
+        //   if (result.success && result.data) {
+        //     pointRate = result.data.pointRate || 0.01;
+        //     name = result.data.name || '김하나';
+        //   }
+        // }
+
+        // setUserName(name);
+        // if (!savedEarnedPoint) {
+        //   setPoint(Math.floor(numAmount * pointRate));
+        // }
+
+        const pointRate = 0.01;
+        const name = '김하나';
 
         setUserName(name);
         if (!savedEarnedPoint) {
@@ -107,6 +123,15 @@ export default function GivingOnceComplete() {
         </div>
 
         <div className="mb-8 w-full space-y-3">
+          <div className="flex items-center justify-between rounded-2xl bg-[#EBEAE4] px-6 py-5">
+            <span className="font-hana-medium text-[#666666] text-lg">
+              교회
+            </span>
+            <span className="font-hana-bold text-[#333333] text-xl">
+              {churchName}
+            </span>
+          </div>
+
           <div className="flex items-center justify-between rounded-2xl bg-[#EBEAE4] px-6 py-5">
             <span className="font-hana-medium text-[#666666] text-lg">
               성함

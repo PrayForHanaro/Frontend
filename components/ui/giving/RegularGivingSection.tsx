@@ -40,7 +40,7 @@ const INITIAL_GIVING_ITEMS: RegularGivingItem[] = [
   {
     id: 1,
     givingType: '십일조',
-    churchName: '하나로 교회',
+    churchName: '하나 교회',
     amount: 300000,
     nextWithdrawalDate: '4월 25일',
     accountName: '하나 헌금통장',
@@ -131,7 +131,7 @@ export default function RegularGivingSection() {
     const newGivingItem: RegularGivingItem = {
       id: Date.now(),
       givingType: selectedCashType,
-      churchName: '하나로 교회',
+      churchName: '하나 교회',
       amount: 30000,
       nextWithdrawalDate: formatDateToKorean(startDate),
       accountName,

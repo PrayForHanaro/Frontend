@@ -37,19 +37,21 @@ const getPersonImage = (type: string) => {
   }
 };
 
+const DEFAULT_DATA: HomeData = {
+  userName: '김하나',
+  myPoint: 12500,
+  churchName: '하나 교회',
+  totalDonation: 35000,
+  prayerPeople: [
+    { id: 1, name: '권순찬', type: 'man' as const, relation: '자녀' },
+    { id: 2, name: '유하영', type: 'baby' as const, relation: '손주' },
+    { id: 3, name: '유지혜', type: 'woman' as const, relation: '자녀' },
+  ],
+};
+
 export default function Home() {
   const router = useRouter();
-  const [data, setData] = useState<HomeData | null>({
-    userName: '하나',
-    myPoint: 19000,
-    churchName: '하나',
-    totalDonation: 1250,
-    prayerPeople: [
-      { id: 1, name: '김성도', type: 'man', relation: '아들' },
-      { id: 2, name: '이성도', type: 'woman', relation: '딸' },
-      { id: 3, name: '박성도', type: 'baby', relation: '손주' },
-    ],
-  });
+  const [data, setData] = useState<HomeData | null>(DEFAULT_DATA);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -68,29 +70,20 @@ export default function Home() {
 
         // const { userName, myPoint, churchName, totalDonation, prayerPeople } =
         //   result.data;
-        const userName = '홍길동';
-        const myPoint = 12500;
-        const churchName = '하나로교회';
-        const totalDonation = 35000;
-        // const prayerPeople = 42;
 
-        const prayerPeople = [
-          { id: 1, name: '권순찬', type: 'baby' as const, relation: '자녀' },
-          { id: 2, name: '유하영', type: 'baby' as const, relation: '손주' },
-          { id: 3, name: '이동형', type: 'baby' as const, relation: '자녀' },
-        ];
+        const selectedChurchStr = sessionStorage.getItem('selectedChurch');
+        const homeData = { ...DEFAULT_DATA };
 
-        setData({
-          userName,
-          myPoint,
-          churchName,
-          totalDonation,
-          prayerPeople,
-        });
+        if (selectedChurchStr) {
+          const selectedChurch = JSON.parse(selectedChurchStr);
+          homeData.churchName = selectedChurch.name;
+        }
+
+        setData(homeData);
         // sessionStorage에 prayerPeople 저장
         sessionStorage.setItem(
           'homePrayerPeople',
-          JSON.stringify(prayerPeople),
+          JSON.stringify(homeData.prayerPeople),
         );
       } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
@@ -143,7 +136,7 @@ export default function Home() {
           <div className="relative z-10 flex h-full flex-col justify-between">
             <div className="space-y-1">
               <p className="font-hana-medium text-lg text-white/90">
-                이번 달 {data?.churchName || '하나'}교회 성도들의 헌금과
+                이번 달 {data?.churchName || '하나'} 성도들의 헌금과
               </p>
               <p className="font-hana-bold text-white text-xl">
                 하나은행의 기부금

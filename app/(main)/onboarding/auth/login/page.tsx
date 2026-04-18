@@ -17,20 +17,26 @@ import { formatPhoneNumber } from '@/lib/formatters';
 export default function Login() {
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
 
   const routeToHome = () => {
-    router.push('/home');
+    if (phoneNumber.trim() && password.trim()) {
+      router.push('/home');
+    }
   };
   const handleReset = () => {
     setPhoneNumber('');
+    setPassword('');
   };
+
+  const isFormValid = phoneNumber.trim() && password.trim();
   return (
     <div className="relative min-h-full">
       <Header content="로그인하기" />
       <form className="min-h-full">
-        <h1 className="pt-24 text-center font-hana-medium text-3xl text-hana-light-mint">
+        {/* <h1 className="pt-24 text-center font-hana-medium text-3xl text-hana-light-mint">
           로그인
-        </h1>
+        </h1> */}
         <FieldGroup className="flex flex-col items-center pt-24">
           <Field>
             <FieldLabel
@@ -62,6 +68,8 @@ export default function Login() {
             <Input
               id="fieldgroup-password"
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="bg-white p-5 pt-7 pb-7 text-2xl"
             />
           </Field>
@@ -77,7 +85,12 @@ export default function Login() {
           </Button>
           <Button
             type="button"
-            className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+            disabled={!isFormValid}
+            className={`h-15 rounded-2xl text-2xl ${
+              isFormValid
+                ? 'bg-hana-linear-deep-green-end hover:bg-hana-linear-deep-green'
+                : 'cursor-not-allowed bg-hana-gray-300 text-hana-gray-500'
+            }`}
             onClick={routeToHome}
           >
             시작하기

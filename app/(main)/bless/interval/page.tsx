@@ -9,7 +9,7 @@ import BlessHeader from '../_components/bless-header';
 import TargetListItem from '../_components/target-list-item';
 import type { BlessTarget } from '../_types';
 
-const USER_NAME = '길동';
+const USER_NAME = '김하나';
 
 const getPersonImage = (type: string) => {
   switch (type) {

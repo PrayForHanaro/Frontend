@@ -49,9 +49,9 @@ export default function Signup() {
     <div className="flex min-h-full flex-col">
       <Header content="회원가입" />
       <form className="scrollbar-hide flex flex-1 flex-col overflow-y-auto">
-        <h1 className="pt-15 text-center font-hana-medium text-3xl text-hana-light-mint">
+        {/* <h1 className="pt-15 text-center font-hana-medium text-3xl text-hana-light-mint">
           회원가입
-        </h1>
+        </h1> */}
         <FieldGroup className="flex flex-col items-center pt-10">
           <Field>
             <FieldLabel
@@ -196,7 +196,7 @@ export default function Signup() {
             초기화
           </Button>
           <Button
-            type="submit"
+            type="button"
             className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
             onClick={routeToIntro}
           >
