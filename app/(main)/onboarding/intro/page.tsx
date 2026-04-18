@@ -31,7 +31,7 @@ export default function OnboardingIntroPage() {
           alt="로고"
           width={300}
           height={300}
-          className="mx-3 mt-5 mb-2 animate-hanabot-float object-contain"
+          className="mx-3 mt-5 mb-2 object-contain"
           priority
         />
       </div>
