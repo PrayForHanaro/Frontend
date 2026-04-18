@@ -28,7 +28,7 @@ export default function BlessIntervalMessage() {
   return (
     <div>
       <Header content="기도 작성" />
-      <div className="relative flex h-full flex-col bg-hana-bless-bg">
+      <div className="relative flex h-full flex-col">
         <div className="flex flex-1 flex-col gap-4 px-4 pt-14 pb-4">
           <BibleVerseBox verse={verse} />
           <MessageTextarea grow value={message} onChange={setMessage} />
