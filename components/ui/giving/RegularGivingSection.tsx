@@ -151,7 +151,7 @@ export default function RegularGivingSection() {
 
   return (
     <>
-      <div className="mb-20 flex flex-col gap-3">
+      <div className="mb-10 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="font-hana-main text-[18px] text-hana-black">
             내 정기 헌금
