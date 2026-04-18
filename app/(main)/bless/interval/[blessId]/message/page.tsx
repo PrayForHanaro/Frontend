@@ -1,8 +1,7 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import BackButton from '@/components/ui/cmm/BackButton';
 import Header from '@/components/ui/cmm/Header';
 import BibleVerseBox from '../../../_components/bible-verse-box';
 import BlessActionButton from '../../../_components/bless-action-button';
@@ -11,7 +10,7 @@ import { BIBLE_VERSES, getRandomVerse } from '../../../_data/bible-verses';
 
 export default function BlessIntervalMessage() {
   const router = useRouter();
-  const { blessId } = useParams<{ blessId: string }>();
+  // const { blessId } = useParams<{ blessId: string }>();
   const [message, setMessage] = useState('');
   const [verse, setVerse] = useState(BIBLE_VERSES[0]);
 
