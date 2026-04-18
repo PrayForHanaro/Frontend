@@ -52,15 +52,40 @@ export default function Home() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const homeRes = await fetch('/api/home', {
-          headers: { 'Content-Type': 'application/json' },
-          cache: 'no-store',
-        });
-        const result = await homeRes.json();
+        // setLoading(true);
 
-        if (homeRes.ok && result.success) {
-          setData(result.data);
-        }
+        // const homeRes = await fetch('/api/home', {
+        //   headers: { 'Content-Type': 'application/json' },
+        //   cache: 'no-store',
+        // });
+        // const result = await homeRes.json();
+
+        // if (!homeRes.ok || !result.success) {
+        //   throw new Error(result.message || '홈 정보를 불러오지 못했습니다.');
+        // }
+
+        // const { userName, myPoint, churchName, totalDonation, prayerPeople } =
+        //   result.data;
+        const userName = '홍길동';
+        const myPoint = 12500;
+        const churchName = '하나로교회';
+        const totalDonation = 35000;
+        // const prayerPeople = 42;
+
+        const prayerPeople = [
+          { id: 1, name: '김철수', type: 'man' as const, relation: '친구' },
+          { id: 2, name: '이영희', type: 'woman' as const, relation: '가족' },
+          { id: 3, name: '박장군', type: 'man' as const, relation: '직장동료' },
+          { id: 4, name: '최아기', type: 'baby' as const, relation: '자녀' },
+        ];
+
+        setData({
+          userName,
+          myPoint,
+          churchName,
+          totalDonation,
+          prayerPeople,
+        });
       } catch (error: unknown) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
       }
@@ -78,15 +103,27 @@ export default function Home() {
         }
       `}</style>
       <main className="flex-1 px-5 pt-10">
-        <section id="환영글" className="mb-6 px-1">
-          <h2 className="font-hana-medium text-2xl text-hana-black leading-tight">
-            안녕하세요, <br />
-            <span className="font-hana-bold text-hana-mint">
-              {data?.userName || '하나'}
-            </span>
-            님 반갑습니다!
-          </h2>
-          <p className="mt-1 text-hana-gray-500">오늘도 함께하는 신앙생활</p>
+        <section
+          id="환영글"
+          className="mb-6 flex items-end justify-between px-1"
+        >
+          <div>
+            <h2 className="font-hana-medium text-2xl text-hana-black leading-tight">
+              안녕하세요, <br />
+              <span className="font-hana-bold text-hana-mint">
+                {data?.userName || '하나'}
+              </span>
+              님 반갑습니다!
+            </h2>
+            <p className="mt-1 text-hana-gray-500">오늘도 함께하는 신앙생활</p>
+          </div>
+          <Image
+            src={IMAGE_PATH.HOME_CHARACTER}
+            alt="하나은행 캐릭터"
+            width={100}
+            height={100}
+            className="object-contain"
+          />
         </section>
 
         <section
@@ -120,16 +157,6 @@ export default function Home() {
                 <span className="font-hana-bold text-2xl opacity-90">만원</span>
               </div>
             </div>
-          </div>
-
-          <div className="-bottom-6 -right-3 absolute z-0 w-32 overflow-visible">
-            <Image
-              src={IMAGE_PATH.HOME_CHARACTER}
-              alt="하나은행 캐릭터"
-              width={140}
-              height={140}
-              className="object-contain"
-            />
           </div>
         </section>
 
@@ -241,7 +268,7 @@ export default function Home() {
                     </div>
                     <div className="flex flex-row items-center gap-2">
                       <h3 className="font-hana-bold text-hana-dark-navy text-lg transition-colors group-hover:text-hana-mint">
-                        {person.name} 성도님
+                        {person.name} 님
                       </h3>
                       <span className="font-hana-medium text-hana-mint text-sm">
                         ({person.relation})
