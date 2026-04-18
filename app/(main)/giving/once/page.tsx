@@ -132,7 +132,8 @@ export default function GivingOnce() {
     sessionStorage.setItem('giving_once_state', JSON.stringify(state));
   };
 
-  const estimatedEarnedPoint = Math.floor(Number(amount) * data.donationRate);
+  const estimatedEarnedPoint =
+    Math.floor(Number(amount) * data.donationRate) * 7;
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
