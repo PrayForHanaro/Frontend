@@ -36,14 +36,17 @@ export async function fetchWithAuth(
       });
     }
 
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
+    if (refreshResponse.status === 401 || refreshResponse.status === 403) {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
 
-    window.location.href = '/onboarding/auth/login';
+      window.location.href = '/onboarding/auth/login';
+      throw new Error('세션이 만료되었습니다.');
+    }
 
-    throw new Error('세션이 만료되었습니다.');
+    return response;
   } finally {
     window.clearTimeout(timeout);
   }

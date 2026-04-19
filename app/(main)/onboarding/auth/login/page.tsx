@@ -1,6 +1,8 @@
 'use client';
+
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -14,15 +16,9 @@ import { formatPhoneNumber } from '@/lib/formatters';
  * @date: 2026-04-13
  */
 
-/**
- * @page: 로그인 페이지
- * @description: 로그인 호출 로직 추가
- * @author: typeYu
- * @date: 2026-04-17
- */
-
 export default function Login() {
   const router = useRouter();
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -69,14 +65,28 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA]">
-      <Header content="로그인" />
-      <form onSubmit={handleSubmit} className="px-5 pt-6">
-        <FieldGroup>
+    <div className="relative min-h-full">
+      <Header content="로그인하기" />
+
+      <form className="min-h-full" onSubmit={handleSubmit}>
+        <h1 className="pt-24 text-center font-hana-medium text-3xl text-hana-light-mint">
+          로그인
+        </h1>
+
+        <FieldGroup className="flex flex-col items-center pt-24">
           <Field>
-            <FieldLabel>전화번호</FieldLabel>
+            <FieldLabel
+              className="px-1 pb-3 text-hana-gray-600 text-xl"
+              htmlFor="fieldgroup-phone"
+            >
+              전화번호
+            </FieldLabel>
+
             <Input
-              aria-label="전화번호"
+              id="fieldgroup-phone"
+              name="phoneNumber"
+              type="text"
+              inputMode="numeric"
               value={phoneNumber}
               onChange={(event) =>
                 setPhoneNumber(formatPhoneNumber(event.target.value))
@@ -87,37 +97,46 @@ export default function Login() {
             />
           </Field>
 
-          <Field>
-            <FieldLabel>비밀번호</FieldLabel>
+          <Field className="pt-10">
+            <FieldLabel
+              className="px-1 pb-3 text-hana-gray-600 text-xl"
+              htmlFor="fieldgroup-password"
+            >
+              비밀번호
+            </FieldLabel>
+
             <Input
-              aria-label="비밀번호"
+              id="fieldgroup-password"
+              name="password"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="비밀번호를 입력해주세요"
-              className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
+              className="bg-white p-5 pt-7 pb-7 text-2xl"
             />
           </Field>
+
+          {errorMessage ? <p>{errorMessage}</p> : null}
         </FieldGroup>
 
-        {errorMessage ? (
-          <p className="mt-4 text-red-500 text-sm">{errorMessage}</p>
-        ) : null}
-
-        <div className="mt-8 flex gap-3">
+        <Field className="absolute bottom-1 items-center pt-10">
           <Button
-            type="button"
+            type="reset"
             variant="outline"
-            className="flex-1"
+            className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
             onClick={handleReset}
             disabled={isSubmitting}
           >
             초기화
           </Button>
-          <Button type="submit" className="flex-1" disabled={isSubmitting}>
+
+          <Button
+            type="submit"
+            className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? '처리중...' : '시작하기'}
           </Button>
-        </div>
+        </Field>
       </form>
     </div>
   );

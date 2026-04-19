@@ -26,7 +26,6 @@ export default function Activity() {
   const [selectedTab, setSelectedTab] = useState<BoardTab>('전체');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isToastVisible, setIsToastVisible] = useState(false);
 
   useEffect(() => {
     async function loadActivities() {
@@ -39,21 +38,6 @@ export default function Activity() {
     }
 
     loadActivities();
-
-    const joinToastValue = sessionStorage.getItem('activityJoinToast');
-
-    if (joinToastValue === 'true') {
-      setIsToastVisible(true);
-      sessionStorage.removeItem('activityJoinToast');
-
-      const timer = window.setTimeout(() => {
-        setIsToastVisible(false);
-      }, 2500);
-
-      return () => {
-        window.clearTimeout(timer);
-      };
-    }
   }, []);
 
   const filteredActivities = useMemo(() => {
@@ -113,7 +97,7 @@ export default function Activity() {
 
       <Calendar />
       <Nav />
-      <ActivityJoinToast isVisible={isToastVisible} />
+      <ActivityJoinToast />
     </div>
   );
 }
