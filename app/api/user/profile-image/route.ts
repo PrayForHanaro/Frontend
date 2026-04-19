@@ -10,14 +10,17 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-    const response = await fetch(`${GATEWAY_URL}/apis/user/users/profile-image`, {
-      method: 'POST',
-      headers: {
-        cookie: request.headers.get('cookie') ?? '',
+    const response = await fetch(
+      `${GATEWAY_URL}/apis/user/users/profile-image`,
+      {
+        method: 'POST',
+        headers: {
+          cookie: request.headers.get('cookie') ?? '',
+        },
+        body: formData,
+        cache: 'no-store',
       },
-      body: formData,
-      cache: 'no-store',
-    });
+    );
 
     const result = await response.json();
 
