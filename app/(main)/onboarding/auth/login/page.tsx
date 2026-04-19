@@ -7,7 +7,13 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { BFF_ENDPOINTS } from '@/lib/backend-endpoints';
 import { formatPhoneNumber } from '@/lib/formatters';
+
+type LoginResponse = {
+  success: boolean;
+  message?: string;
+};
 
 /**
  * @page: 로그인 페이지 입니다.
@@ -16,22 +22,21 @@ import { formatPhoneNumber } from '@/lib/formatters';
  * @date: 2026-04-13
  */
 
-export default function Login() {
+export default function LoginPage() {
   const router = useRouter();
-
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
       setIsSubmitting(true);
       setErrorMessage('');
 
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(BFF_ENDPOINTS.auth.login, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,26 +48,26 @@ export default function Login() {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as LoginResponse;
 
       if (!response.ok || !result.success) {
-        setErrorMessage(result.message || '로그인에 실패했습니다.');
+        setErrorMessage(result.message ?? '로그인에 실패했습니다.');
         return;
       }
 
-      router.push('/home');
-    } catch (_error) {
+      router.replace('/home');
+    } catch {
       setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
-  function handleReset() {
+  const handleReset = () => {
     setPhoneNumber('');
     setPassword('');
     setErrorMessage('');
-  }
+  };
 
   return (
     <div className="relative min-h-full">

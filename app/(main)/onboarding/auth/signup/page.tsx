@@ -7,11 +7,19 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { BFF_ENDPOINTS } from '@/lib/backend-endpoints';
 import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
 
-export default function Signup() {
-  const router = useRouter();
+type SignupResponse = {
+  success: boolean;
+  message?: string;
+  data?: {
+    autoLoggedIn?: boolean;
+  };
+};
 
+export default function SignupPage() {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -19,14 +27,14 @@ export default function Signup() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
       setIsSubmitting(true);
       setErrorMessage('');
 
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch(BFF_ENDPOINTS.auth.signup, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,33 +48,33 @@ export default function Signup() {
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as SignupResponse;
 
       if (!response.ok || !result.success) {
-        setErrorMessage(result.message || '회원가입에 실패했습니다.');
+        setErrorMessage(result.message ?? '회원가입에 실패했습니다.');
         return;
       }
 
       if (result.data?.autoLoggedIn) {
-        router.push('/home');
+        router.replace('/home');
         return;
       }
 
-      router.push('/onboarding/auth/login');
+      router.replace('/onboarding/auth/login');
     } catch {
       setErrorMessage('회원가입 처리 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
-  function handleReset() {
+  const handleReset = () => {
     setName('');
     setBirthDate('');
     setPhoneNumber('');
     setPassword('');
     setErrorMessage('');
-  }
+  };
 
   return (
     <div className="relative min-h-full">

@@ -1,85 +1,71 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { setAuthCookies } from '@/lib/auth-cookies';
-import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
+
+import { GATEWAY_ENDPOINTS } from '@/lib/backend-endpoints';
 import { readJsonSafely } from '@/lib/read-json-safely';
 
-const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
+const GATEWAY_URL = process.env.GATEWAY_URL ?? 'http://api-gateway:8080';
 
-type GatewaySignupWithTokenResponse = {
+type SignupRequestBody = {
+  name: string;
+  birth: string;
+  phoneNumber: string;
+  password: string;
+};
+
+type GatewayResponse = {
   success: boolean;
-  message: string;
-  data?: {
-    accessToken: string;
-    refreshToken: string;
-    userId: string | number;
-    name: string;
-    role: string;
-    orgId: string | number;
-  };
+  message?: string;
+  data?: unknown;
 };
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as SignupRequestBody;
 
     const response = await fetch(
-      `${GATEWAY_URL}${BACKEND_ENDPOINTS.auth.signup}`,
+      `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.signup}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          name: body.name,
+          birth: body.birth,
+          phoneNumber: body.phoneNumber.replaceAll('-', ''),
+          password: body.password,
+        }),
         cache: 'no-store',
       },
     );
 
-    const result =
-      await readJsonSafely<GatewaySignupWithTokenResponse>(response);
+    const result = await readJsonSafely<GatewayResponse>(response);
 
-    if (!response.ok) {
+    if (!response.ok || !result?.success) {
       return NextResponse.json(
         {
           success: false,
-          message: result?.message || '회원가입에 실패했습니다.',
+          message: result?.message ?? '회원가입에 실패했습니다.',
           data: null,
         },
-        { status: response.status || 500 },
+        {
+          status: response.status || 400,
+        },
       );
     }
 
-    // 백엔드가 회원가입 즉시 토큰까지 주는 경우
-    if (
-      result?.success &&
-      result.data?.accessToken &&
-      result.data.refreshToken
-    ) {
-      await setAuthCookies({
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
-        userId: result.data.userId,
-        name: result.data.name,
-        role: result.data.role,
-        orgId: result.data.orgId,
-      });
-
-      return NextResponse.json({
+    return NextResponse.json(
+      {
         success: true,
-        message: result.message || '회원가입에 성공했습니다.',
+        message: 'success',
         data: {
-          autoLoggedIn: true,
+          autoLoggedIn: false,
         },
-      });
-    }
-
-    // public main 기준: 201 Created + empty body
-    return NextResponse.json({
-      success: true,
-      message: result?.message || '회원가입에 성공했습니다.',
-      data: {
-        autoLoggedIn: false,
       },
-    });
+      {
+        status: 201,
+      },
+    );
   } catch {
     return NextResponse.json(
       {
@@ -87,7 +73,9 @@ export async function POST(request: NextRequest) {
         message: '회원가입 처리 중 오류가 발생했습니다.',
         data: null,
       },
-      { status: 500 },
+      {
+        status: 500,
+      },
     );
   }
 }

@@ -1,116 +1,159 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
-/**
- * @page: 홈 데이터 조립 route (BFF)
- * @description: user, org, prayer 서비스의 데이터를 조합하여 홈 화면에 필요한 데이터를 생성합니다.
- * @author: 이승빈
- * @date: 2026-04-14
- **/
+import { GATEWAY_ENDPOINTS } from '@/lib/backend-endpoints';
+import { readJsonSafely } from '@/lib/read-json-safely';
 
-const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
+const GATEWAY_URL = process.env.GATEWAY_URL ?? 'http://api-gateway:8080';
 
-interface PrayerItem {
+type UserHomeResponse = {
+  success: boolean;
+  message?: string;
+  data?: {
+    userName: string;
+    myPoint: number;
+    orgId: number | string | null;
+    donationRate?: number;
+  };
+};
+
+type PrayerItem = {
   receiverId: number;
   relation: string;
-}
+};
 
-interface UserListItem {
+type PrayerResponse = {
+  success: boolean;
+  data?: PrayerItem[];
+};
+
+type UserListItem = {
   userId: number;
   name: string;
-  imageType: 'man' | 'woman' | 'baby';
+  imageType?: 'man' | 'woman' | 'baby';
+};
+
+type UserListResponse = {
+  success: boolean;
+  data?: UserListItem[];
+};
+
+type OrgSummaryResponse = {
+  success: boolean;
+  data?: {
+    orgName?: string;
+    totalDonation?: number;
+  };
+};
+
+function createGatewayHeaders(request: NextRequest): HeadersInit {
+  return {
+    'Content-Type': 'application/json',
+    cookie: request.headers.get('cookie') ?? '',
+  };
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const userMeRes = await fetch(`${GATEWAY_URL}/apis/user/users/me/home`, {
-      headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
-    });
+    const headers = createGatewayHeaders(request);
 
-    const userMe = await userMeRes.json();
-    if (!userMeRes.ok) {
+    const userHomeRes = await fetch(
+      `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.meHome}`,
+      {
+        headers,
+        cache: 'no-store',
+      },
+    );
+
+    const userHome = await readJsonSafely<UserHomeResponse>(userHomeRes);
+
+    if (!userHomeRes.ok || !userHome?.success || !userHome.data) {
       return NextResponse.json(
         {
-          code: userMe.code || 'U001',
-          message: userMe.message || '사용자 정보를 찾을 수 없습니다.',
+          success: false,
+          message: userHome?.message ?? '사용자 정보를 찾을 수 없습니다.',
           data: null,
         },
-        { status: userMeRes.status },
+        {
+          status: userHomeRes.status || 401,
+        },
       );
     }
 
-    const { userName, myPoint, orgId } = userMe.data;
+    const orgId = userHome.data.orgId;
 
-    const [orgData, prayerData] = await Promise.all([
-      fetch(`${GATEWAY_URL}/apis/org/orgs/${orgId}/summary`, {
+    const [orgResult, prayerResult] = await Promise.all([
+      orgId
+        ? fetch(`${GATEWAY_URL}${GATEWAY_ENDPOINTS.org.summary(orgId)}`, {
+            headers,
+            cache: 'no-store',
+          }).then((response) => readJsonSafely<OrgSummaryResponse>(response))
+        : Promise.resolve<OrgSummaryResponse | null>(null),
+      fetch(`${GATEWAY_URL}${GATEWAY_ENDPOINTS.prayer.me}`, {
+        headers,
         cache: 'no-store',
-      })
-        .then((res) => res.json())
-        .catch(() => ({ success: false, data: null })),
-      fetch(`${GATEWAY_URL}/apis/prayer/prayers/me`, { cache: 'no-store' })
-        .then((res) => res.json())
-        .catch(() => ({ success: false, data: [] })),
+      }).then((response) => readJsonSafely<PrayerResponse>(response)),
     ]);
 
-    let prayerPeople: {
+    const prayers = Array.isArray(prayerResult?.data) ? prayerResult.data : [];
+    const ids = prayers
+      .map((item) => item.receiverId)
+      .filter(Boolean)
+      .join(',');
+
+    let prayerPeople: Array<{
       id: number;
       name: string;
       type: 'man' | 'woman' | 'baby';
       relation: string;
-    }[] = [];
-    if (Array.isArray(prayerData.data) && prayerData.data.length > 0) {
-      const prayers = prayerData.data as PrayerItem[];
-      const ids = prayers
-        .map((p) => p.receiverId)
-        .filter(Boolean)
-        .join(',');
+    }> = [];
 
-      if (ids) {
-        const userListRes = await fetch(
-          `${GATEWAY_URL}/apis/user/users/list?ids=${ids}`,
-          { cache: 'no-store' },
+    if (ids) {
+      const userListRes = await fetch(
+        `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.list}?ids=${ids}`,
+        {
+          headers,
+          cache: 'no-store',
+        },
+      );
+
+      const userList = await readJsonSafely<UserListResponse>(userListRes);
+      const userDetails = Array.isArray(userList?.data) ? userList.data : [];
+
+      prayerPeople = prayers.map((prayer) => {
+        const user = userDetails.find(
+          (item) => item.userId === prayer.receiverId,
         );
-        const userList = await userListRes.json();
 
-        if (userList.success) {
-          const userDetails = userList.data as UserListItem[];
-          prayerPeople = prayers.map(
-            (
-              p,
-            ): {
-              id: number;
-              name: string;
-              type: 'man' | 'woman' | 'baby';
-              relation: string;
-            } => {
-              const detail = userDetails.find((u) => u.userId === p.receiverId);
-              return {
-                id: p.receiverId,
-                name: detail?.name || '성도',
-                type: detail?.imageType || 'man',
-                relation: p.relation,
-              };
-            },
-          );
-        }
-      }
+        return {
+          id: prayer.receiverId,
+          name: user?.name ?? '성도',
+          type: user?.imageType ?? 'man',
+          relation: prayer.relation,
+        };
+      });
     }
 
     return NextResponse.json({
       success: true,
       message: 'success',
       data: {
-        userName,
-        myPoint: myPoint || 0,
-        churchName: orgData.data?.orgName || '소속 교회 없음',
-        totalDonation: orgData.data?.totalDonation || 0,
+        userName: userHome.data.userName,
+        myPoint: userHome.data.myPoint,
+        churchName: orgResult?.data?.orgName ?? '소속 교회 없음',
+        totalDonation: orgResult?.data?.totalDonation ?? 0,
         prayerPeople,
       },
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json(
-      { code: 'G001', message: '서버 내부 오류가 발생했습니다.', data: null },
-      { status: 500 },
+      {
+        success: false,
+        message: '서버 내부 오류가 발생했습니다.',
+        data: null,
+      },
+      {
+        status: 500,
+      },
     );
   }
 }

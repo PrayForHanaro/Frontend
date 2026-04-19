@@ -1,20 +1,23 @@
+import 'server-only';
+
 import { cookies } from 'next/headers';
 
-type AuthCookiePayload = {
+export type AuthCookiePayload = {
   accessToken: string;
   refreshToken: string;
-  userId: string | number;
+  userId: string;
   name: string;
   role: string;
-  orgId: string | number;
+  orgId: string;
 };
 
 const isProduction = process.env.NODE_ENV === 'production';
+const accessCookieName = process.env.JWT_COOKIE_NAME ?? 'accessToken';
 
 export async function setAuthCookies(payload: AuthCookiePayload) {
   const cookieStore = await cookies();
 
-  cookieStore.set('accessToken', payload.accessToken, {
+  cookieStore.set(accessCookieName, payload.accessToken, {
     httpOnly: true,
     secure: isProduction,
     sameSite: 'lax',
@@ -30,7 +33,7 @@ export async function setAuthCookies(payload: AuthCookiePayload) {
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  cookieStore.set('userId', String(payload.userId), {
+  cookieStore.set('userId', payload.userId, {
     httpOnly: false,
     secure: isProduction,
     sameSite: 'lax',
@@ -54,7 +57,7 @@ export async function setAuthCookies(payload: AuthCookiePayload) {
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  cookieStore.set('orgId', String(payload.orgId), {
+  cookieStore.set('orgId', payload.orgId, {
     httpOnly: false,
     secure: isProduction,
     sameSite: 'lax',
@@ -66,7 +69,8 @@ export async function setAuthCookies(payload: AuthCookiePayload) {
 export async function clearAuthCookies() {
   const cookieStore = await cookies();
 
-  const names = [
+  const cookieNames = [
+    accessCookieName,
     'accessToken',
     'refreshToken',
     'userId',
@@ -75,9 +79,12 @@ export async function clearAuthCookies() {
     'orgId',
   ];
 
-  for (const name of names) {
-    cookieStore.set(name, '', {
-      httpOnly: name === 'accessToken' || name === 'refreshToken',
+  for (const cookieName of cookieNames) {
+    cookieStore.set(cookieName, '', {
+      httpOnly:
+        cookieName === accessCookieName ||
+        cookieName === 'accessToken' ||
+        cookieName === 'refreshToken',
       secure: isProduction,
       sameSite: 'lax',
       path: '/',

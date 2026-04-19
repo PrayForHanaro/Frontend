@@ -1,31 +1,25 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
+
+import { GATEWAY_ENDPOINTS } from '@/lib/backend-endpoints';
 import { readJsonSafely } from '@/lib/read-json-safely';
 
-/**
- * @page: 내 정보 조회 route
- * @description: 로그인한 사용자의 프로필 정보를 최종 명세에 맞춰 가져옵니다.
- */
+const GATEWAY_URL = process.env.GATEWAY_URL ?? 'http://api-gateway:8080';
 
-const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
-
-type GatewayMeResponse = {
+type GatewayMeHomeResponse = {
   success: boolean;
   message?: string;
-  code?: string;
   data?: {
-    id: number | string;
-    name: string;
-    totalPoint: number;
-    orgId: number | string;
-    role?: string;
+    userName: string;
+    myPoint: number;
+    orgId: number | string | null;
+    donationRate?: number;
   };
 };
 
 export async function GET(request: NextRequest) {
   try {
     const response = await fetch(
-      `${GATEWAY_URL}${BACKEND_ENDPOINTS.user.meHome}`,
+      `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.meHome}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -35,16 +29,18 @@ export async function GET(request: NextRequest) {
       },
     );
 
-    const result = await readJsonSafely<GatewayMeResponse>(response);
+    const result = await readJsonSafely<GatewayMeHomeResponse>(response);
 
     if (!response.ok || !result?.success || !result.data) {
       return NextResponse.json(
         {
           success: false,
-          message: result?.message || '사용자 정보를 불러오지 못했습니다.',
+          message: result?.message ?? '사용자 정보를 불러오지 못했습니다.',
           data: null,
         },
-        { status: response.status || 500 },
+        {
+          status: response.status || 500,
+        },
       );
     }
 
@@ -52,11 +48,11 @@ export async function GET(request: NextRequest) {
       success: true,
       message: 'success',
       data: {
-        id: result.data.id,
-        name: result.data.name,
-        totalPoint: result.data.totalPoint,
+        id: request.cookies.get('userId')?.value ?? null,
+        name: result.data.userName,
+        totalPoint: result.data.myPoint,
         orgId: result.data.orgId,
-        role: result.data.role ?? request.cookies.get('role')?.value ?? 'USER',
+        role: request.cookies.get('role')?.value ?? 'USER',
       },
     });
   } catch {
@@ -66,7 +62,9 @@ export async function GET(request: NextRequest) {
         message: '서버 내부 오류가 발생했습니다.',
         data: null,
       },
-      { status: 500 },
+      {
+        status: 500,
+      },
     );
   }
 }

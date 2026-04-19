@@ -1,88 +1,68 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookies';
-import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
-import { readJsonSafely } from '@/lib/read-json-safely';
-
-const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
-
-type GatewayRefreshResponse = {
-  success: boolean;
-  message: string;
-  data?: {
-    accessToken: string;
-    refreshToken?: string;
-    userId?: string | number;
-    name?: string;
-    role?: string;
-    orgId?: string | number;
-  };
-};
+import {
+  createAccessToken,
+  createRefreshToken,
+  verifyToken,
+} from '@/lib/auth-jwt';
 
 export async function POST(request: NextRequest) {
   try {
-    const response = await fetch(
-      `${GATEWAY_URL}${BACKEND_ENDPOINTS.auth.refresh}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          cookie: request.headers.get('cookie') ?? '',
-        },
-        cache: 'no-store',
-      },
-    );
+    const refreshToken = request.cookies.get('refreshToken')?.value;
 
-    const result = await readJsonSafely<GatewayRefreshResponse>(response);
-
-    if (response.status === 401 || response.status === 403) {
+    if (!refreshToken) {
       await clearAuthCookies();
 
       return NextResponse.json(
         {
           success: false,
-          message: result?.message || '토큰 재발급에 실패했습니다.',
+          message: '리프레시 토큰이 없습니다.',
           data: null,
         },
-        { status: response.status },
+        {
+          status: 401,
+        },
       );
     }
 
-    if (!response.ok || !result?.success || !result.data?.accessToken) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: result?.message || '토큰 재발급에 실패했습니다.',
-          data: null,
-        },
-        { status: response.status || 500 },
-      );
-    }
+    const payload = await verifyToken(refreshToken, 'refresh');
+
+    const sessionUser = {
+      userId: payload.userId,
+      name: payload.name,
+      orgId: payload.org_id,
+      role: (payload.roles?.[0] ?? 'USER') as 'USER' | 'ADMIN' | 'CLERGY',
+    };
+
+    const newAccessToken = await createAccessToken(sessionUser);
+    const newRefreshToken = await createRefreshToken(sessionUser);
 
     await setAuthCookies({
-      accessToken: result.data.accessToken,
-      refreshToken:
-        result.data.refreshToken ??
-        request.cookies.get('refreshToken')?.value ??
-        '',
-      userId: result.data.userId ?? request.cookies.get('userId')?.value ?? '',
-      name: result.data.name ?? request.cookies.get('name')?.value ?? '',
-      role: result.data.role ?? request.cookies.get('role')?.value ?? 'USER',
-      orgId: result.data.orgId ?? request.cookies.get('orgId')?.value ?? '',
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      userId: sessionUser.userId,
+      name: sessionUser.name,
+      role: sessionUser.role,
+      orgId: sessionUser.orgId,
     });
 
     return NextResponse.json({
       success: true,
-      message: '토큰이 재발급되었습니다.',
+      message: 'success',
       data: null,
     });
   } catch {
+    await clearAuthCookies();
+
     return NextResponse.json(
       {
         success: false,
-        message: '토큰 재발급 처리 중 오류가 발생했습니다.',
+        message: '세션이 만료되었습니다.',
         data: null,
       },
-      { status: 500 },
+      {
+        status: 401,
+      },
     );
   }
 }
