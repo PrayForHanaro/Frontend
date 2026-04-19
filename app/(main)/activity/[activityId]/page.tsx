@@ -71,76 +71,78 @@ export default function ActivityId() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] pb-24">
-      <Header content="소모임 상세" />
-      <div className="px-5 py-4">
-        <section className="rounded-2xl bg-white p-5">
-          <h1 className="font-hana-main font-semibold text-[#222222] text-[22px]">
-            {detail.title}
-          </h1>
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto bg-[#F7F8FA] px-5 pt-4 pb-24">
+        <Header content="소모임 상세" />
+        <div className="mt-4">
+          <section className="rounded-2xl bg-white p-5">
+            <h1 className="font-hana-main font-semibold text-[#222222] text-[22px]">
+              {detail.title}
+            </h1>
 
-          <div className="mt-3 flex items-center gap-2">
-            <span className="rounded-full bg-[#E7F4F3] px-3 py-1 font-hana-main text-[12px] text-hana-main">
-              {detail.category}
-            </span>
-            <span className="rounded-full bg-[#F1F3F5] px-3 py-1 font-hana-main text-[#666666] text-[12px]">
-              {detail.status === 'RECRUITING'
-                ? '모집중'
-                : detail.status === 'CLOSED'
-                  ? '마감'
-                  : '중단'}
-            </span>
-          </div>
-
-          <div className="mt-5 flex flex-col gap-3 text-[#444444]">
-            <div className="flex items-center gap-2">
-              <CalendarDays size={18} />
-              <span>{detail.schedule}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin size={18} />
-              <span>{detail.location}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users size={18} />
-              <span>
-                {detail.currentCount}/{detail.maxCount}명
+            <div className="mt-3 flex items-center gap-2">
+              <span className="rounded-full bg-[#E7F4F3] px-3 py-1 font-hana-main text-[12px] text-hana-main">
+                {detail.category}
+              </span>
+              <span className="rounded-full bg-[#F1F3F5] px-3 py-1 font-hana-main text-[#666666] text-[12px]">
+                {detail.status === 'RECRUITING'
+                  ? '모집중'
+                  : detail.status === 'CLOSED'
+                    ? '마감'
+                    : '중단'}
               </span>
             </div>
-          </div>
 
-          <div className="relative mt-5 aspect-[16/10] overflow-hidden rounded-2xl">
-            <Image
-              src={detail.imageUrls[0] || DEFAULT_IMAGE}
-              alt={detail.title}
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </div>
+            <div className="mt-5 flex flex-col gap-3 text-[#444444]">
+              <div className="flex items-center gap-2">
+                <CalendarDays size={18} />
+                <span>{detail.schedule}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin size={18} />
+                <span>{detail.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users size={18} />
+                <span>
+                  {detail.currentCount}/{detail.maxCount}명
+                </span>
+              </div>
+            </div>
 
-          <p className="mt-5 whitespace-pre-wrap font-hana-main text-[#444444] text-[15px] leading-6">
-            {detail.description}
-          </p>
-        </section>
+            <div className="relative mt-5 aspect-[16/10] overflow-hidden rounded-2xl">
+              <Image
+                src={detail.imageUrls[0] || DEFAULT_IMAGE}
+                alt={detail.title}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
 
-        <ActivityMemberSection
-          currentCount={detail.currentCount}
-          maxCount={detail.maxCount}
-          members={detail.members}
-          isApplied={detail.isApplied}
-          isOwner={detail.isOwner}
-          status={detail.status}
-          onApply={handleApply}
+            <p className="mt-5 whitespace-pre-wrap font-hana-main text-[#444444] text-[15px] leading-6">
+              {detail.description}
+            </p>
+          </section>
+
+          <ActivityMemberSection
+            currentCount={detail.currentCount}
+            maxCount={detail.maxCount}
+            members={detail.members}
+            isApplied={detail.isApplied}
+            isOwner={detail.isOwner}
+            status={detail.status}
+            onApply={handleApply}
+          />
+
+          <ActivityCommentSection />
+        </div>
+
+        <ActivityAdBanner
+          isVisible={isBannerVisible}
+          onClick={handleMoveGroupAccountGuidePage}
         />
-
-        <ActivityCommentSection />
       </div>
-
-      <ActivityAdBanner
-        isVisible={isBannerVisible}
-        onClick={handleMoveGroupAccountGuidePage}
-      />
       <Nav />
     </div>
   );

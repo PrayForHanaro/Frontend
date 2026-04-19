@@ -14,15 +14,21 @@ export default function GivingPage() {
   const [selectedTab, setSelectedTab] = useState<GivingTab>('정기 헌금');
 
   return (
-    <div className="flex flex-col gap-4">
-      <Header content="헌금" />
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
+        <div className="flex flex-col gap-4">
+          <Header content="헌금" />
 
-      <GivingToggle selectedTab={selectedTab} onChangeTab={setSelectedTab} />
+          <GivingToggle
+            selectedTab={selectedTab}
+            onChangeTab={setSelectedTab}
+          />
 
-      {selectedTab === '정기 헌금' && <RegularGivingSection />}
-      {selectedTab === '연금 연계' && <PensionLinkedSection />}
-      {selectedTab === '헌금 내역' && <GivingHistorySection />}
-
+          {selectedTab === '정기 헌금' && <RegularGivingSection />}
+          {selectedTab === '연금 연계' && <PensionLinkedSection />}
+          {selectedTab === '헌금 내역' && <GivingHistorySection />}
+        </div>
+      </div>
       <Nav />
     </div>
   );

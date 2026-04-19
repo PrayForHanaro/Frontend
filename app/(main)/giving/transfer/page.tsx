@@ -4,33 +4,32 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/ui/cmm/Header';
+import Nav from '@/components/ui/cmm/Nav';
 import WhiteCard from '@/components/ui/cmm/WhiteCard';
 
 /**
  * @page: 연금 이전 페이지입니다.
- * @description: 연금 이전 페이지입니다.
- * accountNumber에 대한 마스킹은 BFF에서 처리합니다.
+ * @description: 연금 이전 페이지입니다. 개별 Nav 적용 버전.
  * @author: 이정수
  * @date: 2026-04-15
  */
 
-type PensionType = '국민연금' | '퇴직연금' | '개인연금'; // 연금 종류에 대한 타입
+type PensionType = '국민연금' | '퇴직연금' | '개인연금';
 
 type Pension = {
-  pensionId: number; // 연금 ID
-  userId: number; // 사용자 ID
-  accountNumber: string; // 연결된 계좌 ID (null 허용)
-  pensionType: PensionType; // 연금 종류
-  isHanaBank: boolean; // 하나은행 여부
-  totalContribution: number; // 총 납입액
-  totalWithdrawal: number; // 총 출금액
-  profit: number; // 운용 수익
-  returnRate: number; // 수익률 (%)
-  institutionName: string; // 연금 기관명
-  productName: string; // 상품 이름
+  pensionId: number;
+  userId: number;
+  accountNumber: string;
+  pensionType: PensionType;
+  isHanaBank: boolean;
+  totalContribution: number;
+  totalWithdrawal: number;
+  profit: number;
+  returnRate: number;
+  institutionName: string;
+  productName: string;
 };
 
-//TODO 임시 데이터, API 연동 필요
 const pensions: Pension[] = [
   {
     pensionId: 1,
@@ -62,35 +61,14 @@ const pensions: Pension[] = [
 
 export default function Transfer() {
   const [selectedPensions, setSelectedPensions] = useState<number[]>([]);
-
   const router = useRouter();
 
-  const addPension = (pensionId: number) => {
-    setSelectedPensions((prev) => {
-      if (prev.includes(pensionId)) {
-        return prev;
-      }
-
-      return [...prev, pensionId];
-    });
-  };
-
-  const transferPension = () => {
-    router.push('/giving');
-  };
-
-  const removePension = (pensionId: number) => {
-    setSelectedPensions((prev) => {
-      return prev.filter((id) => id !== pensionId);
-    });
-  };
-
   const togglePension = (pensionId: number) => {
-    if (selectedPensions.includes(pensionId)) {
-      removePension(pensionId);
-    } else {
-      addPension(pensionId);
-    }
+    setSelectedPensions((prev) =>
+      prev.includes(pensionId)
+        ? prev.filter((id) => id !== pensionId)
+        : [...prev, pensionId],
+    );
   };
 
   const selectAllNonHanaBank = () => {
@@ -109,63 +87,64 @@ export default function Transfer() {
   );
 
   return (
-    <div className="relative min-h-full w-full">
-      <Header content="헌금 관리" />
-      <div className="relative pt-7">
-        <div className="text-l">내 연금 목록</div>
-        <div className="pt-3 text-hana-gray-600">
-          추가할 연금을 선택해주세요.
-        </div>
-      </div>
-
-      <div className="pt-7">
-        <div className="text-l">하나은행 연결된 연금</div>
-        {hanaBankPensionList.map((p) => (
-          <div key={p.pensionId} className="pt-3">
-            <WhiteCard
-              align="left"
-              contents={`${p.institutionName} - ${p.productName}`}
-              description={`${p.accountNumber}`}
-              isSelected={false}
-              setIsSelected={() => {}}
-              badgeContent="연결됨"
-            />
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-48">
+        <Header content="헌금 관리" />
+        <div className="relative pt-7">
+          <div className="font-hana-bold text-l">내 연금 목록</div>
+          <div className="pt-3 text-hana-gray-600">
+            추가할 연금을 선택해주세요.
           </div>
-        ))}
-      </div>
-
-      <div className="pt-7">
-        <div className="text-l">타은행 연금</div>
-        <div className="flex items-center gap-3 pt-3">
-          <input
-            id="selectAll"
-            type="checkbox"
-            checked={isAllNonHanaBankSelected}
-            onChange={() =>
-              isAllNonHanaBankSelected
-                ? deselectAllNonHanaBank()
-                : selectAllNonHanaBank()
-            }
-            className="h-5 w-5 cursor-pointer accent-hana-light-mint"
-          />
-          <label htmlFor="selectAll" className="cursor-pointer text-l">
-            전체 선택
-          </label>
         </div>
-        {nonHanaBankPensionList.map((p) => (
-          <div key={p.pensionId} className="pt-3">
-            <WhiteCard
-              align="left"
-              contents={`${p.institutionName} - ${p.productName}`}
-              description={`${p.accountNumber}`}
-              isSelected={selectedPensions.includes(p.pensionId)}
-              setIsSelected={() => togglePension(p.pensionId)}
+
+        <div className="pt-7">
+          <div className="font-hana-bold text-l">하나은행 연결된 연금</div>
+          {hanaBankPensionList.map((p) => (
+            <div key={p.pensionId} className="pt-3">
+              <WhiteCard
+                align="left"
+                contents={`${p.institutionName} - ${p.productName}`}
+                description={`${p.accountNumber}`}
+                isSelected={false}
+                setIsSelected={() => {}}
+                badgeContent="연결됨"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="pt-7">
+          <div className="font-hana-bold text-l">타은행 연금</div>
+          <div className="flex items-center gap-3 pt-3">
+            <input
+              id="selectAll"
+              type="checkbox"
+              checked={isAllNonHanaBankSelected}
+              onChange={() =>
+                isAllNonHanaBankSelected
+                  ? deselectAllNonHanaBank()
+                  : selectAllNonHanaBank()
+              }
+              className="h-5 w-5 cursor-pointer accent-hana-light-mint"
             />
+            <label htmlFor="selectAll" className="cursor-pointer text-l">
+              전체 선택
+            </label>
           </div>
-        ))}
-      </div>
-      <div className="absolute bottom-1 w-full pt-10">
-        <div className="grid grid-cols-1 gap-3">
+          {nonHanaBankPensionList.map((p) => (
+            <div key={p.pensionId} className="pt-3">
+              <WhiteCard
+                align="left"
+                contents={`${p.institutionName} - ${p.productName}`}
+                description={`${p.accountNumber}`}
+                isSelected={selectedPensions.includes(p.pensionId)}
+                setIsSelected={() => togglePension(p.pensionId)}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-3">
           <Button
             type="button"
             variant="outline"
@@ -177,12 +156,13 @@ export default function Transfer() {
           <Button
             type="button"
             className="h-15 w-full rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
-            onClick={transferPension}
+            onClick={() => router.push('/giving')}
           >
             선택완료
           </Button>
         </div>
       </div>
+      <Nav />
     </div>
   );
 }
