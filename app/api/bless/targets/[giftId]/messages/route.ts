@@ -98,7 +98,7 @@ export async function POST(
   const { giftId } = await params;
 
   try {
-    const body = await request.json();
+    const { content } = await request.json();
     const res = await fetch(
       `${GATEWAY_URL}/apis/prayer/prayers/${giftId}/messages`,
       {
@@ -107,7 +107,7 @@ export async function POST(
           'Content-Type': 'application/json',
           cookie: request.headers.get('cookie') ?? '',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ content }),
         cache: 'no-store',
       },
     );
