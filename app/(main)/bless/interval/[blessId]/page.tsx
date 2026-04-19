@@ -28,8 +28,8 @@ export default async function BlessInterval({
   const messages = await getMessages(blessId);
 
   return (
-    <div className="relative h-full w-full">
-      <div className="scrollbar-hide relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
         <BackButton to="/bless/interval" />
 
         <div className="mt-4 mb-4 flex justify-center">
@@ -38,7 +38,7 @@ export default async function BlessInterval({
           </div>
         </div>
 
-        <div className="mx-4 rounded-2xl border border-gray-200 bg-hana-bless-bg px-6 py-6 shadow-sm">
+        <div className="rounded-2xl border border-gray-200 bg-hana-bless-bg px-6 py-6 shadow-sm">
           <div className="flex flex-col items-center text-center">
             <p className="font-hana-medium text-[#568F6E] text-sm">
               To. {target.name}
@@ -80,11 +80,11 @@ export default async function BlessInterval({
           </div>
         </div>
 
-        <div className="px-4 pt-4">
+        <div className="pt-4">
           <DetailButtons blessId={blessId} />
         </div>
 
-        <div className="flex flex-1 flex-col gap-3 px-4 pt-4">
+        <div className="flex flex-col gap-3 pt-4">
           {messages.map((msg, idx) => (
             <MessageHistoryItem
               key={msg.id}
