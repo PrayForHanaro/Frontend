@@ -65,7 +65,7 @@ export default function PointPage() {
     ];
 
     setPoints(mockData);
-    setTotalPoint(19000);
+    setTotalPoint(12500);
   }, []);
 
   return (

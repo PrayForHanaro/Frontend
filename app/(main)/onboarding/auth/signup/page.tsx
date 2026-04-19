@@ -25,6 +25,9 @@ export default function Signup() {
   const [carrier, setCarrier] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [showCarrierDropdown, setShowCarrierDropdown] = useState(false);
+  const [authStatus, setAuthStatus] = useState<
+    'BEFORE_SEND' | 'SENT' | 'VERIFIED'
+  >('BEFORE_SEND');
 
   const routeToIntro = () => {
     router.push('/onboarding/intro');
@@ -37,6 +40,8 @@ export default function Signup() {
     setVerificationCode('');
   };
 
+  const isButtonEnabled = authStatus === 'VERIFIED';
+
   const handleSendVerification = () => {
     if (!phoneNumber || !carrier) {
       alert('전화번호와 통신사를 선택해주세요');
@@ -44,6 +49,15 @@ export default function Signup() {
     }
     // TODO: API 호출로 인증번호 발송
     console.log('인증번호 발송:', { phoneNumber, carrier });
+    if (authStatus === 'BEFORE_SEND') {
+      alert('인증번호가 발송되었습니다.');
+      setAuthStatus('SENT');
+    } else if (authStatus === 'SENT') {
+      alert('인증되었습니다.');
+      setAuthStatus('VERIFIED');
+    } else {
+      alert('이미 인증이 완료되었습니다.');
+    }
   };
   return (
     <div className="flex min-h-full flex-col">
@@ -165,9 +179,19 @@ export default function Signup() {
                 <Button
                   type="button"
                   onClick={handleSendVerification}
-                  className="h-auto whitespace-nowrap rounded-xl bg-hana-light-mint px-4 py-4 font-hana-bold text-base text-white hover:bg-hana-light-mint/90"
+                  className={
+                    authStatus === 'BEFORE_SEND'
+                      ? `h-auto whitespace-nowrap rounded-xl bg-hana-light-mint px-4 py-4 font-hana-bold text-base text-white hover:bg-hana-light-mint/90`
+                      : authStatus === 'SENT'
+                        ? `h-auto whitespace-nowrap rounded-xl bg-red-500 px-4 py-4 font-hana-bold text-base text-white hover:bg-red-500/90`
+                        : `h-auto cursor-not-allowed whitespace-nowrap rounded-xl bg-gray-400 px-4 py-4 font-hana-bold text-base text-white`
+                  }
                 >
-                  인증번호받기
+                  {authStatus === 'BEFORE_SEND'
+                    ? '인증번호 받기'
+                    : authStatus === 'SENT'
+                      ? '인증번호 확인'
+                      : '인증 완료'}
                 </Button>
               </div>
             </Field>
@@ -197,7 +221,12 @@ export default function Signup() {
           </Button>
           <Button
             type="button"
-            className="h-15 rounded-2xl bg-hana-linear-deep-green-end text-2xl hover:bg-hana-linear-deep-green"
+            disabled={!isButtonEnabled}
+            className={`h-15 rounded-2xl text-2xl transition-all ${
+              isButtonEnabled
+                ? 'bg-hana-linear-deep-green-end text-white hover:bg-hana-linear-deep-green'
+                : 'cursor-not-allowed bg-hana-linear-deep-green-end/50 text-white/70'
+            }`}
             onClick={routeToIntro}
           >
             회원가입하기

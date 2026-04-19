@@ -38,12 +38,12 @@ export default function GivingOnce() {
   const [givingPerson, setGivingPerson] = useState<'기명' | '무기명'>('기명');
   const [name, setName] = useState('김하나');
   const [amount, setAmount] = useState('');
-  const [point, setPoint] = useState('19000');
+  const [point, setPoint] = useState('12500');
   const [useAllPoints, setUseAllPoints] = useState(true);
   const [prayerTopic, setPrayerTopic] = useState('');
   const [data, setData] = useState<GivingData>({
     name: '김하나',
-    maxPoint: 19000,
+    maxPoint: 12500,
     bankAccount: '하나은행 123-456789-01107',
     churchName: '하나 교회',
     orgId: 1,
@@ -98,7 +98,7 @@ export default function GivingOnce() {
           churchName: churchName,
         }));
 
-        if (useAllPointsRef.current) setPoint('19000'); // 기본값 사용
+        if (useAllPointsRef.current) setPoint('12500'); // 기본값 사용
 
         if (!savedState) {
           setName(userName);
@@ -118,7 +118,7 @@ export default function GivingOnce() {
         setGivingPerson(parsed.givingPerson || '기명');
         setName(parsed.name || '하나');
         setAmount(parsed.amount || '');
-        setPoint(parsed.point || '19000');
+        setPoint(parsed.point || '12500');
         setUseAllPoints(parsed.useAllPoints ?? true);
       } catch (e) {
         console.error('세션 데이터 파싱 오류:', e);

@@ -113,68 +113,76 @@ export default function Transfer() {
     nonHanaBankPensionList.every((p) => selectedPensions.includes(p.pensionId));
 
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <Header content="헌금 관리" />
-      <div className="relative min-h-screen w-full max-w-full overflow-x-hidden pb-28">
-        <div className="relative pt-7">
-          <div className="text-l">내 연금 목록</div>
-          <div className="pt-3 text-hana-gray-600">
-            추가할 연금을 선택해주세요.
-          </div>
-        </div>
 
-        <div className="pt-7">
-          <div className="text-l">하나은행 연결된 연금</div>
-          {hanaBankPensionList.map((p) => (
-            <div key={p.pensionId} className="pt-3">
-              <WhiteCard
-                align="left"
-                contents={`${p.institutionName}`}
-                description={`${p.accountNumber}`}
-                description2={`${p.productName}`}
-                isSelected={false}
-                setIsSelected={() => {}}
-                badgeContent="연결됨"
-              />
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="scrollbar-hide flex-1 overflow-y-auto px-0 pt-7 pb-6">
+          <div>
+            <div className="text-l">내 연금 목록</div>
+            <div className="pt-3 text-hana-gray-600">
+              추가할 연금을 선택해주세요.
             </div>
-          ))}
-        </div>
-
-        <div className="pt-7">
-          <div className="text-l">타은행 연금</div>
-          <div className="flex items-center gap-3 pt-3">
-            <input
-              id="selectAll"
-              type="checkbox"
-              checked={isAllNonHanaBankSelected}
-              onChange={() =>
-                isAllNonHanaBankSelected
-                  ? deselectAllNonHanaBank()
-                  : selectAllNonHanaBank()
-              }
-              className="h-5 w-5 cursor-pointer accent-hana-light-mint"
-            />
-            <label htmlFor="selectAll" className="cursor-pointer text-l">
-              전체 선택
-            </label>
           </div>
-          {nonHanaBankPensionList.map((p) => (
-            <div key={p.pensionId} className="pt-3">
-              <WhiteCard
-                align="left"
-                contents={`${p.institutionName}`}
-                description={`${p.accountNumber}`}
-                description2={`${p.productName}`}
-                isSelected={selectedPensions?.includes(p.pensionId) || false}
-                setIsSelected={(selected) =>
-                  handleSelectPension(p.pensionId, selected)
+
+          <div className="pt-7">
+            <div className="text-l">하나은행 연결된 연금</div>
+            {hanaBankPensionList.map((p) => (
+              <div key={p.pensionId} className="pt-3">
+                <WhiteCard
+                  align="left"
+                  contents={p.institutionName}
+                  description={p.accountNumber}
+                  description2={p.productName}
+                  isSelected={false}
+                  setIsSelected={() => {}}
+                  badgeContent="연결됨"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-7">
+            <div className="text-l">타은행 연금</div>
+            <div className="flex items-center gap-3 pt-3">
+              <input
+                id="selectAll"
+                type="checkbox"
+                checked={isAllNonHanaBankSelected}
+                onChange={() =>
+                  isAllNonHanaBankSelected
+                    ? deselectAllNonHanaBank()
+                    : selectAllNonHanaBank()
                 }
-                showCheckbox={true}
+                className="h-5 w-5 cursor-pointer accent-hana-light-mint"
               />
+              <label htmlFor="selectAll" className="cursor-pointer text-l">
+                전체 선택
+              </label>
             </div>
-          ))}
+
+            {nonHanaBankPensionList.map((p) => (
+              <div key={p.pensionId} className="pt-3">
+                <WhiteCard
+                  align="left"
+                  contents={p.institutionName}
+                  description={p.accountNumber}
+                  description2={p.productName}
+                  isSelected={selectedPensions.includes(p.pensionId)}
+                  setIsSelected={(selected) =>
+                    handleSelectPension(p.pensionId, selected)
+                  }
+                  showCheckbox={true}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* 마지막 카드가 버튼에 안 가리도록 여유 */}
+          <div className="h-10" />
         </div>
-        <div className="absolute bottom-1 w-full pt-15">
+
+        <div className="sticky bottom-0 w-full pt-4 pb-1">
           <div className="grid grid-cols-1 gap-3">
             <Button
               type="button"
