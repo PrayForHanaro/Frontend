@@ -1,5 +1,6 @@
 'use client';
 
+import { updateProfileImage } from '@/lib/user-api';
 import { useRef, useState } from 'react';
 
 export default function ProfileSection() {
@@ -15,43 +16,20 @@ export default function ProfileSection() {
     if (!file) return;
 
     try {
-      // 1️⃣ presigned URL 요청
-      const res = await fetch('/api/presigned-url', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type,
-        }),
-      });
+      // 백엔드 가이드: multipart/form-data 단일 파일 전송 (BFF Proxy 호출)
+      const result = await updateProfileImage(file);
 
-      const { url, fileUrl } = await res.json();
-
-      // 2️⃣ S3 업로드
-      await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': file.type,
-        },
-        body: file,
-      });
-
-      // 미리보기 (S3 URL 대신 로컬 미리보기 추천)
+      // 성공 시 미리보기 업데이트 (또는 서버에서 내려준 URL 사용 가능)
       const preview = URL.createObjectURL(file);
-      setImage(preview);
-
-      // 서버에 저장
-      await fetch('/api/profile/image', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ imageUrl: fileUrl }),
+      setImage((prev) => {
+        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return preview;
       });
+
+      console.log('Profile image updated successfully:', result);
     } catch (error) {
       console.error('업로드 실패', error);
+      alert('프로필 이미지 업로드에 실패했습니다.');
     }
   }
 
