@@ -39,7 +39,29 @@ export default function MyPage() {
           );
         }
 
-        setData(result.data);
+        const normalizedData: MyPageData = {
+          name:
+            typeof result.data.name === 'string' && result.data.name.trim()
+              ? result.data.name.trim()
+              : '이름 없음',
+          profileUrl:
+            typeof result.data.profileUrl === 'string'
+              ? result.data.profileUrl
+              : null,
+          orgName:
+            typeof result.data.orgName === 'string' &&
+            result.data.orgName.trim()
+              ? result.data.orgName.trim()
+              : '소속 교회 없음',
+          pointSum:
+            typeof result.data.pointSum === 'number' ? result.data.pointSum : 0,
+          role:
+            typeof result.data.role === 'string' && result.data.role.trim()
+              ? result.data.role.trim()
+              : 'USER',
+        };
+
+        setData(normalizedData);
       } catch (error) {
         console.error(error);
         setErrorMessage('마이페이지 정보를 불러오지 못했습니다.');

@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 type ProfileSectionProps = {
-  name: string;
-  orgName: string;
-  profileUrl: string | null;
+  name?: string | null;
+  orgName?: string | null;
+  profileUrl?: string | null;
   onProfileUploaded?: (nextProfileUrl: string) => void;
 };
 
@@ -16,11 +16,18 @@ export default function ProfileSection({
   onProfileUploaded,
 }: ProfileSectionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<string | null>(profileUrl);
+  const [image, setImage] = useState<string | null>(profileUrl ?? null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const safeName =
+    typeof name === 'string' && name.trim() ? name.trim() : '이름 없음';
+  const safeOrgName =
+    typeof orgName === 'string' && orgName.trim()
+      ? orgName.trim()
+      : '소속 교회 없음';
+
   useEffect(() => {
-    setImage(profileUrl);
+    setImage(profileUrl ?? null);
   }, [profileUrl]);
 
   function handleClick() {
@@ -84,19 +91,19 @@ export default function ProfileSection({
           {image ? (
             <img
               src={image}
-              alt={`${name} 프로필 이미지`}
+              alt={`${safeName} 프로필 이미지`}
               className="h-full w-full object-cover"
             />
           ) : (
             <span className="font-semibold text-gray-600 text-lg">
-              {name.slice(0, 1) || '성'}
+              {safeName.slice(0, 1)}
             </span>
           )}
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-gray-900 text-lg">{name}</p>
-          <p className="text-gray-500 text-sm">{orgName}</p>
+          <p className="font-semibold text-gray-900 text-lg">{safeName}</p>
+          <p className="text-gray-500 text-sm">{safeOrgName}</p>
           <p className="mt-1 text-gray-400 text-xs">
             {isUploading ? '업로드 중...' : '프로필 이미지를 눌러 변경'}
           </p>

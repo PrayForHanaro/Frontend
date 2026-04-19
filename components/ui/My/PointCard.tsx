@@ -3,14 +3,18 @@
 import Link from 'next/link';
 
 type PointCardProps = {
-  pointSum: number;
+  pointSum?: number | null;
 };
 
 export default function PointCard({ pointSum }: PointCardProps) {
+  const safePointSum = typeof pointSum === 'number' ? pointSum : 0;
+
   return (
     <section className="rounded-2xl bg-hana-main p-4 text-white shadow-sm">
       <p className="text-sm opacity-90">보유 포인트</p>
-      <p className="mt-2 font-bold text-3xl">{pointSum.toLocaleString()}P</p>
+      <p className="mt-2 font-bold text-3xl">
+        {safePointSum.toLocaleString()}P
+      </p>
 
       <div className="mt-4">
         <Link

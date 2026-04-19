@@ -73,16 +73,6 @@ export default function RegularGivingCard({
 
       <div className="mt-6 flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <span
-            aria-hidden="true"
-            className="block rounded-full border-2 border-hana-black"
-            style={{ width: '18px', height: '18px' }}
-          />
-          <span
-            aria-hidden="true"
-            className="block rounded-full border-2 border-hana-black"
-            style={{ width: '18px', height: '18px' }}
-          />
           <strong
             className="font-hana-main text-hana-black"
             style={{ fontSize: '18px', lineHeight: '1.3' }}
