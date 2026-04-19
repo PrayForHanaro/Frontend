@@ -85,3 +85,33 @@ export async function GET(
     );
   }
 }
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ giftId: string }> },
+) {
+  const { giftId } = await params;
+
+  try {
+    const body = await request.json();
+    const res = await bffFetch(
+      `${GATEWAY_URL}/apis/prayer/prayers/${giftId}/messages`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        cache: 'no-store',
+      },
+    );
+    const resultBody = await res.json();
+    return NextResponse.json(resultBody, { status: res.status });
+  } catch (_err) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: '메시지 작성 처리 중 오류가 발생했습니다.',
+        data: null,
+      },
+      { status: 500 },
+    );
+  }
+}
