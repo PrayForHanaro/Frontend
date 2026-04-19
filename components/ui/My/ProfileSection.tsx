@@ -21,9 +21,11 @@ export default function ProfileSection() {
 
       // 성공 시 미리보기 업데이트 (또는 서버에서 내려준 URL 사용 가능)
       const preview = URL.createObjectURL(file);
-      setImage(preview);
+      setImage((prev) => {
+        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+        return preview;
+      });
 
-      // TODO: 필요한 경우 전역 상태(사용자 정보) 업데이트 로직 추가
       console.log('Profile image updated successfully:', result);
     } catch (error) {
       console.error('업로드 실패', error);
