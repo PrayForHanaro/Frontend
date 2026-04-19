@@ -2,29 +2,24 @@
 
 import Link from 'next/link';
 
-export default function PointCard() {
+type PointCardProps = {
+  pointSum: number;
+};
+
+export default function PointCard({ pointSum }: PointCardProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="mx-4 rounded-2xl bg-white p-4 shadow">
-        <div className="flex items-center justify-start">
-          <span className='font-bold text-hana-main text-3xl'>30,000P</span>
-        </div>
+    <section className="rounded-2xl bg-hana-main p-4 text-white shadow-sm">
+      <p className="text-sm opacity-90">보유 포인트</p>
+      <p className="mt-2 font-bold text-3xl">{pointSum.toLocaleString()}P</p>
 
-        {/* 👇 버튼 가로 정렬 */}
-        <div className="mt-4 flex gap-2">
-          <Link href="/giving/once" className="flex-1">
-            <button className="w-full rounded-xl bg-hana-main py-3 text-white">
-              헌금하기
-            </button>
-          </Link>
-
-          <Link href="/mypage/points" className="flex-1">
-            <button className="w-full rounded-xl bg-hana-main py-3 text-white">
-              포인트 내역 보기
-            </button>
-          </Link>
-        </div>
+      <div className="mt-4">
+        <Link
+          href="/giving/once"
+          className="inline-flex rounded-xl bg-white px-4 py-2 font-medium text-hana-main text-sm"
+        >
+          헌금하기
+        </Link>
       </div>
-    </div>
+    </section>
   );
 }

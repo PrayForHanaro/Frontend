@@ -1,63 +1,116 @@
 'use client';
 
-import { updateProfileImage } from '@/lib/user-api';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-export default function ProfileSection() {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [image, setImage] = useState<string | null>(null);
+type ProfileSectionProps = {
+  name: string;
+  orgName: string;
+  profileUrl: string | null;
+  onProfileUploaded?: (nextProfileUrl: string) => void;
+};
+
+export default function ProfileSection({
+  name,
+  orgName,
+  profileUrl,
+  onProfileUploaded,
+}: ProfileSectionProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [image, setImage] = useState<string | null>(profileUrl);
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    setImage(profileUrl);
+  }, [profileUrl]);
 
   function handleClick() {
     fileInputRef.current?.click();
   }
 
-  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
 
     try {
-      // 백엔드 가이드: multipart/form-data 단일 파일 전송 (BFF Proxy 호출)
-      const result = await updateProfileImage(file);
+      setIsUploading(true);
 
-      // 성공 시 미리보기 업데이트 (또는 서버에서 내려준 URL 사용 가능)
-      const preview = URL.createObjectURL(file);
-      setImage((prev) => {
-        if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
-        return preview;
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/me/profile-image', {
+        method: 'POST',
+        body: formData,
       });
 
-      console.log('Profile image updated successfully:', result);
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || '프로필 이미지 업로드에 실패했습니다.',
+        );
+      }
+
+      const nextProfileUrl =
+        typeof result.data === 'string'
+          ? result.data
+          : URL.createObjectURL(file);
+
+      setImage(nextProfileUrl);
+      onProfileUploaded?.(nextProfileUrl);
     } catch (error) {
-      console.error('업로드 실패', error);
+      console.error(error);
       alert('프로필 이미지 업로드에 실패했습니다.');
+    } finally {
+      setIsUploading(false);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      {/* 👇 클릭 가능 */}
-      <div
-        onClick={handleClick}
-        className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-gray-200"
-      >
-        <img
-          src={image || '/profile-default.png'}
-          alt="profile"
-          className="h-full w-full object-cover"
-        />
+    <section className="rounded-2xl bg-white p-4 shadow-sm">
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={handleClick}
+          aria-label="프로필 이미지 업로드"
+          className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-100"
+        >
+          {image ? (
+            <img
+              src={image}
+              alt={`${name} 프로필 이미지`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="font-semibold text-gray-600 text-lg">
+              {name.slice(0, 1) || '성'}
+            </span>
+          )}
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-gray-900 text-lg">{name}</p>
+          <p className="text-gray-500 text-sm">{orgName}</p>
+          <p className="mt-1 text-gray-400 text-xs">
+            {isUploading ? '업로드 중...' : '프로필 이미지를 눌러 변경'}
+          </p>
+        </div>
       </div>
 
-      {/* 숨겨진 input */}
       <input
+        ref={fileInputRef}
         type="file"
         accept="image/*"
-        ref={fileInputRef}
         onChange={handleChange}
         className="hidden"
+        aria-label="프로필 이미지 파일 선택"
       />
-
-      <span className="font-hana-bold text-lg">김성도</span>
-      <span className="text-gray-400 text-sm">○○교회 성도</span>
-    </div>
+    </section>
   );
 }

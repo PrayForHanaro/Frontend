@@ -34,25 +34,6 @@ export type ActivityDetail = ActivityItem & {
   members: ActivityMember[];
 };
 
-export type ActivityCreatePayload = {
-  category: '봉사모집' | '동행찾기' | '교회행사';
-  meetingType: 'single' | 'recurring';
-  recurringType: 'daily' | 'weekday' | 'monthly';
-  title: string;
-  description: string;
-  location: string;
-  maxMembers: number;
-  pointAmount?: number;
-  singleDate: string;
-  singleTime: string;
-  recurringStartDate: string;
-  recurringEndDate: string;
-  recurringTime: string;
-  recurringWeekdays: string[];
-  recurringMonthDays: number[];
-  imageUrls: string[];
-};
-
 type ApiResponse<T> = {
   success: boolean;
   message: string;
@@ -69,11 +50,28 @@ async function parseResponse<T>(response: Response): Promise<T> {
   return result.data;
 }
 
-export async function getActivities() {
-  const response = await fetchWithAuth('/api/activity', {
-    method: 'GET',
-    cache: 'no-store',
-  });
+export async function getActivities(params?: {
+  category?: string;
+  keyword?: string;
+}) {
+  const searchParams = new URLSearchParams();
+
+  if (params?.category) {
+    searchParams.set('category', params.category);
+  }
+
+  if (params?.keyword) {
+    searchParams.set('keyword', params.keyword);
+  }
+
+  const queryString = searchParams.toString();
+  const response = await fetchWithAuth(
+    `/api/activity${queryString ? `?${queryString}` : ''}`,
+    {
+      method: 'GET',
+      cache: 'no-store',
+    },
+  );
 
   return parseResponse<ActivityItem[]>(response);
 }
@@ -90,7 +88,6 @@ export async function getActivity(activityId: string) {
 export async function createActivity(formData: FormData) {
   const response = await fetchWithAuth('/api/activity', {
     method: 'POST',
-    // FormData 전송 시 Content-Type을 명시하지 않아야 boundary가 자동 설정됨
     body: formData,
   });
 

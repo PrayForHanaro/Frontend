@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 /**
  * @page: 일시 헌금 오케스트레이션 route (BFF)
@@ -27,13 +27,26 @@ interface GivingOnceRequest {
   offererName: string | null;
 }
 
-export async function GET() {
+function createJsonHeaders(request: NextRequest): HeadersInit {
+  return {
+    'Content-Type': 'application/json',
+    cookie: request.headers.get('cookie') ?? '',
+  };
+}
+
+function createMultipartHeaders(request: NextRequest): HeadersInit {
+  return {
+    cookie: request.headers.get('cookie') ?? '',
+  };
+}
+
+export async function GET(request: NextRequest) {
   try {
     // 1. [user-service] 내 송금용 정보 가져오기
     const userRes = await fetch(
       `${GATEWAY_URL}/apis/user/users/me/givingOnce`,
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: createJsonHeaders(request),
         cache: 'no-store',
       },
     );
@@ -47,7 +60,9 @@ export async function GET() {
           message: userResult.message || '사용자 정보를 불러오지 못했습니다.',
           data: null,
         },
-        { status: userRes.status },
+        {
+          status: userRes.status || 500,
+        },
       );
     }
 
@@ -55,17 +70,20 @@ export async function GET() {
 
     // 2. [org-service] 교회 이름 가져오기
     let churchName = '정보 없음';
+
     try {
       const orgRes = await fetch(
         `${GATEWAY_URL}/apis/org/orgs/${userData.orgId}/summary`,
         {
+          headers: createMultipartHeaders(request),
           cache: 'no-store',
         },
       );
+
       const orgResult = await orgRes.json();
       churchName = orgResult.data?.orgName || '정보 없음';
-    } catch (_error) {
-      console.error('Failed to fetch org summary');
+    } catch {
+      churchName = '정보 없음';
     }
 
     return NextResponse.json({
@@ -81,30 +99,33 @@ export async function GET() {
         accountId: userData.accountId,
       },
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json(
       {
         code: 'G001',
         message: '서버 내부 오류가 발생했습니다.',
         data: null,
       },
-      { status: 500 },
+      {
+        status: 500,
+      },
     );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body: GivingOnceRequest = await request.json();
+    const body = (await request.json()) as GivingOnceRequest;
 
     // 1. [user-service] 부족한 정보(orgId, accountId) 가져오기
     const userMeRes = await fetch(
       `${GATEWAY_URL}/apis/user/users/me/givingOnce`,
       {
-        headers: { 'Content-Type': 'application/json' },
+        headers: createJsonHeaders(request),
         cache: 'no-store',
       },
     );
+
     const userMe = await userMeRes.json();
 
     if (!userMeRes.ok || !userMe.success || !userMe.data) {
@@ -114,18 +135,20 @@ export async function POST(request: Request) {
           message: userMe.message || '사용자 정보를 불러오지 못했습니다.',
           data: null,
         },
-        { status: userMeRes.status },
+        {
+          status: userMeRes.status || 500,
+        },
       );
     }
 
-    const { orgId, accountId, donationRate } = userMe.data as GivingOnceUser;
+    const { orgId, accountId } = userMe.data as GivingOnceUser;
 
     // 2. [offering-service] 헌금 내역 저장
     const offeringRes = await fetch(
-      `${GATEWAY_URL}/apis/offering/api/offerings`,
+      `${GATEWAY_URL}/apis/offering/offerings/once`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: createJsonHeaders(request),
         body: JSON.stringify({
           orgId,
           accountId,
@@ -146,59 +169,36 @@ export async function POST(request: Request) {
           message: offeringResult.message || '헌금 저장에 실패했습니다.',
           data: null,
         },
-        { status: offeringRes.status },
+        {
+          status: offeringRes.status || 500,
+        },
       );
     }
 
-    // 3. [비동기/병렬 작업] 후처리
-    await Promise.all([
-      // A. 포인트 적립 (Earn)
-      fetch(`${GATEWAY_URL}/apis/user/users/me/points/process`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: body.amount,
-          donationRate,
-          refId: offeringResult.data,
-          pointType: 'OFFERING_RECURRING',
-          isEarn: true,
-        }),
+    // 3. [org-service] 교회 헌금 누적액 업데이트
+    await fetch(`${GATEWAY_URL}/apis/org/orgs/${orgId}/offering-amount`, {
+      method: 'PUT',
+      headers: createJsonHeaders(request),
+      body: JSON.stringify({
+        amount: body.amount,
       }),
-      // B. 포인트 사용 (차감)
-      body.point > 0 &&
-        fetch(`${GATEWAY_URL}/apis/user/users/me/points/process`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: body.point,
-            refId: offeringResult.data,
-            pointType: 'OFFERING_RECURRING',
-            isEarn: false,
-          }),
-        }),
-      // C. 교회 헌금 누적액 업데이트
-      fetch(`${GATEWAY_URL}/apis/org/orgs/${orgId}/offering-amount`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: body.amount,
-        }),
-      }),
-    ]).catch((postError) => {
-      console.error('후처리 작업 중 일부 실패:', postError);
-    });
+    }).catch(() => null);
 
-    return NextResponse.json(offeringResult);
+    return NextResponse.json(offeringResult, {
+      status: offeringRes.status,
+    });
   } catch (error: unknown) {
     const err = error as Error;
-    console.error('API Error (Giving/Once POST Orchestration)');
+
     return NextResponse.json(
       {
         code: 'G001',
         message: err.message || '서버 내부 오류가 발생했습니다.',
         data: null,
       },
-      { status: 500 },
+      {
+        status: 500,
+      },
     );
   }
 }
