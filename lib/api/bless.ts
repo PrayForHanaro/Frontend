@@ -7,7 +7,7 @@ import type {
   RegisteredAccount,
 } from '@/app/(main)/bless/_types';
 
-const USE_MOCK = true;
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_BLESS !== 'false';
 
 export async function getTargets(): Promise<BlessTarget[]> {
   if (USE_MOCK) return MOCK_TARGETS;
