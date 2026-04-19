@@ -1,6 +1,7 @@
 'use client';
 
 import { Camera } from 'lucide-react';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 export default function ProfileSection() {
@@ -16,7 +17,6 @@ export default function ProfileSection() {
     if (!file) return;
 
     try {
-      // 1️⃣ presigned URL 요청
       const res = await fetch('/api/presigned-url', {
         method: 'POST',
         headers: {
@@ -28,9 +28,12 @@ export default function ProfileSection() {
         }),
       });
 
+      if (!res.ok) {
+        throw new Error('presigned-url 요청 실패');
+      }
+
       const { url, fileUrl } = await res.json();
 
-      // 2️⃣ S3 업로드
       await fetch(url, {
         method: 'PUT',
         headers: {
@@ -39,11 +42,9 @@ export default function ProfileSection() {
         body: file,
       });
 
-      // 미리보기 (S3 URL 대신 로컬 미리보기 추천)
       const preview = URL.createObjectURL(file);
       setImage(preview);
 
-      // 서버에 저장
       await fetch('/api/profile/image', {
         method: 'PATCH',
         headers: {
@@ -58,26 +59,28 @@ export default function ProfileSection() {
 
   return (
     <div className="flex flex-col items-center gap-2">
-      {/* 👇 클릭 가능 */}
       <div className="relative h-20 w-20">
-        <div
+        <button
+          type="button"
           onClick={handleClick}
+          aria-label="프로필 이미지 업로드"
           className="h-full w-full cursor-pointer overflow-hidden rounded-full bg-gray-200 ring-[#1ea698] ring-[3px] ring-offset-2"
         >
-          <img
+          <Image
             src={image || '/profile-default.png'}
             alt="profile"
-            className="h-full w-full object-cover"
+            fill
+            className="object-cover"
+            sizes="80px"
+            unoptimized={!!image}
           />
-        </div>
+        </button>
 
-        {/* 📸 아이콘 오버레이 */}
         <div className="absolute right-0 bottom-0 flex h-6 w-6 items-center justify-center rounded-full bg-hana-main">
           <Camera size={14} className="text-white" />
         </div>
       </div>
 
-      {/* 숨겨진 input */}
       <input
         type="file"
         accept="image/*"
