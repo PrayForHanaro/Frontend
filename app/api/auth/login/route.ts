@@ -1,7 +1,11 @@
 import { type NextRequest, NextResponse } from 'next/server';
-
-import { createAccessToken, createRefreshToken, type SessionUser, type UserRole } from '@/lib/auth-jwt';
 import { setAuthCookies } from '@/lib/auth-cookies';
+import {
+  createAccessToken,
+  createRefreshToken,
+  type SessionUser,
+  type UserRole,
+} from '@/lib/auth-jwt';
 import { GATEWAY_ENDPOINTS } from '@/lib/backend-endpoints';
 import { readJsonSafely } from '@/lib/read-json-safely';
 
@@ -39,17 +43,20 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as LoginRequestBody;
 
-    const response = await fetch(`${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.login}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.login}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: body.phoneNumber.replaceAll('-', ''),
+          password: body.password,
+        }),
+        cache: 'no-store',
       },
-      body: JSON.stringify({
-        phoneNumber: body.phoneNumber.replaceAll('-', ''),
-        password: body.password,
-      }),
-      cache: 'no-store',
-    });
+    );
 
     const result = await readJsonSafely<LoginCheckResponse>(response);
 
