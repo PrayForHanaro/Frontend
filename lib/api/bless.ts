@@ -27,9 +27,12 @@ export async function getTarget(id: string): Promise<BlessTarget | null> {
 
 export async function getMessages(blessId: string): Promise<BlessMessage[]> {
   if (USE_MOCK) return MOCK_MESSAGES[blessId] ?? [];
-  // TODO: BFF route 신설 예정 (/api/bless/targets/[id]/messages).
-  //       prayer-service GET /apis/prayer/prayers/{giftId}/messages 래핑.
-  throw new Error('getMessages: 실 API 연동 BFF route 미구현');
+  const res = await fetch(`/api/bless/targets/${blessId}/messages`, {
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error('Failed to fetch messages');
+  const body = await res.json();
+  return body.data as BlessMessage[];
 }
 
 export async function getRegisteredAccounts(): Promise<RegisteredAccount[]> {
