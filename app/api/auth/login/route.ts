@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { setAuthCookies } from '@/lib/auth-cookies';
+import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
+import { readJsonSafely } from '@/lib/read-json-safely';
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
@@ -20,25 +22,28 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${GATEWAY_URL}/apis/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${GATEWAY_URL}${BACKEND_ENDPOINTS.auth.login}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        cache: 'no-store',
       },
-      body: JSON.stringify(body),
-      cache: 'no-store',
-    });
+    );
 
-    const result = (await response.json()) as GatewayAuthResponse;
+    const result = await readJsonSafely<GatewayAuthResponse>(response);
 
-    if (!response.ok || !result.success) {
+    if (!response.ok || !result?.success || !result.data) {
       return NextResponse.json(
         {
           success: false,
-          message: result.message || '로그인에 실패했습니다.',
+          message: result?.message || '로그인에 실패했습니다.',
           data: null,
         },
-        { status: response.status },
+        { status: response.status || 500 },
       );
     }
 
@@ -54,7 +59,7 @@ export async function POST(request: NextRequest) {
         orgId: result.data.orgId,
       },
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json(
       {
         success: false,

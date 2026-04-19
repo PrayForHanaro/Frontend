@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookies';
+import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
+import { readJsonSafely } from '@/lib/read-json-safely';
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
 type GatewayRefreshResponse = {
   success: boolean;
   message: string;
-  data: {
+  data?: {
     accessToken: string;
     refreshToken?: string;
     userId?: string | number;
@@ -18,27 +20,41 @@ type GatewayRefreshResponse = {
 
 export async function POST(request: NextRequest) {
   try {
-    const response = await fetch(`${GATEWAY_URL}/apis/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        cookie: request.headers.get('cookie') ?? '',
+    const response = await fetch(
+      `${GATEWAY_URL}${BACKEND_ENDPOINTS.auth.refresh}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          cookie: request.headers.get('cookie') ?? '',
+        },
+        cache: 'no-store',
       },
-      cache: 'no-store',
-    });
+    );
 
-    const result = (await response.json()) as GatewayRefreshResponse;
+    const result = await readJsonSafely<GatewayRefreshResponse>(response);
 
-    if (!response.ok || !result.success || !result.data?.accessToken) {
+    if (response.status === 401 || response.status === 403) {
       await clearAuthCookies();
 
       return NextResponse.json(
         {
           success: false,
-          message: result.message || '토큰 재발급에 실패했습니다.',
+          message: result?.message || '토큰 재발급에 실패했습니다.',
           data: null,
         },
-        { status: response.status || 401 },
+        { status: response.status },
+      );
+    }
+
+    if (!response.ok || !result?.success || !result.data?.accessToken) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: result?.message || '토큰 재발급에 실패했습니다.',
+          data: null,
+        },
+        { status: response.status || 500 },
       );
     }
 
@@ -59,9 +75,7 @@ export async function POST(request: NextRequest) {
       message: '토큰이 재발급되었습니다.',
       data: null,
     });
-  } catch (_error) {
-    await clearAuthCookies();
-
+  } catch {
     return NextResponse.json(
       {
         success: false,

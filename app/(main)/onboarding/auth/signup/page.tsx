@@ -9,13 +9,6 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
 
-/**
- * @page: 회원가입 페이지입니다.
- * @description: 회원가입 페이지입니다.
- * @author: 이정수
- * @date: 2026-04-13
- */
-
 export default function Signup() {
   const router = useRouter();
 
@@ -26,7 +19,7 @@ export default function Signup() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
 
     try {
@@ -41,7 +34,7 @@ export default function Signup() {
         credentials: 'include',
         body: JSON.stringify({
           name,
-          birthDate: birthDate.replaceAll('.', ''),
+          birth: birthDate.replaceAll('.', '-'),
           phoneNumber: phoneNumber.replaceAll('-', ''),
           password,
         }),
@@ -54,8 +47,13 @@ export default function Signup() {
         return;
       }
 
-      router.push('/onboarding/intro');
-    } catch (_error) {
+      if (result.data?.autoLoggedIn) {
+        router.push('/home');
+        return;
+      }
+
+      router.push('/onboarding/auth/login');
+    } catch {
       setErrorMessage('회원가입 처리 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
@@ -79,7 +77,7 @@ export default function Signup() {
           회원가입
         </h1>
 
-        <FieldGroup className="flex flex-col items-center pt-10 pb-40">
+        <FieldGroup className="flex flex-col items-center pt-10">
           <Field>
             <FieldLabel
               className="px-1 pb-3 text-hana-gray-600 text-xl"

@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { setAuthCookies } from '@/lib/auth-cookies';
+import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
+import { readJsonSafely } from '@/lib/read-json-safely';
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
-type GatewaySignupResponse = {
+type GatewaySignupWithTokenResponse = {
   success: boolean;
   message: string;
-  data: {
+  data?: {
     accessToken: string;
     refreshToken: string;
     userId: string | number;
@@ -20,41 +22,65 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${GATEWAY_URL}/apis/auth/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${GATEWAY_URL}${BACKEND_ENDPOINTS.auth.signup}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        cache: 'no-store',
       },
-      body: JSON.stringify(body),
-      cache: 'no-store',
-    });
+    );
 
-    const result = (await response.json()) as GatewaySignupResponse;
+    const result =
+      await readJsonSafely<GatewaySignupWithTokenResponse>(response);
 
-    if (!response.ok || !result.success) {
+    if (!response.ok) {
       return NextResponse.json(
         {
           success: false,
-          message: result.message || '회원가입에 실패했습니다.',
+          message: result?.message || '회원가입에 실패했습니다.',
           data: null,
         },
-        { status: response.status },
+        { status: response.status || 500 },
       );
     }
 
-    await setAuthCookies(result.data);
-
-    return NextResponse.json({
-      success: true,
-      message: '회원가입에 성공했습니다.',
-      data: {
+    // 백엔드가 회원가입 즉시 토큰까지 주는 경우
+    if (
+      result?.success &&
+      result.data?.accessToken &&
+      result.data.refreshToken
+    ) {
+      await setAuthCookies({
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
         userId: result.data.userId,
         name: result.data.name,
         role: result.data.role,
         orgId: result.data.orgId,
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: result.message || '회원가입에 성공했습니다.',
+        data: {
+          autoLoggedIn: true,
+        },
+      });
+    }
+
+    // public main 기준: 201 Created + empty body
+    return NextResponse.json({
+      success: true,
+      message: result?.message || '회원가입에 성공했습니다.',
+      data: {
+        autoLoggedIn: false,
       },
     });
-  } catch (_error) {
+  } catch {
     return NextResponse.json(
       {
         success: false,
