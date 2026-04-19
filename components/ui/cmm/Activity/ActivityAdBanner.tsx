@@ -50,7 +50,7 @@ function ActivityAdBannerContent({
 
   return (
     <div
-      className={`z-[60] transition-all duration-500 ease-out ${
+      className={`z-[60] mb-8 transition-all duration-500 ease-out ${
         isFixed
           ? '-translate-x-1/2 fixed left-1/2 w-[calc(100vw-24px)] max-w-[393px]'
           : 'relative w-full'

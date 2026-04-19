@@ -70,7 +70,7 @@ export default function ActivityJoinToast() {
   return (
     <div
       aria-live="polite"
-      className={`-translate-x-1/2 pointer-events-none fixed bottom-20 left-1/2 z-[60] px-4 transition-all duration-300 ease-out ${
+      className={`-translate-x-1/2 pointer-events-none fixed bottom-20 left-1/2 z-[60] mb-12 px-4 transition-all duration-300 ease-out ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
       }`}
     >
