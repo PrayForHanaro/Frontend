@@ -60,8 +60,8 @@ export default function BlessOnceInput() {
 
   const handleAccountSelect = (account: RegisteredAccount) => {
     setAccountNumber(account.accountNumber);
-    setRecipientName(account.targetName);
-    setRecipientRelation(account.targetRelation);
+    setRecipientName(account.targetName ?? '');
+    setRecipientRelation(account.targetRelation ?? '');
     setShowAccounts(false);
   };
 
@@ -160,12 +160,21 @@ export default function BlessOnceInput() {
                     className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-hana-gray-100"
                   >
                     <div>
-                      <p className="font-hana-medium text-gray-900 text-sm">
-                        {acc.targetName} ({RELATION_LABELS[acc.targetRelation]})
-                      </p>
-                      <p className="font-hana-regular text-hana-gray-500 text-xs">
-                        {acc.accountNumber}
-                      </p>
+                      {acc.targetName && acc.targetRelation ? (
+                        <>
+                          <p className="font-hana-medium text-gray-900 text-sm">
+                            {acc.targetName} (
+                            {RELATION_LABELS[acc.targetRelation]})
+                          </p>
+                          <p className="font-hana-regular text-hana-gray-500 text-xs">
+                            {acc.accountNumber}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="font-hana-medium text-gray-900 text-sm">
+                          {acc.accountNumber}
+                        </p>
+                      )}
                     </div>
                   </button>
                 ))}

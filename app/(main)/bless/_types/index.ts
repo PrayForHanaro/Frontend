@@ -26,10 +26,12 @@ export type BibleVerse = {
 
 export type RegisteredAccount = {
   id: string;
-  targetId: string;
-  targetName: string;
-  targetRelation: GiftReceiverType;
   accountNumber: string;
+  targetId?: string;
+  targetName?: string;
+  targetRelation?: GiftReceiverType;
+  alias?: string;
+  lastUsedAt?: string;
 };
 
 export type OnceBlessFormData = {
