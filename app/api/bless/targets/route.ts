@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { GiftReceiverType } from '@/app/(main)/bless/_constants';
+import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
 import { bffFetch } from '@/lib/bff-fetch';
 
 /**
@@ -29,9 +30,10 @@ interface UserListItem {
 
 export async function GET() {
   try {
-    const prayerRes = await bffFetch(`${GATEWAY_URL}/apis/prayer/prayers/me`, {
-      cache: 'no-store',
-    });
+    const prayerRes = await bffFetch(
+      `${GATEWAY_URL}${BACKEND_ENDPOINTS.prayer.receiversMe}`,
+      { cache: 'no-store' },
+    );
     const prayerJson = await prayerRes.json();
 
     if (!prayerRes.ok || !prayerJson.success) {
@@ -61,7 +63,7 @@ export async function GET() {
     let userDetails: UserListItem[] = [];
     if (ids) {
       const userListRes = await bffFetch(
-        `${GATEWAY_URL}/apis/user/users/list?ids=${ids}`,
+        `${GATEWAY_URL}${BACKEND_ENDPOINTS.user.list}?ids=${ids}`,
         { cache: 'no-store' },
       );
       const userListJson = await userListRes.json();
