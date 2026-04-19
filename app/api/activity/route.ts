@@ -36,15 +36,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const formData = await request.formData();
 
+    // 백엔드 가이드: POST /apis/activity/activities (Multipart 통합 전송)
     const response = await fetch(`${GATEWAY_URL}/apis/activity/activities`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        // multipart/form-data 전달 시 헤더는 브라우저/fetch가 경계값(boundary)과 함께 자동 설정함
         cookie: request.headers.get('cookie') ?? '',
       },
-      body: JSON.stringify(body),
+      body: formData,
       cache: 'no-store',
     });
 
@@ -53,7 +54,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, {
       status: response.status,
     });
-  } catch (_error) {
+  } catch (error) {
+    console.error('Activity register proxy error:', error);
     return NextResponse.json(
       {
         success: false,

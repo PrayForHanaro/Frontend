@@ -87,13 +87,11 @@ export async function getActivity(activityId: string) {
   return parseResponse<ActivityDetail>(response);
 }
 
-export async function createActivity(payload: ActivityCreatePayload) {
+export async function createActivity(formData: FormData) {
   const response = await fetchWithAuth('/api/activity', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
+    // FormData 전송 시 Content-Type을 명시하지 않아야 boundary가 자동 설정됨
+    body: formData,
   });
 
   return parseResponse<ActivityDetail>(response);
