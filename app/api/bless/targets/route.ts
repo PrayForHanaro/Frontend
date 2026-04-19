@@ -7,14 +7,16 @@ import { bffFetch } from '@/lib/bff-fetch';
  * @page: bless 기도적금 대상자 목록 조회 BFF
  * @description: prayer-service의 대상자 목록과 user-service의 사용자 정보를 조합하여
  *               FE BlessTarget shape 로 반환합니다.
- *   - prayer-service: GET /apis/prayer/prayers/me → receiverId, relation, monthlyAmount, cumulativeTotal, daysOfPrayer
+ *   - prayer-service: GET /apis/prayer/prayers/me → giftId, receiverId, relation, monthlyAmount, cumulativeTotal, daysOfPrayer
  *   - user-service: GET /apis/user/users/list?ids=... → userId, name, imageType
- * BLESS_SPEC §2-2 b-1 대상자 목록(이름·관계), §2-6/§2-6a/§2-6b 금액·누적·기도일수
+ * BLESS_SPEC §2-2 b-1 대상자 목록(이름·관계), §2-6/§2-6a/§2-6b 금액·누적·기도일수.
+ * BlessTarget.id 는 giftId 기반 (메시지 API 및 상세 라우팅 식별자).
  */
 
 const GATEWAY_URL = process.env.GATEWAY_URL || 'http://api-gateway:8080';
 
 interface PrayerReceiverDetail {
+  giftId: number;
   receiverId: number;
   relation: GiftReceiverType;
   monthlyAmount: number;
@@ -75,7 +77,7 @@ export async function GET() {
     const targets = prayers.map((p) => {
       const u = userDetails.find((x) => x.userId === p.receiverId);
       return {
-        id: String(p.receiverId),
+        id: String(p.giftId),
         name: u?.name ?? '성도',
         relation: p.relation,
         avatar: u?.imageType ?? 'man',
