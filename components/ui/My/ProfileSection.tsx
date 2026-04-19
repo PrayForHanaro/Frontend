@@ -64,19 +64,19 @@ export default function ProfileSection() {
           type="button"
           onClick={handleClick}
           aria-label="프로필 이미지 업로드"
-          className="h-full w-full cursor-pointer overflow-hidden rounded-full bg-gray-200 ring-[#1ea698] ring-[3px] ring-offset-2"
+          className="relative block h-full w-full overflow-hidden rounded-full bg-gray-200 ring-[#1ea698] ring-[3px] ring-offset-2"
         >
           <Image
             src={image || '/profile-default.png'}
             alt="profile"
             fill
-            className="object-cover"
+            className="rounded-full object-cover"
             sizes="80px"
             unoptimized={!!image}
           />
         </button>
 
-        <div className="absolute right-0 bottom-0 flex h-6 w-6 items-center justify-center rounded-full bg-hana-main">
+        <div className="absolute right-0 bottom-0 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-hana-main">
           <Camera size={14} className="text-white" />
         </div>
       </div>
