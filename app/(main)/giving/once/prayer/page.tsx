@@ -32,7 +32,7 @@ export default function GivingPrayer() {
         <Header content="기도제목 작성" />
         <main className="mt-4">
           <section className="space-y-4">
-            <div className="mt-3 flex flex-col gap-2">
+            <div className="mt-7 flex flex-col gap-2">
               <p className="text-xl">하나님께 드리는 기도문</p>
               <p className="text-hana-gray-500 text-sm">
                 오늘의 고민과 걱정거리를 하나님께
@@ -44,7 +44,7 @@ export default function GivingPrayer() {
                 value={prayer}
                 onChange={(e) => setPrayer(e.target.value.slice(0, 250))}
                 placeholder="기도제목을 입력해주세요 "
-                className="h-[400px] w-full resize-none rounded-2xl border border-hana-gray-200 bg-hana-gray-100 p-5 pr-16 text-lg outline-none transition-colors focus:border-hana-main focus:bg-white"
+                className="h-[440px] w-full resize-none rounded-2xl border border-hana-gray-200 bg-hana-gray-100 p-5 pr-16 text-lg outline-none transition-colors focus:border-hana-main focus:bg-white"
               />
               <div className="absolute right-5 bottom-4 text-hana-gray-400 text-sm">
                 <span

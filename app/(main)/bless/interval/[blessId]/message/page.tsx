@@ -30,9 +30,13 @@ export default function BlessIntervalMessage() {
     <div className="relative h-full w-full overflow-hidden">
       <div className="scrollbar-hide h-full overflow-y-auto bg-hana-bless-bg px-4 pb-24">
         <BackButton to={`/bless/interval/${blessId}`} />
-        <div className="flex flex-col gap-4 pt-14">
+        <div className="flex flex-col gap-4 pt-20">
           <BibleVerseBox verse={verse} />
-          <MessageTextarea value={message} onChange={setMessage} />
+          <MessageTextarea
+            value={message}
+            onChange={setMessage}
+            className="h-[400px]"
+          />
           <BlessActionButton disabled={isMessageEmpty} onClick={handleNext}>
             다음 단계로
           </BlessActionButton>
