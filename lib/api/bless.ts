@@ -37,8 +37,12 @@ export async function getMessages(blessId: string): Promise<BlessMessage[]> {
 
 export async function getRegisteredAccounts(): Promise<RegisteredAccount[]> {
   if (USE_MOCK) return MOCK_ACCOUNTS;
-  // TODO: BE에 등록 계좌 목록 API 없음. 합의·구현 필요 (일회성 송금 즐겨찾기 용도).
-  throw new Error('getRegisteredAccounts: BE 엔드포인트 미정');
+  const res = await fetch('/api/bless/registered-accounts', {
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error('Failed to fetch registered accounts');
+  const body = await res.json();
+  return body.data as RegisteredAccount[];
 }
 
 export async function createMessage(
