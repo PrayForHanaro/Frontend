@@ -40,3 +40,16 @@ export async function getRegisteredAccounts(): Promise<RegisteredAccount[]> {
   // TODO: BE에 등록 계좌 목록 API 없음. 합의·구현 필요 (일회성 송금 즐겨찾기 용도).
   throw new Error('getRegisteredAccounts: BE 엔드포인트 미정');
 }
+
+export async function createMessage(
+  blessId: string,
+  content: string,
+): Promise<void> {
+  if (USE_MOCK) return;
+  const res = await fetch(`/api/bless/targets/${blessId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) throw new Error('Failed to create message');
+}
