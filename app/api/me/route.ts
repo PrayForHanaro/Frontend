@@ -1,41 +1,37 @@
 import { type NextRequest, NextResponse } from 'next/server';
-
 import { GATEWAY_ENDPOINTS } from '@/lib/backend-endpoints';
 import { readJsonSafely } from '@/lib/read-json-safely';
 
 const GATEWAY_URL = process.env.GATEWAY_URL ?? 'http://api-gateway:8080';
 
-type GatewayMeHomeResponse = {
+type GatewayMeResponse = {
   success: boolean;
   message?: string;
   data?: {
-    userName: string;
-    myPoint: number;
-    orgId: number | string | null;
-    donationRate?: number;
+    name: string;
+    profileUrl: string | null;
+    orgName: string;
+    pointSum: number;
   };
 };
 
 export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(
-      `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.meHome}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          cookie: request.headers.get('cookie') ?? '',
-        },
-        cache: 'no-store',
+    const response = await fetch(`${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.me}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: request.headers.get('cookie') ?? '',
       },
-    );
+      cache: 'no-store',
+    });
 
-    const result = await readJsonSafely<GatewayMeHomeResponse>(response);
+    const result = await readJsonSafely<GatewayMeResponse>(response);
 
     if (!response.ok || !result?.success || !result.data) {
       return NextResponse.json(
         {
           success: false,
-          message: result?.message ?? '사용자 정보를 불러오지 못했습니다.',
+          message: result?.message ?? '마이페이지 정보를 불러오지 못했습니다.',
           data: null,
         },
         {
@@ -48,10 +44,10 @@ export async function GET(request: NextRequest) {
       success: true,
       message: 'success',
       data: {
-        id: request.cookies.get('userId')?.value ?? null,
-        name: result.data.userName,
-        totalPoint: result.data.myPoint,
-        orgId: result.data.orgId,
+        name: result.data.name,
+        profileUrl: result.data.profileUrl,
+        orgName: result.data.orgName,
+        pointSum: result.data.pointSum,
         role: request.cookies.get('role')?.value ?? 'USER',
       },
     });
