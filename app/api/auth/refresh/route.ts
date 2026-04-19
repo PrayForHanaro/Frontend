@@ -3,8 +3,22 @@ import { clearAuthCookies, setAuthCookies } from '@/lib/auth-cookies';
 import {
   createAccessToken,
   createRefreshToken,
+  type SessionUser,
+  type UserRole,
   verifyToken,
 } from '@/lib/auth-jwt';
+
+function normalizeRole(role: string | undefined): UserRole {
+  if (role === 'ADMIN') {
+    return 'ADMIN';
+  }
+
+  if (role === 'CLERGY') {
+    return 'CLERGY';
+  }
+
+  return 'USER';
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,11 +41,11 @@ export async function POST(request: NextRequest) {
 
     const payload = await verifyToken(refreshToken, 'refresh');
 
-    const sessionUser = {
+    const sessionUser: SessionUser = {
       userId: payload.userId,
       name: payload.name,
-      orgId: payload.org_id,
-      role: (payload.roles?.[0] ?? 'USER') as 'USER' | 'ADMIN' | 'CLERGY',
+      orgId: payload.org_id ?? '',
+      role: normalizeRole(payload.roles?.[0]),
     };
 
     const newAccessToken = await createAccessToken(sessionUser);
