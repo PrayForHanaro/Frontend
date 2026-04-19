@@ -71,14 +71,16 @@ export default function BlessInterval({
               }) => person.id.toString() === blessId,
             );
             if (foundPerson) {
+              const daysOfPrayer = Math.floor(Math.random() * 200) + 1;
+              const dailyAmount = Math.floor(Math.random() * 50000) + 1; // 1 ~ 50000
               target = {
                 id: foundPerson.id.toString(),
                 name: foundPerson.name,
                 relation: foundPerson.relation,
                 avatar: getPersonImage(foundPerson.type),
-                daysOfPrayer: Math.floor(Math.random() * 200) + 1,
-                totalAmount: Math.floor(Math.random() * 1000000) + 10000,
-                dailyAmount: Math.floor(Math.random() * 50000) + 1000,
+                daysOfPrayer: daysOfPrayer,
+                dailyAmount: dailyAmount,
+                totalAmount: daysOfPrayer * dailyAmount,
               };
             }
           }

@@ -46,8 +46,8 @@ export default function CounselingForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<CounselingFormValue>({
-    name: '김성도',
-    birth: '19650101',
+    name: '김하나',
+    birth: '196501025',
     phone: '010-1234-5678',
     assetType: '',
     need: '',

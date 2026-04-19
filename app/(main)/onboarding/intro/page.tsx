@@ -22,16 +22,21 @@ export default function OnboardingIntroPage() {
   };
   return (
     <div className="relative min-h-full">
-      <h1 className="pt-24 text-center font-hana-bold text-3xl text-hana-light-mint">
-        PRAY4HANA
-      </h1>
+      <Image
+        src={IMAGE_PATH.LOGO_TITLE}
+        alt="로고타이틀"
+        width={700}
+        height={700}
+        className="mx-auto mt-5 object-contain"
+        priority
+      />
       <div className="flex justify-center">
         <Image
           src={IMAGE_PATH.ONBOARDING_CHECKIN}
           alt="로고"
           width={300}
           height={300}
-          className="mx-3 mt-5 mb-2 object-contain"
+          className="mx-3 mb-2 object-contain"
           priority
         />
       </div>

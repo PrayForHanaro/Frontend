@@ -21,7 +21,7 @@ export default function Login() {
 
   const routeToHome = () => {
     if (phoneNumber.trim() && password.trim()) {
-      router.push('/home');
+      router.push('/onboarding/church/pending');
     }
   };
   const handleReset = () => {

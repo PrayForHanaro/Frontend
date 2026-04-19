@@ -67,7 +67,7 @@ function ActivityAdBannerContent({
           : undefined
       }
     >
-      <div className="relative mb-[40px] w-full border-2 border-[#56A99E] bg-white px-2 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+      <div className="relative mb-[5px] w-full border-2 border-[#56A99E] bg-white px-2 py-4 shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
         <button
           type="button"
           onClick={onClick}

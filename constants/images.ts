@@ -13,4 +13,5 @@ export const IMAGE_PATH = {
   HOME_BABY: '/home/home_baby.svg',
   GIVINGONCE_COMPLETE: '/givingOnce/givingOnce_complete.svg',
   LOGO: '/logo/logo.png',
+  LOGO_TITLE: '/logo/logo_title.png',
 };
