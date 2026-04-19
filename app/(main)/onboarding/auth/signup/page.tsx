@@ -29,6 +29,19 @@ export default function Signup() {
     'BEFORE_SEND' | 'SENT' | 'VERIFIED'
   >('BEFORE_SEND');
 
+  const [popupMessage, setPopupMessage] = useState('');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const openPopup = (message: string) => {
+    setPopupMessage(message);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setPopupMessage('');
+  };
+
   const routeToIntro = () => {
     router.push('/onboarding/intro');
   };
@@ -41,22 +54,23 @@ export default function Signup() {
   };
 
   const isButtonEnabled = authStatus === 'VERIFIED';
-
   const handleSendVerification = () => {
     if (!phoneNumber || !carrier) {
-      alert('전화번호와 통신사를 선택해주세요');
+      openPopup('전화번호와 통신사를 선택해주세요');
       return;
     }
+
     // TODO: API 호출로 인증번호 발송
     console.log('인증번호 발송:', { phoneNumber, carrier });
+
     if (authStatus === 'BEFORE_SEND') {
-      alert('인증번호가 발송되었습니다.');
+      openPopup('인증번호가 발송되었습니다.');
       setAuthStatus('SENT');
     } else if (authStatus === 'SENT') {
-      alert('인증되었습니다.');
+      openPopup('인증되었습니다.');
       setAuthStatus('VERIFIED');
     } else {
-      alert('이미 인증이 완료되었습니다.');
+      openPopup('이미 인증이 완료되었습니다.');
     }
   };
   return (
@@ -233,6 +247,25 @@ export default function Signup() {
           </Button>
         </Field>
       </form>
+      {isPopupOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 px-6">
+          <div className="w-full max-w-[320px] rounded-2xl bg-white p-6 shadow-xl">
+            <p className="text-center font-hana-medium text-gray-800 text-lg">
+              {popupMessage}
+            </p>
+
+            <div className="mt-5">
+              <Button
+                type="button"
+                onClick={closePopup}
+                className="h-12 w-full rounded-xl bg-hana-light-mint text-base text-white hover:bg-hana-light-mint/90"
+              >
+                확인
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
