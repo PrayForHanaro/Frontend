@@ -113,7 +113,11 @@ export default function ActivityRegister() {
     }
 
     try {
-      const createdActivity = await createActivity({
+      // 백엔드 가이드: multipart/form-data 통합 전송
+      const formData = new FormData();
+
+      // 1. 활동 정보 JSON (Blob 형태로 추가)
+      const activityData = {
         category: '동행찾기',
         meetingType: periodValue.meetingType,
         recurringType: periodValue.recurringType,
@@ -129,9 +133,23 @@ export default function ActivityRegister() {
         recurringTime: periodValue.recurringTime,
         recurringWeekdays: periodValue.recurringWeekdays,
         recurringMonthDays: periodValue.recurringMonthDays,
-        imageUrls: [],
+        imageUrls: [], // S3 업로드 URL은 백엔드에서 처리
+      };
+
+      formData.append(
+        'request',
+        new Blob([JSON.stringify(activityData)], { type: 'application/json' }),
+      );
+
+      // 2. 이미지 파일 리스트 (최대 3장)
+      images.forEach((file) => {
+        formData.append('files', file);
       });
 
+      const createdActivity = await createActivity(formData);
+
+      // 백엔드 가이드: 응답 데이터에서 id(또는 activityId)를 꺼내어 상세 페이지로 리다이렉트
+      // lib/activity-api.ts의 ActivityDetail 타입에 id가 포함되어 있음
       router.push(`/activity/${createdActivity.id}`);
     } catch (error) {
       console.error(error);
