@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import { bffFetch } from '@/lib/bff-fetch';
+import { type NextRequest, NextResponse } from 'next/server';
 
 /**
  * @page: bless 등록 계좌 즐겨찾기 조회 BFF
@@ -19,12 +18,15 @@ interface RegisteredAccountFromGateway {
   lastUsedAt: string;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const res = await bffFetch(
-      `${GATEWAY_URL}/apis/prayer/registered-accounts`,
-      { cache: 'no-store' },
-    );
+    const res = await fetch(`${GATEWAY_URL}/apis/prayer/registered-accounts`, {
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: request.headers.get('cookie') ?? '',
+      },
+      cache: 'no-store',
+    });
     const body = await res.json();
 
     if (!res.ok || !body.success) {

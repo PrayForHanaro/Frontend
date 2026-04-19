@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { bffFetch } from '@/lib/bff-fetch';
 
 /**
  * @page: bless 기도 메시지 목록 조회 BFF
@@ -44,9 +43,15 @@ export async function GET(
   const size = search.get('size') ?? '20';
 
   try {
-    const res = await bffFetch(
+    const res = await fetch(
       `${GATEWAY_URL}/apis/prayer/prayers/${giftId}/messages?page=${page}&size=${size}`,
-      { cache: 'no-store' },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          cookie: request.headers.get('cookie') ?? '',
+        },
+        cache: 'no-store',
+      },
     );
     const body = await res.json();
 
@@ -94,10 +99,14 @@ export async function POST(
 
   try {
     const body = await request.json();
-    const res = await bffFetch(
+    const res = await fetch(
       `${GATEWAY_URL}/apis/prayer/prayers/${giftId}/messages`,
       {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          cookie: request.headers.get('cookie') ?? '',
+        },
         body: JSON.stringify(body),
         cache: 'no-store',
       },

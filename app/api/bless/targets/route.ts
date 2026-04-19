@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import type { GiftReceiverType } from '@/app/(main)/bless/_constants';
 import { BACKEND_ENDPOINTS } from '@/lib/backend-endpoints';
-import { bffFetch } from '@/lib/bff-fetch';
+import { readJsonSafely } from '@/lib/read-json-safely';
 
 /**
  * @page: bless 기도적금 대상자 목록 조회 BFF
@@ -30,11 +30,18 @@ interface UserListItem {
   imageType: 'man' | 'woman' | 'baby';
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const cookie = request.headers.get('cookie') ?? '';
   try {
-    const prayerRes = await bffFetch(
+    const prayerRes = await fetch(
       `${GATEWAY_URL}${BACKEND_ENDPOINTS.prayer.receiversMe}`,
-      { cache: 'no-store' },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          cookie,
+        },
+        cache: 'no-store',
+      },
     );
     const prayerJson = await prayerRes.json();
 
@@ -64,13 +71,22 @@ export async function GET() {
 
     let userDetails: UserListItem[] = [];
     if (ids) {
-      const userListRes = await bffFetch(
+      const userListRes = await fetch(
         `${GATEWAY_URL}${BACKEND_ENDPOINTS.user.list}?ids=${ids}`,
-        { cache: 'no-store' },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            cookie,
+          },
+          cache: 'no-store',
+        },
       );
-      const userListJson = await userListRes.json();
-      if (userListJson.success) {
-        userDetails = userListJson.data as UserListItem[];
+      const userListJson = await readJsonSafely<{
+        success: boolean;
+        data: UserListItem[];
+      }>(userListRes);
+      if (userListJson?.success) {
+        userDetails = userListJson.data;
       }
     }
 
