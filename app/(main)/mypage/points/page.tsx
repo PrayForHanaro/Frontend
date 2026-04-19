@@ -6,7 +6,7 @@ import Nav from '@/components/ui/cmm/Nav';
 import PointItem from '@/components/ui/My/points/PointItem';
 import PointSummary from '@/components/ui/My/points/PointSummary';
 
-// 👉 타입 정의 (나중에 DTO 그대로 쓰면 됨)
+// 👉 타입 정의
 type PointHistory = {
   id: number;
   title: string;
@@ -18,7 +18,6 @@ export default function PointPage() {
   const [points, setPoints] = useState<PointHistory[]>([]);
   const [totalPoint, setTotalPoint] = useState(0);
 
-  // 👉 지금은 하드코딩 (나중에 API로 교체)
   useEffect(() => {
     const mockData: PointHistory[] = [
       {
@@ -52,29 +51,27 @@ export default function PointPage() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 pb-20">
-      <Header content="포인트 내역" />
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
+        <Header content="포인트 내역" />
 
-      {/* 👉 상단 요약 (props로 받기) */}
-      <PointSummary totalPoint={totalPoint} />
+        <PointSummary totalPoint={totalPoint} />
 
-      <div className="mt-8 flex flex-col gap-3 px-4">
-        {/* 포인트 내역 텍스트 */}
-        <span className="text-gray-500 text-sm">
-          포인트 내역 총 {points.length}건
-        </span>
+        <div className="mt-8 flex flex-col gap-3">
+          <span className="text-gray-500 text-sm">
+            포인트 내역 총 {points.length}건
+          </span>
 
-        {/* 리스트 */}
-        {points.map((point) => (
-          <PointItem
-            key={point.id}
-            title={point.title}
-            amount={point.amount}
-            date={point.date}
-          />
-        ))}
+          {points.map((point) => (
+            <PointItem
+              key={point.id}
+              title={point.title}
+              amount={point.amount}
+              date={point.date}
+            />
+          ))}
+        </div>
       </div>
-
       <Nav />
     </div>
   );

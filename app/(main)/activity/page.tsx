@@ -15,7 +15,7 @@ import { getActivities } from '@/lib/activity-api';
 
 /**
  * @page: 소모임 - 활동 목록 페이지
- * @description:  활동 목록 페이지입니다. 활동 카드 리스트와 활동 등록 페이지로 이동하는 버튼으로 구성되어 있습니다.
+ * @description: 활동 목록 페이지입니다. 활동 카드 리스트와 활동 등록 페이지로 이동하는 버튼으로 구성되어 있습니다.
  * @author: typeYu
  * @date: 2026-04-14
  */
@@ -67,35 +67,39 @@ export default function Activity() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <Header content="소모임" />
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
+        <div className="flex flex-col gap-4">
+          <Header content="소모임" />
 
-      <BoardToggle selectedTab={selectedTab} onChangeTab={setSelectedTab} />
+          <BoardToggle selectedTab={selectedTab} onChangeTab={setSelectedTab} />
 
-      <SearchInput value={searchKeyword} onChangeValue={setSearchKeyword} />
+          <SearchInput value={searchKeyword} onChangeValue={setSearchKeyword} />
 
-      <div className="flex flex-col gap-4">
-        {filteredActivities.map((activity) => (
-          <ActivityCard
-            key={activity.id}
-            id={activity.id}
-            category={activity.category}
-            title={activity.title}
-            location={activity.location}
-            schedule={activity.schedule}
-            currentCount={activity.currentCount}
-            maxCount={activity.maxCount}
-            point={activity.point}
-            isApplied={activity.isApplied}
-            isOwner={activity.isOwner}
-            status={activity.status}
-          />
-        ))}
+          <div className="flex flex-col gap-4">
+            {filteredActivities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                id={activity.id}
+                category={activity.category}
+                title={activity.title}
+                location={activity.location}
+                schedule={activity.schedule}
+                currentCount={activity.currentCount}
+                maxCount={activity.maxCount}
+                point={activity.point}
+                isApplied={activity.isApplied}
+                isOwner={activity.isOwner}
+                status={activity.status}
+              />
+            ))}
+          </div>
+
+          <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
+
+          <Calendar />
+        </div>
       </div>
-
-      <LongButton text="활동 만들기" onClick={handleMoveRegisterPage} />
-
-      <Calendar />
       <Nav />
       <ActivityJoinToast />
     </div>

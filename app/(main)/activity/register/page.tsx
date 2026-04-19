@@ -113,7 +113,11 @@ export default function ActivityRegister() {
     }
 
     try {
-      const createdActivity = await createActivity({
+      // 백엔드 가이드: multipart/form-data 통합 전송
+      const formData = new FormData();
+
+      // 1. 활동 정보 JSON (Blob 형태로 추가)
+      const activityData = {
         category: '동행찾기',
         meetingType: periodValue.meetingType,
         recurringType: periodValue.recurringType,
@@ -129,9 +133,23 @@ export default function ActivityRegister() {
         recurringTime: periodValue.recurringTime,
         recurringWeekdays: periodValue.recurringWeekdays,
         recurringMonthDays: periodValue.recurringMonthDays,
-        imageUrls: [],
+        imageUrls: [], // S3 업로드 URL은 백엔드에서 처리
+      };
+
+      formData.append(
+        'request',
+        new Blob([JSON.stringify(activityData)], { type: 'application/json' }),
+      );
+
+      // 2. 이미지 파일 리스트 (최대 3장)
+      images.forEach((file) => {
+        formData.append('files', file);
       });
 
+      const createdActivity = await createActivity(formData);
+
+      // 백엔드 가이드: 응답 데이터에서 id(또는 activityId)를 꺼내어 상세 페이지로 리다이렉트
+      // lib/activity-api.ts의 ActivityDetail 타입에 id가 포함되어 있음
       router.push(`/activity/${createdActivity.id}`);
     } catch (error) {
       console.error(error);
@@ -140,60 +158,61 @@ export default function ActivityRegister() {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-20">
-      <Header content="활동 만들기" />
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
+        <Header content="활동 만들기" />
 
-      <div className="mt-5 flex flex-col gap-6">
-        <section className="flex flex-col gap-2">
-          <h2 className="font-bold font-hana-main text-[#222222] text-base">
-            제목 *
-          </h2>
+        <div className="mt-5 flex flex-col gap-6">
+          <section className="flex flex-col gap-2">
+            <h2 className="font-bold font-hana-main text-[#222222] text-base">
+              제목 *
+            </h2>
 
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="모임명은 짧을 수록 이해하기 쉬워요"
-            className="w-full rounded-md border border-[#E5E7EB] bg-white p-4 font-hana-main text-[#222222] text-base outline-none placeholder:text-[#9CA3AF]"
+            <input
+              type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="모임명은 짧을 수록 이해하기 쉬워요"
+              className="w-full rounded-md border border-[#E5E7EB] bg-white p-4 font-hana-main text-[#222222] text-base outline-none placeholder:text-[#9CA3AF]"
+            />
+          </section>
+
+          <section className="flex flex-col gap-2">
+            <h2 className="font-bold font-hana-main text-[#222222] text-base">
+              설명글 *
+            </h2>
+
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="자세한 설명을 적어주세요"
+              className="min-h-42 w-full resize-none rounded-md border border-[#E5E7EB] bg-white p-4 font-hana-main text-[#222222] text-base outline-none placeholder:text-[#9CA3AF]"
+            />
+          </section>
+
+          <ActivityPeriodField
+            value={periodValue}
+            onChangeValue={setPeriodValue}
           />
-        </section>
 
-        <section className="flex flex-col gap-2">
-          <h2 className="font-bold font-hana-main text-[#222222] text-base">
-            설명글 *
-          </h2>
+          <ActivityCapacityField value={capacity} onChangeValue={setCapacity} />
 
-          <textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            placeholder="자세한 설명을 적어주세요"
-            className="min-h-42 w-full resize-none rounded-md border border-[#E5E7EB] bg-white p-4 font-hana-main text-[#222222] text-base outline-none placeholder:text-[#9CA3AF]"
+          <ActivityLocationField value={location} onChangeValue={setLocation} />
+
+          <ActivityImageField value={images} onChangeValue={setImages} />
+
+          <LongButton
+            text="등록하기"
+            disabled={!isFormValid}
+            onClick={handleRegisterActivity}
           />
-        </section>
+        </div>
 
-        <ActivityPeriodField
-          value={periodValue}
-          onChangeValue={setPeriodValue}
-        />
-
-        <ActivityCapacityField value={capacity} onChangeValue={setCapacity} />
-
-        <ActivityLocationField value={location} onChangeValue={setLocation} />
-
-        <ActivityImageField value={images} onChangeValue={setImages} />
-
-        <LongButton
-          text="등록하기"
-          disabled={!isFormValid}
-          onClick={handleRegisterActivity}
+        <ActivityAdBanner
+          isVisible={isBannerVisible}
+          onClick={handleMoveGroupAccountGuidePage}
         />
       </div>
-
-      <ActivityAdBanner
-        isVisible={isBannerVisible}
-        onClick={handleMoveGroupAccountGuidePage}
-      />
-
       <Nav />
     </div>
   );

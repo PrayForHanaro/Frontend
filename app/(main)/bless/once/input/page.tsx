@@ -93,8 +93,8 @@ export default function BlessOnceInput() {
   };
 
   return (
-    <div className="relative h-full w-full">
-      <div className="scrollbar-hide relative flex h-full flex-col overflow-y-auto bg-hana-bless-bg pb-[70px]">
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
         <BackButton to="/home" />
 
         <BlessHeader
@@ -102,7 +102,7 @@ export default function BlessOnceInput() {
           subtitle="사랑하는 사람에게 기도와 마음을 전하세요"
         />
 
-        <div className="flex flex-col gap-3 px-6 pt-2">
+        <div className="flex flex-col gap-3 pt-2">
           <MessageTextarea value={message} onChange={setMessage} />
 
           <div className="flex flex-col gap-1.5">
@@ -183,7 +183,7 @@ export default function BlessOnceInput() {
           </div>
         </div>
 
-        <div className="mt-auto px-6 pt-4 pb-4">
+        <div className="mt-10 px-2 pb-4">
           <BlessActionButton onClick={handleNext}>
             다음 단계로
           </BlessActionButton>

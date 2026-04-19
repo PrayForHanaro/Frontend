@@ -12,7 +12,8 @@ export default function MessageTextarea({
   onChange,
   maxLength = 250,
   grow = false,
-}: MessageTextareaProps) {
+  className,
+}: MessageTextareaProps & { className?: string }) {
   return (
     <label className={cn('flex flex-col gap-2', grow && 'flex-1')}>
       <span className="font-hana-medium text-gray-900 text-sm">
@@ -29,6 +30,7 @@ export default function MessageTextarea({
         className={cn(
           'resize-none rounded-xl bg-[#EFEBE7] p-4 font-hana-regular text-gray-900 text-sm placeholder:text-hana-gray-400 focus:outline-none focus:ring-2 focus:ring-hana-main/30',
           grow ? 'flex-1' : 'min-h-[88px]',
+          className,
         )}
       />
       <p className="text-right font-hana-regular text-hana-gray-500 text-xs">

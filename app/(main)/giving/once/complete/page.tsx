@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Header from '@/components/ui/cmm/Header';
+import Nav from '@/components/ui/cmm/Nav';
 import { IMAGE_PATH } from '@/constants/images';
 
 /**
@@ -35,7 +36,6 @@ export default function GivingOnceComplete() {
 
         if (res.ok) {
           const result = await res.json();
-          // BFF 응답 구조에 따라 데이터 접근 (result.data)
           if (result.success && result.data) {
             pointRate = result.data.pointRate || 0.01;
             name = result.data.name || '하나';
@@ -71,64 +71,67 @@ export default function GivingOnceComplete() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header content="헌금 완료" />
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="scrollbar-hide h-full overflow-y-auto px-4 pb-24">
+        <Header content="헌금 완료" />
 
-      <main className="flex flex-1 flex-col items-center px-8 pt-10 pb-10">
-        <div className="fade-in slide-in-from-bottom-10 mb-6 animate-in duration-700">
-          <Image
-            src={IMAGE_PATH.GIVINGONCE_COMPLETE}
-            alt="헌금 봉투"
-            width={180}
-            height={315}
-            priority
-            className="drop-shadow-[0_15px_30px_rgba(0,0,0,0.1)]"
-          />
-        </div>
-
-        <div className="mb-10 text-center">
-          <p className="mb-2 font-hana-medium text-[#888888] text-xl">
-            정성껏 드린 헌금액
-          </p>
-          <div className="flex items-baseline justify-center gap-1">
-            <span className="font-hana-bold text-6xl text-[#008485]">
-              {amount.toLocaleString()}
-            </span>
-            <span className="font-hana-bold text-2xl text-[#333333]">원</span>
-          </div>
-          <div className="mx-auto mt-5 h-1.5 w-20 rounded-full bg-[#008485] opacity-20" />
-        </div>
-
-        <div className="mb-8 w-full space-y-3">
-          <div className="flex items-center justify-between rounded-2xl bg-[#EBEAE4] px-6 py-5">
-            <span className="font-hana-medium text-[#666666] text-lg">
-              성함
-            </span>
-            <span className="font-hana-bold text-[#333333] text-xl">
-              {userName} 성도님
-            </span>
+        <main className="flex flex-col items-center pt-10 pb-10">
+          <div className="fade-in slide-in-from-bottom-10 mb-6 animate-in duration-700">
+            <Image
+              src={IMAGE_PATH.GIVINGONCE_COMPLETE}
+              alt="헌금 봉투"
+              width={180}
+              height={315}
+              priority
+              className="drop-shadow-[0_15px_30px_rgba(0,0,0,0.1)]"
+            />
           </div>
 
-          <div className="flex items-center justify-between rounded-2xl bg-[#EBEAE4] px-6 py-5">
-            <span className="font-hana-medium text-[#666666] text-lg">
-              적립 포인트
-            </span>
-            <span className="font-hana-bold text-2xl text-[#D39431]">
-              {point.toLocaleString()} <span className="text-lg">P</span>
-            </span>
+          <div className="mb-10 text-center">
+            <p className="mb-2 font-hana-medium text-[#888888] text-xl">
+              정성껏 드린 헌금액
+            </p>
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="font-hana-bold text-6xl text-[#008485]">
+                {amount.toLocaleString()}
+              </span>
+              <span className="font-hana-bold text-2xl text-[#333333]">원</span>
+            </div>
+            <div className="mx-auto mt-5 h-1.5 w-20 rounded-full bg-[#008485] opacity-20" />
           </div>
-        </div>
 
-        <div className="w-full">
-          <button
-            type="button"
-            onClick={handleFinish}
-            className="w-full cursor-pointer rounded-2xl bg-[#008485] py-5 font-hana-bold text-2xl text-white shadow-lg transition-all active:scale-[0.98]"
-          >
-            확인
-          </button>
-        </div>
-      </main>
+          <div className="mb-8 w-full space-y-3">
+            <div className="flex items-center justify-between rounded-2xl bg-[#EBEAE4] px-6 py-5">
+              <span className="font-hana-medium text-[#666666] text-lg">
+                성함
+              </span>
+              <span className="font-hana-bold text-[#333333] text-xl">
+                {userName} 성도님
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-[#EBEAE4] px-6 py-5">
+              <span className="font-hana-medium text-[#666666] text-lg">
+                적립 포인트
+              </span>
+              <span className="font-hana-bold text-2xl text-[#D39431]">
+                {point.toLocaleString()} <span className="text-lg">P</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <button
+              type="button"
+              onClick={handleFinish}
+              className="w-full cursor-pointer rounded-2xl bg-[#008485] py-5 font-hana-bold text-2xl text-white shadow-lg transition-all active:scale-[0.98]"
+            >
+              확인
+            </button>
+          </div>
+        </main>
+      </div>
+      <Nav />
     </div>
   );
 }
