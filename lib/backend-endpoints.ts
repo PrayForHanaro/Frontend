@@ -3,8 +3,7 @@ export const BACKEND_ENDPOINTS = {
     login: '/apis/auth/login',
     refresh: '/apis/auth/refresh',
     logout: '/apis/auth/logout',
-
-    signup: '/apis/user/users/signup',
+    signup: '/apis/auth/signup',
   },
   user: {
     meHome: '/apis/user/users/me/home',
