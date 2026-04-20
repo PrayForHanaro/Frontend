@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       },
     );
     console.log(headers);
-    
+
     const userHome = await readJsonSafely<UserHomeResponse>(userHomeRes);
 
     if (!userHomeRes.ok || !userHome?.success || !userHome.data) {

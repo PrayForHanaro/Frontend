@@ -68,7 +68,7 @@ export default function SignupPage() {
     }
   };
 
-  const handleReset = () => {
+  const _handleReset = () => {
     setName('');
     setBirthDate('');
     setphone('');
@@ -142,9 +142,7 @@ export default function SignupPage() {
               type="text"
               inputMode="numeric"
               value={phone}
-              onChange={(event) =>
-                setphone(formatphone(event.target.value))
-              }
+              onChange={(event) => setphone(formatphone(event.target.value))}
               maxLength={13}
               placeholder="010-0000-0000"
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"

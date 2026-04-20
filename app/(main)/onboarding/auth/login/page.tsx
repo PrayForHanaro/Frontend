@@ -36,7 +36,7 @@ export default function LoginPage() {
       setIsSubmitting(true);
       setErrorMessage('');
 
-      console.log(phone)
+      console.log(phone);
       const response = await fetch(BFF_ENDPOINTS.auth.login, {
         method: 'POST',
         headers: {
@@ -94,9 +94,7 @@ export default function LoginPage() {
               type="text"
               inputMode="numeric"
               value={phone}
-              onChange={(event) =>
-                setphone(formatphone(event.target.value))
-              }
+              onChange={(event) => setphone(formatphone(event.target.value))}
               placeholder="010-0000-0000"
               maxLength={13}
               className="bg-white p-5 pt-7 pb-7 text-2xl placeholder:text-gray-300"
