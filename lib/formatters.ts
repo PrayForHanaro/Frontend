@@ -17,7 +17,7 @@ export function formatBirthDate(value: string) {
 }
 
 //전화번호 포맷 함수 (예시: 010-0000-0000)
-export function formatPhoneNumber(value: string) {
+export function formatphone(value: string) {
   const numbersOnly = value.replace(/\D/g, '').slice(0, 11);
 
   if (numbersOnly.length <= 3) return numbersOnly;

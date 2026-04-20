@@ -12,7 +12,7 @@ import { readJsonSafely } from '@/lib/read-json-safely';
 const GATEWAY_URL = process.env.GATEWAY_URL ?? 'http://api-gateway:8080';
 
 type LoginRequestBody = {
-  phoneNumber: string;
+  phone: string;
   password: string;
 };
 
@@ -51,13 +51,15 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          phoneNumber: body.phoneNumber.replaceAll('-', ''),
+          phone: body.phone.replaceAll('-', ''),
           password: body.password,
         }),
         cache: 'no-store',
       },
     );
 
+    console.log('Login API response status:', response.status);
+    console.log(body.phone, body.password);
     const result = await readJsonSafely<LoginCheckResponse>(response);
 
     if (!response.ok || !result?.success || !result.data) {

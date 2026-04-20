@@ -8,7 +8,7 @@ const GATEWAY_URL = process.env.GATEWAY_URL ?? 'http://api-gateway:8080';
 type SignupRequestBody = {
   name: string;
   birth: string;
-  phoneNumber: string;
+  phone: string;
   password: string;
 };
 
@@ -21,7 +21,7 @@ type GatewayResponse = {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as SignupRequestBody;
-
+    console.log('Received signup request:', body);
     const response = await fetch(
       `${GATEWAY_URL}${GATEWAY_ENDPOINTS.user.signup}`,
       {
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           name: body.name,
           birth: body.birth,
-          phoneNumber: body.phoneNumber.replaceAll('-', ''),
+          phone: body.phone.replaceAll('-', ''),
           password: body.password,
         }),
         cache: 'no-store',

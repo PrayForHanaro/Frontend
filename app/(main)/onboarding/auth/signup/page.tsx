@@ -8,7 +8,7 @@ import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { BFF_ENDPOINTS } from '@/lib/backend-endpoints';
-import { formatBirthDate, formatPhoneNumber } from '@/lib/formatters';
+import { formatBirthDate, formatphone } from '@/lib/formatters';
 
 type SignupResponse = {
   success: boolean;
@@ -22,7 +22,7 @@ export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phone, setphone] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +43,7 @@ export default function SignupPage() {
         body: JSON.stringify({
           name,
           birth: birthDate.replaceAll('.', '-'),
-          phoneNumber: phoneNumber.replaceAll('-', ''),
+          phone: phone.replaceAll('-', ''),
           password,
         }),
       });
@@ -71,7 +71,7 @@ export default function SignupPage() {
   const handleReset = () => {
     setName('');
     setBirthDate('');
-    setPhoneNumber('');
+    setphone('');
     setPassword('');
     setErrorMessage('');
   };
@@ -138,12 +138,12 @@ export default function SignupPage() {
 
             <Input
               id="fieldgroup-phone"
-              name="phoneNumber"
+              name="phone"
               type="text"
               inputMode="numeric"
-              value={phoneNumber}
+              value={phone}
               onChange={(event) =>
-                setPhoneNumber(formatPhoneNumber(event.target.value))
+                setphone(formatphone(event.target.value))
               }
               maxLength={13}
               placeholder="010-0000-0000"
@@ -173,7 +173,7 @@ export default function SignupPage() {
         </FieldGroup>
 
         <Field className="absolute bottom-1 items-center pt-10">
-          <Button
+          {/* <Button
             type="reset"
             variant="outline"
             className="h-15 rounded-2xl bg-hana-gray-200 text-2xl hover:bg-hana-gray-300"
@@ -181,7 +181,7 @@ export default function SignupPage() {
             disabled={isSubmitting}
           >
             초기화
-          </Button>
+          </Button> */}
 
           <Button
             type="submit"

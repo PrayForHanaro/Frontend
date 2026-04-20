@@ -8,7 +8,7 @@ import Header from '@/components/ui/cmm/Header';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { BFF_ENDPOINTS } from '@/lib/backend-endpoints';
-import { formatPhoneNumber } from '@/lib/formatters';
+import { formatphone } from '@/lib/formatters';
 
 type LoginResponse = {
   success: boolean;
@@ -24,7 +24,7 @@ type LoginResponse = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phone, setphone] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,6 +36,7 @@ export default function LoginPage() {
       setIsSubmitting(true);
       setErrorMessage('');
 
+      console.log(phone)
       const response = await fetch(BFF_ENDPOINTS.auth.login, {
         method: 'POST',
         headers: {
@@ -43,7 +44,7 @@ export default function LoginPage() {
         },
         credentials: 'include',
         body: JSON.stringify({
-          phoneNumber: phoneNumber.replaceAll('-', ''),
+          phone: phone.replaceAll('-', ''),
           password,
         }),
       });
@@ -64,7 +65,7 @@ export default function LoginPage() {
   };
 
   const handleReset = () => {
-    setPhoneNumber('');
+    setphone('');
     setPassword('');
     setErrorMessage('');
   };
@@ -89,12 +90,12 @@ export default function LoginPage() {
 
             <Input
               id="fieldgroup-phone"
-              name="phoneNumber"
+              name="phone"
               type="text"
               inputMode="numeric"
-              value={phoneNumber}
+              value={phone}
               onChange={(event) =>
-                setPhoneNumber(formatPhoneNumber(event.target.value))
+                setphone(formatphone(event.target.value))
               }
               placeholder="010-0000-0000"
               maxLength={13}
