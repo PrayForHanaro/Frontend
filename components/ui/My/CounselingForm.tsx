@@ -47,7 +47,7 @@ export default function CounselingForm() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<CounselingFormValue>({
     name: '김하나',
-    birth: '196501025',
+    birth: '19650125',
     phone: '010-1234-5678',
     assetType: '',
     need: '',
