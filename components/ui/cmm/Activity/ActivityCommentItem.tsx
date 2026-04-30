@@ -76,7 +76,7 @@ function ReplyItem({ reply }: { reply: ActivityReply }) {
           </span>
         </div>
 
-        <p className="font-hana-main text-[#2F3A4F] text-[16px] leading-[1.5]">
+        <p className="font-hana-main text-[#2F3A4F] text-[16px] leading-normal">
           {reply.content}
         </p>
       </div>
@@ -127,7 +127,7 @@ export default function ActivityCommentItem({
             </span>
           </div>
 
-          <p className="font-hana-main text-[#2F3A4F] text-[18px] leading-[1.5]">
+          <p className="font-hana-main text-[#2F3A4F] text-[18px] leading-normal">
             {comment.content}
           </p>
 
