@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 /**
  * @page: 인구 수 컴포넌트
  * @description: 인구 수 컴포넌트입니다. +, - 버튼과 숫자 입력 필드로 구성되어 있습니다. 최소값: 2명, 최대값:99명
- * @author: 작성자명
+ * @author: typeYu
  * @date: 2026-04-14
  */
 
